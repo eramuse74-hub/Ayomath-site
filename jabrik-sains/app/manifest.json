@@ -1,0 +1,35 @@
+{
+    "name": "Jabrik Sains — Teman Mengajar IPAS",
+    "short_name": "Jabrik Sains",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#FBF8F1",
+    "theme_color": "#2E9E5B",
+    "description": "Teman mengajar IPAS untuk guru SD Kelas 1-6: 39 pelajaran, 97 eksperimen berbahan rumahan, rubrik penilaian, dan Modul Ajar siap ekspor. Gratis, tanpa internet, tanpa proyektor.",
+    "orientation": "portrait-primary",
+    "prefer_related_applications": false,
+    "icons": [
+        {
+            "src": "icons/Icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/Icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/Icon-maskable-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "icons/Icon-maskable-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ]
+}
