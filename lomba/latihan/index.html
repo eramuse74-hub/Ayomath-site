@@ -108,7 +108,10 @@
   </div>
 
   <div class="card">
-    <div class="sectitle" style="margin-top:0">Aturan Lomba</div>
+    <div class="sectitle" style="margin-top:0" id="aturan-judul">Aturan Lomba</div>
+    <!-- Daftar di bawah ini adalah bawaan. Kalau info.json berisi "aturan",
+         seluruh daftar ini diganti — lihat info.example.json. -->
+    <div id="aturan">
     <div class="rule"><span class="ic">🔢</span><span><b>Masuk pakai nomor peserta</b>
       Tidak ada nama, tidak ada akun, tidak ada login. Panitia yang membagikan nomor.</span></div>
     <div class="rule"><span class="ic">⏱️</span><span><b>Waktu berjalan sejak menekan MULAI</b>
@@ -121,7 +124,12 @@
       Jawaban dan sisa waktu tersimpan di server — lanjut dari soal terakhir.</span></div>
     <div class="rule"><span class="ic">🏁</span><span><b>Hasil diumumkan setelah sesi ditutup</b>
       Peringkat tidak ditampilkan selama lomba berlangsung.</span></div>
+    </div>
   </div>
+
+  <!-- Kartu tambahan dari info.json ("bagian"): hadiah, kontak panitia, denah
+       lokasi, apa saja. Kosong = tidak ada yang muncul. -->
+  <div id="bagian"></div>
 
   <div id="sponsor-wrap" hidden>
     <div class="sectitle">Didukung oleh</div>
@@ -316,8 +324,58 @@ async function sponsors() {
   if (shown) $('sponsor-wrap').hidden = false;
 }
 
+// 4. Aturan dan keterangan tambahan — supaya panitia bisa mengubah teks tanpa
+//    menyentuh HTML sama sekali. Tidak ada info.json? Yang tampil adalah daftar
+//    bawaan yang sudah ditulis di HTML di atas.
+async function info() {
+  let cfg;
+  try {
+    const res = await fetch('info.json', { cache: 'no-store' });
+    if (!res.ok) return;
+    cfg = await res.json();
+  } catch { return; }
+  if (!cfg || typeof cfg !== 'object') return;
+
+  if (typeof cfg.judul_aturan === 'string' && cfg.judul_aturan.trim()) {
+    $('aturan-judul').textContent = cfg.judul_aturan;
+  }
+
+  if (Array.isArray(cfg.aturan) && cfg.aturan.length) {
+    const box = $('aturan');
+    box.replaceChildren();
+    for (const a of cfg.aturan) {
+      const row = document.createElement('div');
+      row.className = 'rule';
+      row.appendChild(cell('span', String(a.ikon ?? '•'), 'ic'));
+      const txt = document.createElement('span');
+      if (a.judul) txt.appendChild(cell('b', String(a.judul)));
+      txt.appendChild(document.createTextNode(String(a.teks ?? '')));
+      row.appendChild(txt);
+      box.appendChild(row);
+    }
+  }
+
+  if (Array.isArray(cfg.bagian) && cfg.bagian.length) {
+    const wrap = $('bagian');
+    wrap.replaceChildren();
+    for (const b of cfg.bagian) {
+      const card = document.createElement('div');
+      card.className = 'card';
+      const h = cell('div', String(b.judul ?? ''), 'sectitle');
+      h.style.marginTop = '0';
+      card.appendChild(h);
+      for (const p of (Array.isArray(b.isi) ? b.isi : [b.isi])) {
+        if (p == null) continue;
+        card.appendChild(cell('p', String(p)));
+      }
+      wrap.appendChild(card);
+    }
+  }
+}
+
 main().catch(() => warn('Tidak bisa memuat data lomba. Periksa koneksi internet.'));
 sponsors();
+info();
 </script>
 </body>
 </html>

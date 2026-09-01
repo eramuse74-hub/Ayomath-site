@@ -1,0 +1,41 @@
+{
+  "judul_aturan": "Aturan Lomba",
+
+  "aturan": [
+    { "ikon": "🔢", "judul": "Masuk pakai nomor peserta",
+      "teks": "Tidak ada nama, tidak ada akun, tidak ada login. Panitia yang membagikan nomor." },
+    { "ikon": "⏱️", "judul": "Waktu berjalan sejak menekan MULAI",
+      "teks": "Waktu dihitung oleh server, bukan oleh komputer peserta." },
+    { "ikon": "✏️", "judul": "Boleh pakai kertas coret-coretan",
+      "teks": "Kertas dikumpulkan kembali setelah sesi selesai." },
+    { "ikon": "🚫", "judul": "Tidak ada petunjuk dan tidak ada pengulangan",
+      "teks": "Semua peserta di satu kelas mengerjakan soal yang sama persis." },
+    { "ikon": "🔁", "judul": "Terputus? Buka lagi halaman yang sama",
+      "teks": "Jawaban dan sisa waktu tersimpan di server — lanjut dari soal terakhir." },
+    { "ikon": "🏁", "judul": "Hasil diumumkan setelah sesi ditutup",
+      "teks": "Peringkat tidak ditampilkan selama lomba berlangsung." }
+  ],
+
+  "bagian": [
+    {
+      "judul": "Hadiah",
+      "isi": [
+        "Juara 1, 2, dan 3 untuk setiap kelas mendapat piala dan sertifikat dari Dinas Pendidikan.",
+        "Seluruh peserta mendapat sertifikat keikutsertaan."
+      ]
+    },
+    {
+      "judul": "Lokasi",
+      "isi": [
+        "Aula Kantor Bupati, Jalan Contoh No. 1, Praya.",
+        "Peserta diharap hadir 30 menit sebelum sesi dimulai."
+      ]
+    },
+    {
+      "judul": "Kontak Panitia",
+      "isi": [
+        "IOA — 08xx-xxxx-xxxx (WhatsApp), panitia@contoh.or.id"
+      ]
+    }
+  ]
+}
