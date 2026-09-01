@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Papan Langsung — Lomba AyoMath</title>
+<meta name="description" content="Papan skor langsung lomba matematika AyoMath: soal yang sedang dikerjakan dan hasil peserta secara real-time.">
+<!--
+  ============================================================================
+  Papan proyektor + penonton jarak jauh (docs/LOMBA.md §7).
+
+  Tiga hal, satu layar:
+    1. Jam sesi     — sesi apa yang berjalan, sisa waktunya berapa.
+    2. Arena        — soal yang SEDANG dikerjakan peserta, tanpa kunci jawaban.
+                      Kunci tidak pernah dikirim ke browser manapun; view
+                      lomba_batches_public mengosongkan field 'a'.
+    3. Skor         — dari lomba_scores, ikut Realtime. Baris peserta selalu
+                      "Peserta 017 · SDN 3 Praya" — tidak pernah ada nama anak.
+
+  SKOR SELAMA SESI BERJALAN: tombol "Sembunyikan skor" ada di pojok. Kalau
+  papan ini diproyeksikan DI DALAM ruangan lomba, sembunyikan — anak yang
+  melihat posisinya di tengah lomba jadi patah semangat, dan itulah alasan
+  layar peserta sendiri tidak pernah menampilkan peringkat (§2). Kalau papan
+  ini untuk penonton di ruang lain, biarkan tampil. Pilihannya tersimpan di
+  browser ini saja.
+
+  Untuk event baru: salin folder ini, ganti `event` di blok CFG.
+  ============================================================================
+-->
+<style>
+  :root{--bg:#161029;--surface:#241c45;--surface2:#2f2757;--text:#F1ECFF;
+        --muted:#a99cc9;--teal:#4ECEC9;--gold:#F0BE4D;--sage:#5FD39A;
+        --coral:#F47E86;--line:rgba(255,255,255,.10)}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+       background:var(--bg);color:var(--text);line-height:1.5}
+  .wrap{max-width:1280px;margin:0 auto;padding:18px}
+  header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;
+         justify-content:space-between;padding:8px 0 16px}
+  h1{font-size:24px;margin:0;font-weight:900}
+  .sub{color:var(--muted);font-size:14px;margin:2px 0 0}
+  .clock{background:var(--surface);border-radius:16px;padding:10px 18px;text-align:center;
+         min-width:180px}
+  .clock .big{font-size:34px;font-weight:900;color:var(--teal);
+              font-variant-numeric:tabular-nums;line-height:1.1}
+  .clock .lbl{font-size:12px;color:var(--muted);text-transform:uppercase;
+              letter-spacing:.8px}
+  .clock.low .big{color:var(--coral)}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media (max-width:900px){.grid{grid-template-columns:1fr}}
+  .panel{background:var(--surface);border-radius:20px;padding:18px}
+  .ptitle{font-size:13px;text-transform:uppercase;letter-spacing:.9px;
+          color:var(--muted);font-weight:800;margin:0 0 12px;
+          display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .stat{display:flex;gap:22px;flex-wrap:wrap;margin-bottom:14px}
+  .stat div{font-size:13px;color:var(--muted)}
+  .stat b{display:block;font-size:26px;color:var(--text);font-weight:900;
+          font-variant-numeric:tabular-nums}
+  /* Arena */
+  .soal{background:var(--surface2);border-radius:16px;padding:20px;min-height:150px;
+        display:flex;align-items:center;justify-content:center;text-align:center;
+        font-size:26px;font-weight:800;color:var(--teal)}
+  .soal.cerita{font-size:19px;color:var(--text);line-height:1.4}
+  .opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+  .opt{background:var(--surface2);border-radius:12px;padding:12px;text-align:center;
+       font-weight:800;font-size:18px}
+  .arena-nav{display:flex;align-items:center;justify-content:center;gap:14px;
+             margin-top:12px;color:var(--muted);font-size:13px}
+  .arena-nav button{background:var(--surface2);color:var(--text);border:0;
+                    border-radius:10px;width:34px;height:34px;font-size:18px;
+                    cursor:pointer}
+  .tabs{display:flex;gap:6px;flex-wrap:wrap}
+  .tabs button{background:var(--surface2);color:var(--muted);border:0;border-radius:10px;
+               padding:5px 11px;font-size:13px;font-weight:800;cursor:pointer}
+  .tabs button[aria-selected=true]{background:var(--teal);color:#10231f}
+  /* Skor */
+  table{width:100%;border-collapse:collapse;font-size:15px}
+  th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line)}
+  th{font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted)}
+  td.rank{font-weight:900;color:var(--gold);width:38px;text-align:right}
+  td.nom{font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+  td.sek{color:var(--muted);font-size:13px}
+  td.skor{font-weight:900;text-align:right;font-variant-numeric:tabular-nums}
+  td.wkt{color:var(--muted);text-align:right;font-variant-numeric:tabular-nums;
+         font-size:13px;white-space:nowrap}
+  .belum{color:var(--muted);font-size:13px;text-align:center;padding:18px}
+  .ticker{background:var(--surface);border-radius:14px;padding:10px 16px;margin-top:16px;
+          font-size:14px;color:var(--muted);white-space:nowrap;overflow:hidden;
+          text-overflow:ellipsis}
+  .ticker b{color:var(--sage)}
+  .toggle{background:transparent;color:var(--muted);border:1px solid var(--line);
+          border-radius:10px;padding:5px 11px;font-size:12px;font-weight:700;
+          cursor:pointer}
+  .hidden-note{text-align:center;color:var(--muted);padding:26px 10px;font-size:14px}
+  .sponsors{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:18px}
+  .sp{background:#fff;border-radius:14px;width:132px;height:66px;display:flex;
+      align-items:center;justify-content:center;padding:10px}
+  .sp img{display:block;max-width:100%;max-height:100%;object-fit:contain}
+  .sp span{font-size:12px;font-weight:700;color:#555;text-align:center}
+  footer{text-align:center;color:var(--muted);font-size:13px;padding:22px 10px 34px}
+  footer a{color:var(--teal)}
+  .dot{display:inline-block;width:8px;height:8px;border-radius:50%;
+       background:var(--muted);margin-right:6px;vertical-align:middle}
+  .dot.on{background:var(--sage)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1 id="ev-name">Papan Langsung</h1>
+      <p class="sub" id="ev-sub"><span class="dot" id="rt-dot"></span><span id="sesi">Memuat…</span></p>
+    </div>
+    <div class="clock" id="clock">
+      <div class="lbl" id="clock-lbl">Sisa waktu sesi</div>
+      <div class="big" id="clock-big">--:--</div>
+    </div>
+  </header>
+
+  <div class="grid">
+    <div class="panel">
+      <p class="ptitle">
+        <span>Arena — soal yang sedang dikerjakan</span>
+        <span class="tabs" id="kelas-tabs"></span>
+      </p>
+      <div class="stat" id="stat"></div>
+      <div class="soal" id="soal">Menunggu sesi dimulai…</div>
+      <div class="opts" id="opts"></div>
+      <div class="arena-nav">
+        <button id="prev" aria-label="Soal sebelumnya">‹</button>
+        <span id="soal-no">—</span>
+        <button id="next" aria-label="Soal berikutnya">›</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <p class="ptitle">
+        <span>Hasil peserta</span>
+        <button class="toggle" id="toggle-skor">Sembunyikan skor</button>
+      </p>
+      <div id="skor-box"></div>
+    </div>
+  </div>
+
+  <div class="ticker" id="ticker">Belum ada peserta yang selesai.</div>
+
+  <div id="sponsor-wrap" hidden>
+    <div class="sponsors" id="sponsors"></div>
+  </div>
+
+  <footer>
+    <p><a href="index.html">← Halaman lomba</a> · Platform <b>AyoMath</b></p>
+    <p>Peserta ditampilkan dengan nomor dan asal sekolah. Nama anak tidak pernah
+       disimpan maupun ditampilkan.</p>
+  </footer>
+</div>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+// ── Yang perlu diubah untuk event baru ───────────────────────────────────────
+const CFG = { event: 'latihan' };          // lomba_events.slug
+// ─────────────────────────────────────────────────────────────────────────────
+
+const SUPA_URL = 'https://koadqcjejecqpnufkhyx.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtvYWRxY2plamVjcXBudWZraHl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzQ1NDEsImV4cCI6MjA5NTcxMDU0MX0.IQUnBXrGsz1fCRTvUb0f5vI8AKhmASoegvVs09wqbaI';
+const db = createClient(SUPA_URL, SUPA_KEY);
+
+const $ = (id) => document.getElementById(id);
+
+/** Semua teks dari server lewat sini. Nama sekolah dan label sesi diketik
+    manusia, jadi diperlakukan sebagai data — tidak pernah innerHTML. */
+function cell(tag, text, cls) {
+  const el = document.createElement(tag);
+  el.textContent = text ?? '';
+  if (cls) el.className = cls;
+  return el;
+}
+const mmss = (ms) => {
+  const s = Math.max(0, Math.floor(ms / 1000));
+  return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+};
+
+/** Jam besar di pojok. Sesi sungguhan cuma 30–45 menit, jadi mm:ss yang benar
+    di situ — tapi batch latihan dibuka berhari-hari, dan "19911:57" di layar
+    proyektor tidak berarti apa-apa. Lebih dari sejam ditulis dengan satuan. */
+function jamBesar(ms) {
+  const s = Math.max(0, Math.floor(ms / 1000));
+  if (s < 3600) return mmss(ms);
+  const hari = Math.floor(s / 86400);
+  const jamSisa = Math.floor((s % 86400) / 3600);
+  if (hari) return `${hari} hari${jamSisa ? ` ${jamSisa} jam` : ''}`;
+  return `${Math.floor(s / 3600)} jam ${Math.floor((s % 3600) / 60)} mnt`;
+}
+const jam = (iso) => new Date(iso).toLocaleTimeString('id-ID',
+  { hour: '2-digit', minute: '2-digit' });
+
+const S = {
+  batches: [], batch: null, kelas: null, idx: 0,
+  scores: [], showScores: localStorage.getItem('lomba_show_skor') !== '0',
+  rotate: true,
+};
+
+// ── Sesi ─────────────────────────────────────────────────────────────────────
+
+async function loadEvent() {
+  const { data: ev } = await db.from('lomba_events').select('*')
+    .eq('slug', CFG.event).maybeSingle();
+  if (ev) { $('ev-name').textContent = ev.name; document.title = ev.name + ' — Papan Langsung'; }
+
+  const { data } = await db.from('lomba_batches_public').select('*')
+    .eq('event_slug', CFG.event).order('starts_at');
+  S.batches = data ?? [];
+  pickBatch();
+}
+
+function pickBatch() {
+  const now = Date.now();
+  const live = S.batches.find(b =>
+    new Date(b.starts_at).getTime() <= now && now < new Date(b.ends_at).getTime());
+  const next = S.batches.find(b => new Date(b.starts_at).getTime() > now);
+  const prev = [...S.batches].reverse()
+    .find(b => new Date(b.ends_at).getTime() <= now);
+  const chosen = live ?? next ?? prev ?? null;
+
+  const changed = chosen?.id !== S.batch?.id;
+  S.batch = chosen;
+  if (!chosen) { $('sesi').textContent = 'Belum ada sesi terjadwal'; return; }
+
+  $('sesi').textContent = live ? `${chosen.label} — sedang berlangsung`
+    : next && chosen.id === next.id ? `${chosen.label} — mulai pukul ${jam(chosen.starts_at)}`
+    : `${chosen.label} — sudah selesai`;
+
+  if (changed) {
+    const keys = Object.keys(chosen.papers ?? {}).map(Number).sort((a, b) => a - b);
+    S.kelas = keys[0] ?? null;
+    S.idx = 0;
+    drawTabs(keys);
+  }
+  drawArena();
+}
+
+function drawTabs(keys) {
+  const tabs = $('kelas-tabs');
+  tabs.replaceChildren();
+  for (const k of keys) {
+    const b = document.createElement('button');
+    b.textContent = `Kelas ${k}`;
+    b.setAttribute('aria-selected', String(k === S.kelas));
+    b.onclick = () => { S.kelas = k; S.idx = 0; S.rotate = false; drawTabs(keys); drawArena(); };
+    tabs.appendChild(b);
+  }
+}
+
+// ── Arena: soal apa adanya, tanpa kunci ──────────────────────────────────────
+
+function paper() {
+  return (S.batch?.papers ?? {})[String(S.kelas)] ?? null;
+}
+
+function drawArena() {
+  const p = paper();
+  const soal = $('soal'), opts = $('opts');
+  if (!p || !p.length) {
+    soal.className = 'soal';
+    soal.textContent = S.batch && new Date(S.batch.starts_at) > new Date()
+      ? 'Soal ditampilkan setelah sesi dimulai.'
+      : 'Belum ada soal untuk ditampilkan.';
+    opts.replaceChildren();
+    $('soal-no').textContent = '—';
+    return;
+  }
+  S.idx = ((S.idx % p.length) + p.length) % p.length;
+  const q = p[S.idx];
+  // 'l' adalah QLayout; 1 = story. Soal cerita perlu ukuran teks lebih kecil.
+  soal.className = q.l === 1 ? 'soal cerita' : 'soal';
+  soal.textContent = String(q.p ?? '');
+  opts.replaceChildren();
+  for (const c of (q.c ?? [])) opts.appendChild(cell('div', String(c), 'opt'));
+  $('soal-no').textContent = `Soal ${S.idx + 1} dari ${p.length}`;
+}
+
+$('prev').onclick = () => { S.rotate = false; S.idx--; drawArena(); };
+$('next').onclick = () => { S.rotate = false; S.idx++; drawArena(); };
+
+// ── Skor ─────────────────────────────────────────────────────────────────────
+
+async function loadScores() {
+  if (!S.batch) return;
+  const { data } = await db.from('lomba_scores').select('*')
+    .eq('batch_id', S.batch.id);
+  S.scores = data ?? [];
+  drawStats();
+  drawScores();
+  drawTicker();
+}
+
+function drawStats() {
+  const total = S.scores.length;
+  const done = S.scores.filter(s => s.done).length;
+  const box = $('stat');
+  box.replaceChildren();
+  for (const [n, label] of [[total, 'peserta mulai'], [done, 'sudah selesai'],
+                            [total - done, 'masih mengerjakan']]) {
+    const d = document.createElement('div');
+    d.appendChild(cell('b', String(n)));
+    d.appendChild(document.createTextNode(label));
+    box.appendChild(d);
+  }
+}
+
+function drawScores() {
+  const box = $('skor-box');
+  box.replaceChildren();
+  const open = S.batch && new Date(S.batch.ends_at) > new Date();
+
+  if (!S.showScores && open) {
+    box.appendChild(cell('div',
+      'Skor disembunyikan selama sesi berlangsung, supaya peserta yang sedang ' +
+      'mengerjakan tidak terpengaruh melihat posisinya.', 'hidden-note'));
+    return;
+  }
+  if (!S.scores.length) {
+    box.appendChild(cell('div', 'Belum ada peserta yang mulai.', 'belum'));
+    return;
+  }
+
+  // Peringkat per kelas: nilai turun, lalu waktu naik — sama persis dengan
+  // lomba_results di server. Yang belum selesai selalu di bawah.
+  const byKelas = {};
+  for (const s of S.scores) (byKelas[s.kelas] ??= []).push(s);
+
+  for (const k of Object.keys(byKelas).map(Number).sort((a, b) => a - b)) {
+    const rows = byKelas[k].sort((a, b) =>
+      (b.points ?? -1) - (a.points ?? -1) ||
+      (a.time_ms ?? 2 ** 31) - (b.time_ms ?? 2 ** 31));
+    box.appendChild(cell('p', `Kelas ${k}`, 'ptitle'));
+    const table = document.createElement('table');
+    const thead = document.createElement('thead');
+    const htr = document.createElement('tr');
+    for (const [t, cls] of [['#', 'rank'], ['Peserta', ''], ['Sekolah', ''],
+                            ['Nilai', 'skor'], ['Waktu', 'wkt']]) {
+      const th = cell('th', t); if (cls) th.className = cls; htr.appendChild(th);
+    }
+    thead.appendChild(htr); table.appendChild(thead);
+    const tb = document.createElement('tbody');
+    rows.slice(0, 20).forEach((s, i) => {
+      const tr = document.createElement('tr');
+      tr.appendChild(cell('td', s.done ? String(i + 1) : '·', 'rank'));
+      tr.appendChild(cell('td', `Peserta ${s.nomor}`, 'nom'));
+      tr.appendChild(cell('td', s.sekolah || '—', 'sek'));
+      tr.appendChild(cell('td', s.done ? `${s.score}` : 'mengerjakan', 'skor'));
+      tr.appendChild(cell('td', s.done && s.time_ms != null ? mmss(s.time_ms) : '—', 'wkt'));
+      tb.appendChild(tr);
+    });
+    table.appendChild(tb);
+    box.appendChild(table);
+  }
+}
+
+function drawTicker() {
+  const done = S.scores.filter(s => s.done && s.time_ms != null)
+    .sort((a, b) => (a.time_ms ?? 0) - (b.time_ms ?? 0)).slice(0, 6);
+  const t = $('ticker');
+  t.replaceChildren();
+  if (!done.length || (!S.showScores && S.batch &&
+      new Date(S.batch.ends_at) > new Date())) {
+    t.appendChild(document.createTextNode(
+      done.length ? `${done.length} peserta sudah selesai.`
+                  : 'Belum ada peserta yang selesai.'));
+    return;
+  }
+  done.forEach((s, i) => {
+    if (i) t.appendChild(document.createTextNode('   ·   '));
+    t.appendChild(cell('b', `Peserta ${s.nomor}`));
+    t.appendChild(document.createTextNode(
+      `${s.sekolah ? ' · ' + s.sekolah : ''} — ${s.score} benar dalam ${mmss(s.time_ms)}`));
+  });
+}
+
+$('toggle-skor').onclick = () => {
+  S.showScores = !S.showScores;
+  localStorage.setItem('lomba_show_skor', S.showScores ? '1' : '0');
+  $('toggle-skor').textContent = S.showScores ? 'Sembunyikan skor' : 'Tampilkan skor';
+  drawScores(); drawTicker();
+};
+$('toggle-skor').textContent = S.showScores ? 'Sembunyikan skor' : 'Tampilkan skor';
+
+// ── Jam ──────────────────────────────────────────────────────────────────────
+
+function tick() {
+  const c = $('clock');
+  if (!S.batch) { $('clock-big').textContent = '--:--'; return; }
+  const now = Date.now();
+  const start = new Date(S.batch.starts_at).getTime();
+  const end = new Date(S.batch.ends_at).getTime();
+  if (now < start) {
+    $('clock-lbl').textContent = 'Mulai dalam';
+    $('clock-big').textContent = jamBesar(start - now);
+    c.classList.remove('low');
+  } else if (now < end) {
+    $('clock-lbl').textContent = 'Sisa waktu sesi';
+    $('clock-big').textContent = jamBesar(end - now);
+    c.classList.toggle('low', end - now < 120000);
+  } else {
+    $('clock-lbl').textContent = 'Sesi';
+    $('clock-big').textContent = 'selesai';
+    c.classList.remove('low');
+  }
+}
+
+// ── Realtime ─────────────────────────────────────────────────────────────────
+// Perubahan pada lomba_entries dipakai HANYA sebagai sinyal; datanya tetap
+// dibaca ulang dari lomba_scores, yang sudah difilter kolomnya. Jadi papan ini
+// tidak pernah menyentuh jawaban peserta.
+
+let pending = null;
+function nudge() {
+  clearTimeout(pending);
+  pending = setTimeout(loadScores, 700);   // banyak anak menekan bersamaan
+}
+
+db.channel('lomba-live')
+  .on('postgres_changes', { event: '*', schema: 'public', table: 'lomba_entries' }, nudge)
+  .subscribe((status) => {
+    $('rt-dot').classList.toggle('on', status === 'SUBSCRIBED');
+  });
+
+// ── Sponsor (sama seperti halaman depan) ─────────────────────────────────────
+
+async function sponsors() {
+  let list;
+  try {
+    const res = await fetch('sponsors.json', { cache: 'no-store' });
+    if (!res.ok) return;
+    list = await res.json();
+  } catch { return; }
+  if (!Array.isArray(list) || !list.length) return;
+  const box = $('sponsors');
+  box.replaceChildren();
+  let shown = 0;
+  for (const s of list) {
+    const file = String(s.berkas ?? '');
+    if (!/^[\w.-]+\.(png|jpg|jpeg|svg|webp)$/i.test(file)) continue;
+    const d = document.createElement('div');
+    d.className = 'sp';
+    const img = document.createElement('img');
+    img.src = `sponsors/${file}`;
+    img.alt = String(s.nama ?? '');
+    img.loading = 'lazy';
+    img.onerror = () => { d.replaceChildren(cell('span', String(s.nama ?? ''))); };
+    d.appendChild(img);
+    box.appendChild(d);
+    shown++;
+  }
+  if (shown) $('sponsor-wrap').hidden = false;
+}
+
+// ── Jalan ────────────────────────────────────────────────────────────────────
+
+await loadEvent();
+await loadScores();
+sponsors();
+
+setInterval(tick, 1000); tick();
+// Sesi berganti sendiri saat jamnya tiba, tanpa siapapun menyentuh proyektor.
+setInterval(async () => { await loadEvent(); await loadScores(); }, 60000);
+// Arena berputar pelan supaya penonton sempat membaca; berhenti begitu ada
+// yang menekan panah atau memilih kelas.
+setInterval(() => { if (S.rotate) { S.idx++; drawArena(); } }, 9000);
+</script>
+</body>
+</html>

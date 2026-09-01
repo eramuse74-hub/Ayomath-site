@@ -1,0 +1,18 @@
+[
+  {
+    "nama": "Dinas Pendidikan Kab. Lombok Tengah",
+    "berkas": "dinas-lombok-tengah.png",
+    "tautan": "https://lomboktengahkab.go.id",
+    "tingkat": "utama"
+  },
+  {
+    "nama": "IOA",
+    "berkas": "ioa.png",
+    "tingkat": "utama"
+  },
+  {
+    "nama": "Toko Buku Contoh",
+    "berkas": "toko-buku.jpg",
+    "tingkat": "pendukung"
+  }
+]
