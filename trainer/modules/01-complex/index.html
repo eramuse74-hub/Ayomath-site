@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Module 1 · Complex numbers and Euler's formula — Foundations Trainer</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<link rel="stylesheet" href="../../shared/style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <span class="crumb"><a href="../../">Foundations Trainer</a> › Module 1</span>
+    <h1>Complex numbers and Euler's formula</h1>
+  </header>
+
+  <div class="reframe"><b>The reframe this module is built from</b>
+    A complex number is a length and a direction. Multiplying rotates and scales. $e^{j\theta}$ is pure rotation.
+    Everything below — powers, roots, the trig identities, phasors — is that one sentence wearing different clothes.
+  </div>
+
+  <div class="cols">
+    <main>
+      <section class="card" id="practice"></section>
+
+      <section class="card" id="figures">
+        <h2>Figures you drive</h2>
+        <p class="small muted">Each one appears again inside the hint ladder when it is needed. Here you can just play.</p>
+        <div class="tabs" id="figtabs"></div>
+        <div id="figure"></div>
+      </section>
+
+      <section class="card">
+        <h2>How this module is meant to be used</h2>
+        <p class="small">Attempt every question <b>before</b> touching a hint — sketch it, guess, commit. A wrong committed answer tells the site which wrong model you are holding, and it will answer that model rather than mark arithmetic. Hints come one level at a time and the next level only unlocks after you have tried again. The solution is level four; it exists, but the step you take yourself is the one that becomes yours.</p>
+        <p class="small">A clean first solve is mastered. Anything you needed help on returns in three days and again after two weeks — a concept that is understood can be <i>re-derived</i>, and re-deriving gets fast. Export your progress from time to time; the browser will eventually clear it.</p>
+        <h3>Where this goes next</h3>
+        <ul class="small">
+          <li><b>Trig identities</b> are two rotations composed (items 23–25 already start this).</li>
+          <li><b>ODE characteristic roots</b> are two points in this plane; where they sit is the damping.</li>
+          <li><b>Impedance</b> is resistance with a direction: $j\omega L$ and $1/(j\omega C)$ come straight from item 28.</li>
+          <li><b>Fourier</b> winds a signal around the unit circle and asks where its centre of mass lands.</li>
+        </ul>
+      </section>
+    </main>
+
+    <aside>
+      <div class="card">
+        <h2>Progress</h2>
+        <div class="stats" id="stats"></div>
+        <div class="bar"><i id="bar" style="width:0"></i></div>
+        <p class="note" id="backup"></p>
+        <div class="row">
+          <button class="ghost sm" id="export">Export backup</button>
+          <label class="btn ghost sm" style="cursor:pointer">Import <input type="file" id="import" accept="application/json,.json" style="display:none"></label>
+        </div>
+        <h3>Items</h3>
+        <div class="legend"><span><i class="dot"></i> new</span><span><i class="dot learning"></i> started</span><span><i class="dot review"></i> review</span><span><i class="dot due"></i> due</span><span><i class="dot mastered"></i> mastered</span></div>
+        <ul class="items" id="itemlist"></ul>
+        <p class="note"><button class="subtle sm" id="resetitem">Forget this item's history</button></p>
+      </div>
+    </aside>
+  </div>
+
+  <footer>Instrumentation Foundations Trainer · module 1 of 8 · progress is stored only in this browser — export it.</footer>
+</div>
+
+<script src="../../shared/complex-plane.js"></script>
+<script src="../../shared/answers.js"></script>
+<script src="../../shared/storage.js"></script>
+<script src="../../shared/engine.js"></script>
+<script src="visuals.js"></script>
+<script src="items.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

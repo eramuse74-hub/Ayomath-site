@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Instrumentation Foundations Trainer</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<link rel="stylesheet" href="shared/style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<!--
+  Instrumentation Foundations Trainer — a private practice site for one student.
+  Unlisted on purpose; the URL is shared directly. Brief: trainer-site-spec.md.
+  Static, no build step. Progress lives in localStorage; export it.
+-->
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1>Instrumentation Foundations Trainer</h1>
+    <span class="crumb">mathematics and physics for the BME instrumentation chain</span>
+  </header>
+
+  <div class="spine">
+    <b>The spine: everything is rotation.</b>
+    Almost everything in year four reduces to rotation in the complex plane. Multiplication rotates and scales.
+    $e^{j\theta}$ is rotation at constant rate. Trig identities are rotations composing. Impedance is resistance that
+    rotates the phase. Second-order damping is where two roots sit in the plane. Resonance is driving in phase with the
+    natural rotation. The Fourier transform winds a signal around a circle. One idea, eight costumes — and the figures
+    on every module share one complex plane so you can feel that rather than be told it.
+  </div>
+
+  <div class="cols">
+    <main>
+      <section class="card">
+        <h2>Modules</h2>
+        <ul class="modules" id="modules"></ul>
+        <p class="note">Modules are built in order and each is shown to you before the next is started. The list above says where things stand.</p>
+      </section>
+
+      <section class="card">
+        <h2>How it works</h2>
+        <p class="small">Every question has a four-level hint ladder instead of a solution. Level 1 asks an orienting question; level 2 points at the right representation; level 3 sets up the work and leaves one gap; level 4 is the full solution and only unlocks after you have attempted level 3. Wrong answers are matched against a catalogue of <i>wrong models</i> — the site tries to name the mental model behind the mistake, not the arithmetic.</p>
+        <p class="small">Each module has figures you drive with a slider or by dragging; the same figures appear inside the hint ladder at the moment they matter. After a helped solve you get three quick variants while the idea is hot, and the item comes back after three days and again after two weeks.</p>
+        <p class="small">This is not a course, a grade book or a tracker. Hours and module status live in the spreadsheet. This tracks question-level mastery, and nothing leaves your browser.</p>
+      </section>
+    </main>
+
+    <aside>
+      <div class="card">
+        <h2>Progress</h2>
+        <div class="stats" id="stats"></div>
+        <div class="bar"><i id="bar" style="width:0"></i></div>
+        <p class="note" id="backup"></p>
+        <div class="row">
+          <button class="ghost sm" id="export">Export backup</button>
+          <label class="btn ghost sm" style="cursor:pointer">Import <input type="file" id="import" accept="application/json,.json" style="display:none"></label>
+        </div>
+        <p class="note">Export writes a small JSON file. Keep a copy in your cloud drive; import it on another device to carry your history across. Merge is the safe default.</p>
+      </div>
+    </aside>
+  </div>
+
+  <footer>Built from the September 2026 brief. Plain HTML, CSS and JavaScript; KaTeX for the mathematics. Nothing to maintain.</footer>
+</div>
+
+<script src="shared/complex-plane.js"></script>
+<script src="shared/answers.js"></script>
+<script src="shared/storage.js"></script>
+<script src="shared/engine.js"></script>
+<script src="modules/01-complex/items.js"></script>
+<script>
+(function () {
+  const MODULES = [
+    { n: 1, name: 'Complex numbers and Euler’s formula', re: 'A complex number is a length and a direction. Multiplying rotates and scales. $e^{j\\theta}$ is pure rotation.', href: 'modules/01-complex/', ready: true },
+    { n: 2, name: 'Trigonometric identities', re: 'Identities are just what happens when two rotations compose. Derive, do not memorise.' },
+    { n: 3, name: 'Calculus fluency', re: 'Integration by parts is the product rule run backwards. Partial fractions is un-adding a sum.' },
+    { n: 4, name: 'Ordinary differential equations', re: 'The characteristic roots are two points in the complex plane. Where they sit <i>is</i> the damping regime.' },
+    { n: 5, name: 'Linear algebra', re: 'A matrix is a transformation of space. An eigenvector is a direction the transformation does not turn.' },
+    { n: 6, name: 'Circuits and impedance', re: 'A capacitor and an inductor are phase shifters. Impedance is resistance with a direction attached.' },
+    { n: 7, name: 'Waves, oscillation, resonance', re: 'Resonance is pushing in phase with the natural rotation.' },
+    { n: 8, name: 'Fourier preview', re: 'Wind the signal around a circle at a test frequency; the centre of mass tells you how much of that frequency is present.' }
+  ];
+  const state = window.Storage_.load();
+  const engine = new window.Engine(state, window.MODULE.items);
+  const s = engine.summary();
+  const ul = document.getElementById('modules');
+  MODULES.forEach(m => {
+    const li = document.createElement('li');
+    const status = m.ready
+      ? '<div class="st ready">' + (s.mastered === s.total ? 'all ' + s.total + ' items mastered' : s.mastered + ' of ' + s.total + ' mastered' + (s.due ? ' · ' + s.due + ' due now' : '')) + '</div>'
+      : '<div class="st later">not yet built</div>';
+    li.innerHTML = '<div class="n">' + m.n + '</div><div>' + (m.ready ? '<a class="name" href="' + m.href + '">' + m.name + ' →</a>' : '<span class="name">' + m.name + '</span>') + '<div class="re">' + m.re + '</div>' + status + '</div>';
+    ul.appendChild(li);
+  });
+  document.getElementById('stats').innerHTML = '<div class="stat"><b>' + s.mastered + '</b><span>mastered</span></div><div class="stat"><b>' + s.review + '</b><span>in review</span></div><div class="stat"><b>' + s.due + '</b><span>due now</span></div><div class="stat"><b>' + s.new + '</b><span>not started</span></div>';
+  document.getElementById('bar').style.width = Math.round(100 * s.mastered / s.total) + '%';
+  const d = window.Storage_.daysSince(state.lastExport), any = Object.keys(state.items).length > 0;
+  document.getElementById('backup').textContent = !any ? 'Nothing to back up yet.' : (d == null ? 'No backup yet — export once you have done a few items.' : (d > 14 ? 'Last backup ' + d + ' days ago. Export again.' : 'Last backup ' + (d === 0 ? 'today' : d + ' day' + (d === 1 ? '' : 's') + ' ago') + '.'));
+  document.getElementById('export').addEventListener('click', () => { window.Storage_.exportFile(state); location.reload(); });
+  document.getElementById('import').addEventListener('change', ev => {
+    const f = ev.target.files[0]; if (!f) return;
+    const mode = confirm('Merge with the progress already on this device?\n\nOK = merge (keeps the newer record for each item)\nCancel = replace everything on this device with the file') ? 'merge' : 'replace';
+    window.Storage_.importFile(f, state, mode).then(() => location.reload()).catch(e => alert(e.message));
+    ev.target.value = '';
+  });
+  if (window.renderMathInElement) renderMathInElement(document.body, { delimiters: [{ left: '$', right: '$', display: false }], throwOnError: false });
+})();
+</script>
+</body>
+</html>
