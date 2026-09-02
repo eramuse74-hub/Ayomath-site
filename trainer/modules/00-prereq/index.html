@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Module 0 · Prerequisite mathematics — Foundations Trainer</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<link rel="stylesheet" href="../../shared/style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <span class="crumb"><a href="../../">Foundations Trainer</a> › Module 0 (optional)</span>
+    <h1>Prerequisite mathematics refresh</h1>
+  </header>
+
+  <div class="reframe"><b>What this module is for</b>
+    Nothing here is new. It is the algebra, trigonometry and calculus that ECE 230, BME 310 and module 1 assume you can do
+    without thinking — cancelling correctly, reading an angle off the unit circle, the chain rule, isolating an exponential.
+    Use it as a diagnostic: skip what is easy, stay on what is not. Everything is optional; nothing later depends on
+    finishing it.
+  </div>
+
+  <div class="cols">
+    <main>
+      <section class="card" id="practice"></section>
+
+      <section class="card" id="figures">
+        <h2>Figures you drive</h2>
+        <p class="small muted">The unit circle underlies every trig question; the quadratic figure shows roots leaving the real axis (module 1 starts exactly there); the tangent figure is what a derivative <i>is</i>.</p>
+        <div class="tabs" id="figtabs"></div>
+        <div id="figure"></div>
+      </section>
+
+      <section class="card">
+        <h2>How to use this module</h2>
+        <p class="small">Work through the list once, fast. Anything you solve cleanly is mastered and will not come back. Anything you needed a hint or a second attempt on returns in three days and again after two weeks — that is the repair. If you find a whole section easy, skip it from the item list on the right.</p>
+        <p class="small">The three sections: <b>algebra</b> (items 1–10), <b>trigonometry</b> (11–18), <b>calculus reflexes</b> (19–25). Module 1 assumes the trigonometry section in particular.</p>
+      </section>
+    </main>
+
+    <aside>
+      <div class="card">
+        <h2>Progress</h2>
+        <div class="stats" id="stats"></div>
+        <div class="bar"><i id="bar" style="width:0"></i></div>
+        <p class="note" id="backup"></p>
+        <div class="row">
+          <button class="ghost sm" id="export">Export backup</button>
+          <label class="btn ghost sm" style="cursor:pointer">Import <input type="file" id="import" accept="application/json,.json" style="display:none"></label>
+        </div>
+        <h3>Items</h3>
+        <div class="legend"><span><i class="dot"></i> new</span><span><i class="dot learning"></i> started</span><span><i class="dot review"></i> review</span><span><i class="dot due"></i> due</span><span><i class="dot mastered"></i> mastered</span></div>
+        <ul class="items" id="itemlist"></ul>
+        <p class="note"><button class="subtle sm" id="resetitem">Forget this item's history</button></p>
+      </div>
+    </aside>
+  </div>
+
+  <footer>Instrumentation Foundations Trainer · module 0 (optional) · progress is stored only in this browser — export it.</footer>
+</div>
+
+<script src="../../shared/complex-plane.js"></script>
+<script src="../../shared/answers.js"></script>
+<script src="../../shared/storage.js"></script>
+<script src="../../shared/engine.js"></script>
+<script src="visuals.js"></script>
+<script src="items.js"></script>
+<script src="../01-complex/app.js"></script>
+</body>
+</html>

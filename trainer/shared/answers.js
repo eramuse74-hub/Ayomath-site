@@ -128,9 +128,9 @@
   }
 
   /* ---- expression parser (identities in A, B, x …) ---------------------- */
-  const FUNCS = { cos: Math.cos, sin: Math.sin, tan: Math.tan, sqrt: Math.sqrt, exp: Math.exp, ln: Math.log, log: Math.log };
+  const FUNCS = { cos: Math.cos, sin: Math.sin, tan: Math.tan, sec: x => 1 / Math.cos(x), csc: x => 1 / Math.sin(x), cot: x => 1 / Math.tan(x), sqrt: Math.sqrt, exp: Math.exp, ln: Math.log, log: Math.log };
   function tokenize(src, vars) {
-    const s = src.replace(/\s+/g, '').replace(/²/g, '^2').replace(/³/g, '^3').replace(/[×·]/g, '*').replace(/÷/g, '/').replace(/π/g, 'pi').replace(/√/g, 'sqrt').replace(/[−–]/g, '-');
+    const s = src.replace(/\s+/g, '').replace(/²/g, '^2').replace(/³/g, '^3').replace(/[×·]/g, '*').replace(/÷/g, '/').replace(/π/g, 'pi').replace(/√/g, 'sqrt').replace(/[−–]/g, '-').replace(/[{[]/g, '(').replace(/[}\]]/g, ')');
     const toks = []; let i = 0;
     while (i < s.length) {
       const c = s[i];
@@ -145,6 +145,7 @@
           if (hit) { toks.push({ t: 'fn', v: hit }); word = word.slice(hit.length); continue; }
           if (word.toLowerCase().startsWith('pi')) { toks.push({ t: 'num', v: Math.PI }); word = word.slice(2); continue; }
           if (vars.indexOf(word[0]) >= 0) { toks.push({ t: 'var', v: word[0] }); word = word.slice(1); continue; }
+          if (word[0] === 'e') { toks.push({ t: 'num', v: Math.E }); word = word.slice(1); continue; }
           throw new Error('I do not know the symbol "' + word[0] + '". Use ' + vars.join(', ') + ' and cos, sin, tan.');
         }
         continue;
@@ -201,19 +202,38 @@
     return f;
   }
   const TEST_POINTS = [0.37, -1.21, 2.05, 0.83, -0.46, 1.57, -2.6, 0.11];
-  function pointsFor(vars) {
+  /* Test points. `domain` = [lo, hi] maps the raw points (which span about
+     -2.6 … 2.7) into that interval, for expressions with logs or roots. */
+  function pointsFor(vars, domain) {
     const out = [];
-    for (let k = 0; k < 6; k++) { const v = {}; vars.forEach((n, i) => { v[n] = TEST_POINTS[(k * 3 + i * 5) % TEST_POINTS.length] + 0.13 * k; }); out.push(v); }
+    for (let k = 0; k < 6; k++) {
+      const v = {};
+      vars.forEach((n, i) => {
+        let x = TEST_POINTS[(k * 3 + i * 5) % TEST_POINTS.length] + 0.13 * k;
+        if (domain) x = domain[0] + (x + 2.7) / 5.4 * (domain[1] - domain[0]);
+        v[n] = x;
+      });
+      out.push(v);
+    }
     return out;
   }
-  function exprEquals(f, g, vars) {
-    for (const v of pointsFor(vars)) {
+  /* opts: { domain, upToConstant } — upToConstant accepts f = g + C for any constant C. */
+  function exprEquals(f, g, vars, opts) {
+    opts = opts || {};
+    let diff0 = null;
+    for (const v of pointsFor(vars, opts.domain)) {
       const a = f(v), b = g(v);
       if (!isFinite(a) || !isFinite(b)) return false;
-      if (Math.abs(a - b) > 1e-6 * (1 + Math.abs(b))) return false;
+      if (opts.upToConstant) {
+        const d = a - b;
+        if (diff0 === null) diff0 = d;
+        else if (Math.abs(d - diff0) > 1e-6 * (1 + Math.abs(b))) return false;
+      } else if (Math.abs(a - b) > 1e-6 * (1 + Math.abs(b))) return false;
     }
     return true;
   }
+  /* Remove a trailing "+ C" / "+ c" / "+ const" from an antiderivative. */
+  function stripConstant(s) { return s.replace(/\s*[+-]\s*(C|c|const|K|k)\s*$/, ''); }
 
-  window.Answers = { evalNum, parseComplex, checkComplex, checkNumber, near, nearPolar, magNear, angNear, angDiff, parseExpr, exprEquals, D2R, R2D };
+  window.Answers = { evalNum, parseComplex, checkComplex, checkNumber, near, nearPolar, magNear, angNear, angDiff, parseExpr, exprEquals, stripConstant, D2R, R2D };
 })();

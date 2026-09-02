@@ -427,7 +427,7 @@
   {
     id: 'cx-euler-mag', title: '|r e^{jθ}|', kind: 'number',
     params: { r: 3, th: 2.4 },
-    gen: () => ({ r: rint(2, 9), th: F(Math.random() * 6 - 3, 1) }),
+    gen: () => { let th; do { th = F(Math.random() * 6 - 3, 1); } while (Math.abs(th) < 0.3); return { r: rint(2, 9), th: th }; },
     make: p => ({
       prompt: 'What is $\\left|' + p.r + '\\,e^{j' + p.th + '}\\right|$?',
       answer: { value: p.r },
@@ -842,10 +842,13 @@
   function variant(item) { return item.gen ? build(item, item.gen()) : null; }
 
   window.MODULE_ITEMS = ITEMS;
-  window.MODULE = {
+  const MOD = {
     id: '01-complex', number: 1,
     name: 'Complex numbers and Euler\u2019s formula',
     reframe: 'A complex number is a length and a direction. Multiplying rotates and scales. e^{jθ} is pure rotation.',
     items: ITEMS, build: build, variant: variant
   };
+  window.MODULE = MOD;
+  window.MODULES = window.MODULES || {};
+  window.MODULES[MOD.id] = MOD;
 })();

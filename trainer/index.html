@@ -36,7 +36,7 @@
       <section class="card">
         <h2>Modules</h2>
         <ul class="modules" id="modules"></ul>
-        <p class="note">Modules are built in order and each is shown to you before the next is started. The list above says where things stand.</p>
+        <p class="note">Module 0 is optional: a refresh of the algebra, trigonometry and calculus that everything else assumes. Start there if any of it feels shaky; otherwise start at module 1. Modules are built in order and each is shown to you before the next is started.</p>
       </section>
 
       <section class="card">
@@ -69,11 +69,13 @@
 <script src="shared/answers.js"></script>
 <script src="shared/storage.js"></script>
 <script src="shared/engine.js"></script>
+<script src="modules/00-prereq/items.js"></script>
 <script src="modules/01-complex/items.js"></script>
 <script>
 (function () {
   const MODULES = [
-    { n: 1, name: 'Complex numbers and Euler’s formula', re: 'A complex number is a length and a direction. Multiplying rotates and scales. $e^{j\\theta}$ is pure rotation.', href: 'modules/01-complex/', ready: true },
+    { n: 0, id: '00-prereq', name: 'Prerequisite mathematics refresh', re: 'Optional. Algebra, trigonometry and calculus reflexes that every later course silently assumes. Dip in where you feel shaky.', href: 'modules/00-prereq/', ready: true, optional: true },
+    { n: 1, id: '01-complex', name: 'Complex numbers and Euler’s formula', re: 'A complex number is a length and a direction. Multiplying rotates and scales. $e^{j\\theta}$ is pure rotation.', href: 'modules/01-complex/', ready: true },
     { n: 2, name: 'Trigonometric identities', re: 'Identities are just what happens when two rotations compose. Derive, do not memorise.' },
     { n: 3, name: 'Calculus fluency', re: 'Integration by parts is the product rule run backwards. Partial fractions is un-adding a sum.' },
     { n: 4, name: 'Ordinary differential equations', re: 'The characteristic roots are two points in the complex plane. Where they sit <i>is</i> the damping regime.' },
@@ -83,17 +85,20 @@
     { n: 8, name: 'Fourier preview', re: 'Wind the signal around a circle at a test frequency; the centre of mass tells you how much of that frequency is present.' }
   ];
   const state = window.Storage_.load();
-  const engine = new window.Engine(state, window.MODULE.items);
-  const s = engine.summary();
+  const total = { total: 0, mastered: 0, review: 0, due: 0, new: 0, learning: 0 };
   const ul = document.getElementById('modules');
   MODULES.forEach(m => {
     const li = document.createElement('li');
-    const status = m.ready
-      ? '<div class="st ready">' + (s.mastered === s.total ? 'all ' + s.total + ' items mastered' : s.mastered + ' of ' + s.total + ' mastered' + (s.due ? ' · ' + s.due + ' due now' : '')) + '</div>'
-      : '<div class="st later">not yet built</div>';
+    let status;
+    if (m.ready) {
+      const eng = new window.Engine(state, window.MODULES[m.id].items), s = eng.summary();
+      Object.keys(total).forEach(k => { total[k] += s[k]; });
+      status = '<div class="st ready">' + (s.mastered === s.total ? 'all ' + s.total + ' items mastered' : (s.mastered + s.review + s.learning === 0 ? s.total + ' items · not started' : s.mastered + ' of ' + s.total + ' mastered' + (s.due ? ' · ' + s.due + ' due now' : ''))) + (m.optional ? ' · optional' : '') + '</div>';
+    } else status = '<div class="st later">not yet built</div>';
     li.innerHTML = '<div class="n">' + m.n + '</div><div>' + (m.ready ? '<a class="name" href="' + m.href + '">' + m.name + ' →</a>' : '<span class="name">' + m.name + '</span>') + '<div class="re">' + m.re + '</div>' + status + '</div>';
     ul.appendChild(li);
   });
+  const s = total;
   document.getElementById('stats').innerHTML = '<div class="stat"><b>' + s.mastered + '</b><span>mastered</span></div><div class="stat"><b>' + s.review + '</b><span>in review</span></div><div class="stat"><b>' + s.due + '</b><span>due now</span></div><div class="stat"><b>' + s.new + '</b><span>not started</span></div>';
   document.getElementById('bar').style.width = Math.round(100 * s.mastered / s.total) + '%';
   const d = window.Storage_.daysSince(state.lastExport), any = Object.keys(state.items).length > 0;

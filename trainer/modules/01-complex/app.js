@@ -90,7 +90,7 @@
     }
     const line = h('div', 'answer-line');
     const inp = document.createElement('input'); inp.type = 'text'; inp.autocomplete = 'off'; inp.spellcheck = false; inp.setAttribute('inputmode', kind === 'expr' ? 'text' : 'text');
-    inp.placeholder = kind === 'expr' ? 'e.g. cos(A)cos(B) - sin(A)sin(B)' : (kind === 'number' ? 'a number' : 'e.g. 3+4j  or  5∠53.13');
+    inp.placeholder = kind === 'expr' ? 'an expression in ' + (q.item.vars || []).join(', ') + (q.item.upToConstant ? '  (+ C optional)' : '') : (kind === 'number' ? 'a number, e.g. 2.5  or  5pi/6' : 'e.g. 3+4j  or  5∠53.13');
     const go = h('button', null, 'Check');
     line.appendChild(inp); line.appendChild(go);
     container.appendChild(line);
@@ -130,10 +130,12 @@
     const item = q.item;
     if (kind === 'choice') return { ok: !!input.correct, opt: input };
     if (kind === 'expr') {
-      let fn; try { fn = A.parseExpr(input, item.vars); } catch (e) { return { err: e.message }; }
+      const opts = { domain: item.domain, upToConstant: !!item.upToConstant };
+      const src = item.upToConstant ? A.stripConstant(input) : input;
+      let fn; try { fn = A.parseExpr(src, item.vars); } catch (e) { return { err: e.message }; }
       const target = A.parseExpr(item.expr, item.vars);
-      let ok; try { ok = A.exprEquals(fn, target, item.vars); } catch (e) { return { err: 'That expression could not be evaluated.' }; }
-      return { ok: ok, fn: fn };
+      let ok; try { ok = A.exprEquals(fn, target, item.vars, opts); } catch (e) { return { err: 'That expression could not be evaluated.' }; }
+      return { ok: ok, fn: fn, opts: opts };
     }
     const ans = A.parseComplex(input);
     if (!ans) return { err: 'I could not read that.' };
@@ -144,7 +146,7 @@
     const item = q.item, list = item.misconceptions || [];
     try {
       if (kind === 'choice') return list.find(m => m.key === r.opt.mis) || null;
-      if (kind === 'expr') return list.find(m => { try { return A.exprEquals(r.fn, A.parseExpr(m.expr, item.vars), item.vars); } catch (e) { return false; } }) || null;
+      if (kind === 'expr') return list.find(m => { try { return A.exprEquals(r.fn, A.parseExpr(m.expr, item.vars), item.vars, r.opts); } catch (e) { return false; } }) || null;
       return list.find(m => { try { return m.test && m.test(r.ans, q); } catch (e) { return false; } }) || null;
     } catch (e) { return null; }
   }
