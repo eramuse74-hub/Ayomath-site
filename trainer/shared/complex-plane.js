@@ -139,12 +139,15 @@
       ctx.textAlign = 'left'; ctx.textBaseline = 'top';
       ctx.fillText('Im', this.cx + 4, 3);
       /* tick labels along axes */
-      const step = this._step || niceStep(this.range);
+      let step = this._step || niceStep(this.range);
+      /* on very wide canvases the ticks crowd: label every k-th one instead */
+      const every = Math.max(1, Math.ceil(26 / (step * this.scale)));
       ctx.font = '11px -apple-system,Segoe UI,Roboto,sans-serif'; ctx.fillStyle = '#9aa0b0';
       ctx.textAlign = 'center'; ctx.textBaseline = 'top';
       const x0 = this.toZ(0, 0).re, x1 = this.toZ(this.w, 0).re;
       for (let x = Math.ceil(x0 / step) * step; x <= x1; x += step) {
         if (Math.abs(x) < step / 2) continue;
+        if (Math.round(x / step) % every !== 0) continue;
         const p = this.toPx({ re: x, im: 0 });
         if (p[0] > this.w - 18) continue;
         ctx.fillText(fmtTick(x), p[0], this.cy + 3);

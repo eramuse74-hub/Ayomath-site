@@ -66,6 +66,8 @@
     head.appendChild(skip);
     root.appendChild(head);
     const prompt = h('div', 'prompt', q.prompt); root.appendChild(prompt); tex(prompt);
+    const bg = window.Background && window.Background.forItem(item.id);
+    if (bg) root.appendChild(h('p', 'note', 'Shaky on the idea itself? <a href="../../background/#' + bg.id + '">Background: ' + bg.title + ' →</a>'));
 
     /* answer entry */
     const entry = h('div'); entry.id = 'entry'; root.appendChild(entry);
@@ -313,7 +315,10 @@
     });
     $('#resetitem').addEventListener('click', () => { if (cur && confirm('Forget your history for "' + cur.item.title + '"?')) { engine.reset(cur.item.id); start(cur.item); } });
     renderList(); renderStats();
-    const first = engine.next(null);
+    /* deep link: ?item=<id> opens that item (used by the Background page) */
+    const wanted = new URLSearchParams(location.search).get('item');
+    const linked = wanted && M.items.find(i => i.id === wanted);
+    const first = linked || engine.next(null);
     if (first) start(first); else renderCard();
     tex(document.body);
   }

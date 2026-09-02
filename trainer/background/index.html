@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Background — Foundations Trainer</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<link rel="stylesheet" href="../shared/style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<style>
+  .toc{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px;margin:10px 0 4px}
+  .toc a{display:block;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;text-decoration:none;color:var(--text);font-weight:700;font-size:14px}
+  .toc a:hover{border-color:var(--accent)}
+  .toc a span{display:block;font-weight:500;color:var(--muted);font-size:12px;margin-top:2px}
+  section.bg{scroll-margin-top:12px}
+  section.bg h2{font-size:22px;margin:0 0 4px}
+  section.bg h3{font-size:16px;margin:18px 0 6px;color:var(--accent)}
+  section.bg p{margin:8px 0}
+  section.bg ul{margin:6px 0 10px;padding-left:22px}
+  section.bg li{margin:5px 0}
+  section.bg li b{color:var(--accent)}
+  .lead{font-size:17px;color:var(--muted);margin:0 0 10px}
+  .usage{background:#eef2ff;border-radius:12px;padding:12px 14px;margin:14px 0}
+  .usage b{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin-bottom:4px}
+  .usage ul{margin:4px 0 0;padding-left:20px}
+  .check{border-top:1px dashed var(--line);margin-top:14px;padding-top:10px;font-size:14px}
+  .check a{margin-right:10px;white-space:nowrap}
+  .svgfig{display:block;max-width:420px;margin:10px auto;width:100%}
+  .svgfig text{font:12px -apple-system,Segoe UI,Roboto,sans-serif;fill:#4b5163}
+  .key{background:#fff8e6;border-left:4px solid var(--ang);padding:10px 14px;border-radius:0 12px 12px 0;margin:12px 0}
+  .try{background:#e6faf6;border-left:4px solid var(--mag);padding:8px 14px;border-radius:0 12px 12px 0;margin:8px 0 12px;font-size:14px}
+  .try b{color:var(--mag)}
+  .lazy{min-height:120px}
+  .totop{font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap" id="top">
+  <header class="top">
+    <span class="crumb"><a href="../">Foundations Trainer</a> › Background</span>
+    <h1>Background: the ideas behind the questions</h1>
+  </header>
+
+  <div class="card">
+    <p class="lead">How to use this page</p>
+    <ul>
+      <li><b>Pick a topic</b> below. Each one builds the idea from nothing, in bullets.</li>
+      <li><b>Drive the figure</b> in each section until the sentence in the amber box feels obvious, not merely true.</li>
+      <li><b>Check yourself</b> with the linked questions at the end of each section. Every question in the modules links back here.</li>
+      <li><b>Order:</b> sine/cosine → radians → tangent → exponentials → calculus → complex numbers → $e^{j\theta}$. Later ones lean on earlier ones.</li>
+    </ul>
+    <div class="toc" id="toc"></div>
+  </div>
+
+  <!-- ============================================================ -->
+  <section class="card bg" id="sin-cos">
+    <h2>Sine and cosine — what they actually are</h2>
+    <p class="lead">Not ratios in a triangle. The two coordinates of a point going round a circle.</p>
+
+    <h3>1. The definition that makes everything else follow</h3>
+    <ul>
+      <li>Draw a circle of radius 1, centred at the origin.</li>
+      <li>Put a point on it at angle $\theta$, measured counter-clockwise from the positive horizontal axis.</li>
+      <li><b>$\cos\theta$ = the point's horizontal coordinate.</b></li>
+      <li><b>$\sin\theta$ = the point's vertical coordinate.</b> That is the whole definition.</li>
+      <li>Picture it as shadows: light from above casts the point's shadow on the horizontal axis at $\cos\theta$; light from the side casts it on the vertical axis at $\sin\theta$.</li>
+      <li>The school version, "opposite over hypotenuse", is the same picture with hypotenuse 1. The circle version is better because it keeps working past $90^\circ$, for negative angles, and for angles that grow forever — which is what an angle does when something rotates.</li>
+    </ul>
+    <div class="try"><b>Try:</b> drag the point. Watch the two shadows. Put it at $90^\circ$ — the horizontal shadow vanishes ($\cos 90^\circ = 0$).</div>
+    <div class="lazy" data-fig="V0:unitcircle" data-preset='{"deg":40}'></div>
+
+    <h3>2. Facts you can now read off instead of memorising</h3>
+    <ul>
+      <li><b>Both stay between $-1$ and $1$.</b> A point on a unit circle is never further than 1 from the centre.</li>
+      <li><b>$\cos^2\theta + \sin^2\theta = 1$.</b> Pythagoras: the point is at distance 1 from the origin.</li>
+      <li><b>$\cos(-\theta) = \cos\theta$, $\sin(-\theta) = -\sin\theta$.</b> A negative angle is the mirror image below the axis: same horizontal position, opposite height.</li>
+      <li><b>$\sin(\pi - \theta) = \sin\theta$.</b> Mirror across the vertical axis: same height. This is why $\sin x = \tfrac12$ has two solutions.</li>
+      <li><b>Cosine is sine a quarter turn early:</b> $\cos\theta = \sin(\theta + \pi/2)$. Same wave, shifted. Remember this: a quarter turn is what $j$ will turn out to be.</li>
+      <li><b>Reference angle + quadrant.</b> Size comes from the acute angle to the horizontal axis (only $30^\circ/45^\circ/60^\circ$ values needed); sign comes from the quadrant.</li>
+    </ul>
+
+    <h3>3. From angle to time: the wave</h3>
+    <ul>
+      <li>Let the point go round at a steady rate $\omega$ radians per second, so $\theta = \omega t$.</li>
+      <li>Plot its <b>height against time</b>: that is the sine wave.</li>
+      <li>Plot its <b>horizontal position against time</b>: that is the cosine wave.</li>
+      <li>The figure below does exactly this — circle on the left, height unrolled to the right, horizontal position unrolled downward.</li>
+    </ul>
+    <div class="try"><b>Try:</b> press play. Then pause at $\theta = \pi/2$ and $\theta = \pi$ and read the two shadows.</div>
+    <div class="lazy" data-fig="V1:euler" data-preset='{"theta":0.9}'></div>
+    <div class="key"><b>The sentence to make obvious:</b> a sinusoid is not a shape somebody drew. It is what uniform rotation looks like when you only see one coordinate.</div>
+    <ul>
+      <li>Mains voltage: a coil turning in a magnetic field → sinusoid at 50/60 Hz.</li>
+      <li>Mass on a spring, small pendulum swings, pressure of a pure tone: all "a point going round, seen from the side".</li>
+      <li>MRI: the magnetisation literally precesses (rotates); the received signal is this picture.</li>
+    </ul>
+
+    <h3>4. Three knobs: amplitude, frequency, phase</h3>
+    <p>The general sinusoid is $A\sin(\omega t + \phi)$. Three numbers, three independent knobs:</p>
+    <ul>
+      <li><b>$A$ — how tall.</b> The radius of the circle.</li>
+      <li><b>$\omega$ — how fast</b>, in rad/s. One turn is $2\pi$ rad, so period $T = 2\pi/\omega$ and frequency $f = \omega/2\pi$.</li>
+      <li><b>$\phi$ — where it starts</b> at $t = 0$. Shifts the wave sideways in time by $\phi/\omega$; changes neither height nor speed.</li>
+      <li>Two sinusoids of the <i>same</i> $\omega$ differ only in $A$ and $\phi$: a length and an angle. That pair is one complex number — the whole trick of AC circuit analysis (modules 1 and 6).</li>
+    </ul>
+
+    <h3>5. Why engineers are obsessed with them</h3>
+    <ul>
+      <li><b>Differentiate a sine → a cosine:</b> same shape, a quarter turn earlier, scaled by $\omega$.</li>
+      <li><b>Integrate → same shape</b>, a quarter turn later.</li>
+      <li><b>Add two sinusoids of the same frequency → a sinusoid</b> of that frequency.</li>
+      <li>Therefore any circuit of resistors, capacitors and inductors, fed a sinusoid, gives out a sinusoid of the same frequency. Only amplitude and phase change. No other waveform does this.</li>
+      <li>That is why sinusoids are the alphabet: every reasonable signal is a sum of them (Fourier), and a filter is just "what it does to each frequency".</li>
+    </ul>
+    <div class="usage"><b>Where you will meet this</b>
+      <ul>
+        <li>ECE 230: sinusoidal steady state, phasors, impedance, AC power.</li>
+        <li>BME 310 / 462: amplifiers and filters are specified by what they do to each frequency; ECG and EMG are analysed by frequency content.</li>
+        <li>ECE 330: Fourier series and transforms — every signal as sinusoids.</li>
+        <li>Imaging: MRI signal is a rotating magnetisation; ultrasound is a pressure sinusoid.</li>
+      </ul>
+    </div>
+    <div class="check" data-check="sin-cos"></div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section class="card bg" id="radians">
+    <h2>Radians — why π keeps appearing</h2>
+    <p class="lead">Degrees are a human convention. Radians are what the circle itself measures.</p>
+
+    <h3>1. What a radian is</h3>
+    <ul>
+      <li>Take a circle of radius $r$. Walk along the rim a distance of exactly $r$.</li>
+      <li>The angle you turned through is <b>one radian</b> (about $57.3^\circ$).</li>
+      <li>The whole rim is $2\pi r$ long, so a full turn is <b>$2\pi$ radians</b>. That is the only reason $\pi$ appears: angle in radians = arc length ÷ radius.</li>
+      <li>Conversions: $360^\circ = 2\pi$, $180^\circ = \pi$, $90^\circ = \pi/2$; in general $\theta_{rad} = \theta_{deg}\cdot\pi/180$.</li>
+      <li>Arc length $s = r\theta$ — <i>only</i> in radians. The first of many formulas that silently assume radians.</li>
+    </ul>
+    <svg class="svgfig" viewBox="0 0 300 220" aria-label="arc equal to radius">
+      <circle cx="120" cy="120" r="90" fill="none" stroke="#c8ccd8" stroke-dasharray="4 4"/>
+      <line x1="120" y1="120" x2="210" y2="120" stroke="#0f9d8a" stroke-width="3"/>
+      <text x="160" y="138" fill="#0f9d8a">r</text>
+      <path d="M210,120 A90,90 0 0,0 168.6,43.3" fill="none" stroke="#e08a00" stroke-width="4"/>
+      <text x="215" y="80" fill="#e08a00">arc = r</text>
+      <line x1="120" y1="120" x2="168.6" y2="43.3" stroke="#0f9d8a" stroke-width="3"/>
+      <path d="M150,120 A30,30 0 0,0 136,93" fill="none" stroke="#e08a00" stroke-width="2"/>
+      <text x="152" y="104" fill="#e08a00">1 rad</text>
+      <text x="20" y="205">1 radian ≈ 57.3°. Full turn = 2π rad because the rim is 2πr long.</text>
+    </svg>
+
+    <h3>2. Why calculus refuses to work in degrees</h3>
+    <ul>
+      <li>Near $\theta = 0$ the point's height is almost exactly its arc length: $\sin\theta \approx \theta$.</li>
+      <li>So in radians the slope of $\sin$ at the origin is exactly $1$, and $\frac{d}{d\theta}\sin\theta = \cos\theta$ comes out clean.</li>
+      <li>In degrees every derivative drags a factor $\pi/180 \approx 0.01745$ along: $\frac{d}{dx}\sin x^\circ = 0.01745\cos x^\circ$. Nobody wants that.</li>
+      <li>So calculus, physics and every course after this one use radians without saying so.</li>
+    </ul>
+    <div class="try"><b>Try:</b> drag $x_0$ toward $0$. The tangent line becomes $y = x$. That is $\sin x \approx x$ — a radian statement.</div>
+    <div class="lazy" data-fig="V0:tangent" data-preset='{"fn":"sin(x)","x0":0.3,"range":[-2,2]}'></div>
+
+    <h3>3. Angular frequency</h3>
+    <ul>
+      <li>A point rotating at $\omega$ rad/s has turned through angle $\omega t$ after $t$ seconds — an angle you can feed straight into $\sin$, $\cos$ or $e^{j\theta}$.</li>
+      <li>That is why circuits use $\omega = 2\pi f$: it saves writing $2\pi$ in every formula.</li>
+      <li>In $e^{j\theta}$ the exponent is <b>always radians</b>.</li>
+    </ul>
+    <div class="key"><b>The sentence to make obvious:</b> $\pi$ is not a unit. It is the length of half a rim measured in radii.</div>
+    <div class="usage"><b>Where you will meet this</b>
+      <ul>
+        <li>$\omega = 2\pi f$ in every circuits and signals formula; $\omega t$ as an angle.</li>
+        <li>Calculator-mode errors on exams: an answer off by a factor near $57$ or $0.017$ is this.</li>
+        <li>Small-angle approximation in optics, mechanics and control ($\sin\theta \approx \theta$ linearises a pendulum).</li>
+      </ul>
+    </div>
+    <div class="check" data-check="radians"></div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section class="card bg" id="tan">
+    <h2>Tangent, slope and the quadrant problem</h2>
+    <p class="lead">tan θ is the slope of the radius line. That explains everything odd about it.</p>
+    <h3>1. What tangent is</h3>
+    <ul>
+      <li>$\tan\theta = \dfrac{\sin\theta}{\cos\theta} = \dfrac{\text{rise}}{\text{run}}$ of the line from the origin to the point — its <b>slope</b>.</li>
+      <li><b>Blows up at $90^\circ$:</b> a vertical line has no finite slope ($\cos = 0$).</li>
+      <li><b>Repeats every $180^\circ$</b>, not $360^\circ$: the line at $\theta$ and at $\theta + 180^\circ$ is the same line. The point moved to the other end; a line has one slope.</li>
+      <li><b>Sign:</b> positive in quadrants I and III (both coordinates same sign), negative in II and IV.</li>
+    </ul>
+    <div class="try"><b>Try:</b> drag the point through $90^\circ$ and watch the tan readout blow up and flip sign. Then compare $36.87^\circ$ with $216.87^\circ$: same tan.</div>
+    <div class="lazy" data-fig="V0:unitcircle" data-preset='{"deg":216.87}'></div>
+
+    <h3>2. The quadrant problem (it follows you into every complex-number calculation)</h3>
+    <ul>
+      <li>Because tan repeats every half turn, going backwards is ambiguous: slope $0.75$ could be the point at $36.87^\circ$ <i>or</i> at $216.87^\circ$.</li>
+      <li>Your calculator's $\arctan$ always returns the answer between $-90^\circ$ and $90^\circ$ (quadrants I and IV).</li>
+      <li>If your point is really in quadrant II or III, <b>add or subtract $180^\circ$ yourself</b>.</li>
+      <li>Programming languages fix it with $\operatorname{atan2}(y, x)$: given both coordinates separately, it can see the signs and returns the true angle.</li>
+      <li>Example: $-3 - 4j$. $\arctan(4/3) = 53.13^\circ$; the point is in quadrant III; so the angle is $233.13^\circ$ (or $-126.87^\circ$).</li>
+    </ul>
+    <div class="key"><b>The sentence to make obvious:</b> $\arctan$ knows the slope; it cannot know which end of the line you are on. You have to look.</div>
+    <div class="usage"><b>Where you will meet this</b>
+      <ul>
+        <li>Every polar conversion in module 1, every phase angle in ECE 230, every phase plot in ECE 330.</li>
+        <li>Bode phase plots wrapping at $\pm180^\circ$ — this ambiguity showing up on a graph.</li>
+      </ul>
+    </div>
+    <div class="check" data-check="tan"></div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section class="card bg" id="exp-log">
+    <h2>Exponentials and logarithms — time constants</h2>
+    <p class="lead">e^x is the function whose rate of change equals its current value. Everything about it follows from that.</p>
+
+    <h3>1. What $e$ is for</h3>
+    <ul>
+      <li>Many things change at a rate proportional to how much there is: a population, compound interest, charge draining from a capacitor, undecayed nuclei, a cooling body's temperature difference.</li>
+      <li>"Rate proportional to amount" is the equation $\dfrac{dy}{dt} = k\,y$. Its solution is $y = y_0 e^{kt}$.</li>
+      <li>$e \approx 2.718$ is simply the base for which the proportionality constant is exactly $1$: $\frac{d}{dt}e^{t} = e^{t}$.</li>
+      <li>Any other base works but drags a factor along ($\frac{d}{dt}2^t = 0.693\cdot 2^t$) — exactly as degrees drag $\pi/180$ along in trigonometry.</li>
+    </ul>
+
+    <h3>2. Decay and the time constant</h3>
+    <ul>
+      <li>Discharging capacitor: $v(t) = V_0 e^{-t/\tau}$ with $\tau = RC$.</li>
+      <li>Read the exponent as <b>"how many time constants have passed"</b>.</li>
+      <li>After $1\tau$: $e^{-1} = 37\%$ left. After $2\tau$: $13.5\%$. After $5\tau$: under $1\%$ — engineers call that "done".</li>
+      <li>The curve never reaches zero; it loses the same <i>fraction</i> per $\tau$, not the same amount.</li>
+      <li>The tangent's slope is always $-(\text{current value})/\tau$: steepness proportional to height — the defining property, in picture form.</li>
+      <li>Same curve with a positive exponent is growth. A charging capacitor is $V(1 - e^{-t/\tau})$: the gap closing exponentially.</li>
+      <li>Preview of module 4: $e^{st}$ with a <i>complex</i> $s$ is decay and rotation at once — a damped oscillation.</li>
+    </ul>
+    <div class="try"><b>Try:</b> drag the point along the decay. Check that at $x = 2$ (one time constant) the height is $37\%$ of $5$, and that slope = −height/2 everywhere.</div>
+    <div class="lazy" data-fig="V0:tangent" data-preset='{"fn":"5*exp(-x/2)","x0":2,"range":[0,8]}'></div>
+
+    <h3>3. Logarithms: the question "what exponent?"</h3>
+    <ul>
+      <li>$\ln y$ answers: <b>$e$ to what power gives $y$?</b> It undoes the exponential.</li>
+      <li>Solving for time: $V_0 e^{-t/\tau} = v \Rightarrow t = \tau\ln(V_0/v)$ — "how many time constants does this ratio take".</li>
+      <li>Log rules are exponent rules read backwards:
+        <ul>
+          <li>$e^{a}e^{b} = e^{a+b}$ ⇒ $\ln(PQ) = \ln P + \ln Q$: <b>multiplication becomes addition</b>.</li>
+          <li>$(e^{a})^n = e^{na}$ ⇒ $\ln(P^n) = n\ln P$: <b>powers become multipliers</b>.</li>
+          <li>Other bases: $\log_b y = \ln y / \ln b$. Base 10 is for decibels; base 2 counts doublings (bits).</li>
+        </ul>
+      </li>
+      <li>"Multiplication becomes addition" is why decibels exist: stage gains multiply, dB values <b>add</b>, and a Bode plot (dB against log frequency) turns each stage into straight lines you can sketch.</li>
+      <li>Whenever a quantity spans many orders of magnitude (1 Hz to 1 MHz; 1 µV to 1 V), engineers plot the log.</li>
+    </ul>
+    <div class="key"><b>The sentence to make obvious:</b> exponentials count time in time-constants; logarithms count how many time-constants a ratio is worth.</div>
+    <div class="usage"><b>Where you will meet this</b>
+      <ul>
+        <li>ECE 230: RC and RL transients, $\tau = RC$ and $L/R$; every first-order circuit.</li>
+        <li>BME 310 / 462: filter cut-offs, decibels, Bode plots, amplifier dynamic range.</li>
+        <li>Pharmacokinetics, radioactive tracers, Nernst potential (a log), cell growth.</li>
+      </ul>
+    </div>
+    <div class="check" data-check="exp-log"></div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section class="card bg" id="calculus">
+    <h2>Derivative and integral — slope and accumulation</h2>
+    <p class="lead">A derivative is a slope. An integral is an accumulated total. Every rule is bookkeeping on top of those two pictures.</p>
+
+    <h3>1. The derivative is a slope at an instant</h3>
+    <ul>
+      <li>Zoom in on any smooth curve far enough and it looks straight.</li>
+      <li>$f'(x_0)$ is the slope of that straight line — the <b>tangent</b> — at $x_0$.</li>
+      <li>It is a <b>rate</b>: how fast $f$ is changing right there, in units of $f$ per unit of $x$.</li>
+      <li>It is <b>not</b> the value of $f$ (that is the height) and <b>not</b> the total change over an interval (that is a difference of heights).</li>
+      <li>Slope is zero at every peak and trough — that is why "set the derivative to zero" finds maxima and minima.</li>
+    </ul>
+    <div class="try"><b>Try:</b> type any function into the box and drag. Find the places where the slope readout is $0$; find where it is largest.</div>
+    <div class="lazy" data-fig="V0:tangent" data-preset='{"fn":"2*sin(x) + x/2","x0":3,"range":[0,6]}'></div>
+
+    <h3>2. The rules are about how rates combine</h3>
+    <ul>
+      <li><b>Chain rule — rates multiply along a chain.</b> If $y$ changes 3× as fast as $u$, and $u$ changes 2× as fast as $x$, then $y$ changes 6× as fast as $x$: $\frac{dy}{dx} = \frac{dy}{du}\frac{du}{dx}$. In $\sin(x^2)$: outer rate $\cos(x^2)$, inner rate $2x$, multiply.</li>
+      <li><b>Product rule — two things changing, two reasons for growth.</b> A rectangle $u \times v$: widen by $du$ and you add a strip $v\,du$; heighten by $dv$ and you add a strip $u\,dv$. So $d(uv) = u\,dv + v\,du$.</li>
+      <li><b>Sine and cosine.</b> $\frac{d}{dt}\sin\omega t = \omega\cos\omega t$: same shape, a quarter turn early, scaled by $\omega$. Faster oscillation, steeper slopes. This becomes "differentiation is multiplication by $j\omega$" in module 1.</li>
+    </ul>
+
+    <h3>3. The integral is accumulation, and it undoes the derivative</h3>
+    <ul>
+      <li>$\int_a^b f(x)\,dx$ is the signed area under $f$ from $a$ to $b$.</li>
+      <li>More usefully: the <b>total accumulated</b> when $f$ is a rate — distance from velocity, charge from current ($q = \int i\,dt$), energy from power.</li>
+      <li><b>Fundamental theorem:</b> accumulating a rate recovers the quantity. If $F' = f$ then $\int_a^b f\,dx = F(b) - F(a)$.</li>
+      <li>So to integrate, ask "what has this as its derivative?" — then <b>check by differentiating your answer</b>. Not optional; it catches every sign and factor slip.</li>
+      <li>Two habits worth more than any technique: <b>sketch before integrating</b> (you then know the sign and rough size), and <b>differentiate every antiderivative</b> before moving on.</li>
+    </ul>
+
+    <h3>4. Why this is the language of circuits</h3>
+    <ul>
+      <li>A capacitor stores charge; current is the rate of charge flow: $i = C\,\dfrac{dv}{dt}$.</li>
+      <li>An inductor resists changes in current: $v = L\,\dfrac{di}{dt}$.</li>
+      <li>Kirchhoff's laws then give equations containing derivatives — differential equations. Every RC, RL or RLC response is the solution of one.</li>
+      <li>Module 4 is about those solutions; module 1 is about the trick that turns them into algebra for sinusoids.</li>
+    </ul>
+    <div class="key"><b>The sentence to make obvious:</b> derivative = slope of the tangent = rate now. Integral = area = total so far. Each undoes the other.</div>
+    <div class="usage"><b>Where you will meet this</b>
+      <ul>
+        <li>ECE 230: capacitor and inductor equations, first- and second-order circuits.</li>
+        <li>ECE 330: convolution and the Fourier transform are integrals.</li>
+        <li>ECE 332: controllers literally called P, I and D — proportional, integral, derivative.</li>
+        <li>Physiology models: flows are derivatives of volumes; concentrations are integrals of flows.</li>
+      </ul>
+    </div>
+    <div class="check" data-check="calculus"></div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section class="card bg" id="complex">
+    <h2>Complex numbers — why they were worth inventing</h2>
+    <p class="lead">Not "imaginary". A second axis, so that numbers can have a direction as well as a size.</p>
+
+    <h3>1. The problem that forced them</h3>
+    <ul>
+      <li>$x^2 - 4x + 13 = 0$ has no real solution: the parabola never touches the axis.</li>
+      <li>The quadratic formula still produces something: $x = 2 \pm \sqrt{-9}$. For centuries that was declared meaningless.</li>
+      <li>The productive move: <b>allow</b> $\sqrt{-1}$, call it $j$ (engineers; mathematicians say $i$), and see what happens.</li>
+      <li>What happens: every polynomial then has exactly as many roots as its degree, and the "missing" roots sit just off the real line as a mirror pair.</li>
+    </ul>
+    <div class="try"><b>Try:</b> raise $c$ slowly. Watch the two roots slide together on the axis, meet, and then leave it vertically as a pair.</div>
+    <div class="lazy" data-fig="V0:quadratic" data-preset='{"a":1,"b":-4,"c":3}'></div>
+
+    <h3>2. The picture that makes $j$ obvious</h3>
+    <ul>
+      <li>Real numbers on a horizontal line, as usual.</li>
+      <li>Multiplying by $-1$ flips a number to the other side: a <b>half turn</b> about the origin.</li>
+      <li>What operation, done twice, is a half turn? A <b>quarter turn</b>.</li>
+      <li>So let $j$ = "rotate a quarter turn counter-clockwise". Then $j\cdot j$ = half turn = $-1$. That is all $j^2 = -1$ says.</li>
+      <li>The imaginary axis is where the real axis goes after a quarter turn. A complex number $a + bj$ is a point (an arrow) in the resulting plane.</li>
+      <li>Two names for the same arrow: its two shadows ($a$, $b$ — rectangular form) or its length and direction ($r$, $\theta$ — polar form).</li>
+      <li>Rectangular is for <b>adding</b> (tip to tail). Polar is for <b>multiplying</b> — see next.</li>
+    </ul>
+    <div class="try"><b>Try:</b> drag the point and watch both names update. Put it on the imaginary axis: that is $bj$, angle $90^\circ$.</div>
+    <div class="lazy" data-fig="V1:rotation" data-preset='{"z":{"re":3,"im":4}}'></div>
+
+    <h3>3. Multiplication is rotate-and-stretch</h3>
+    <ul>
+      <li>Multiply two complex numbers: <b>lengths multiply, angles add</b>.</li>
+      <li>Multiply by $j$ (length 1, angle $90^\circ$): a pure quarter turn.</li>
+      <li>Multiply by $2$ (length 2, angle 0): a pure stretch.</li>
+      <li>Multiply by $2j$: both.</li>
+      <li>Everything in module 1 follows: powers rotate repeatedly (a spiral); roots divide the angle (so there are $n$ of them, equally spaced); the conjugate is the mirror image (so $z\bar z$ is real); $1/z$ is "undo the rotation, invert the stretch".</li>
+    </ul>
+    <div class="try"><b>Try:</b> discover the rule yourself before opening the check under the figure. Put $z_2$ on the unit circle first, so only the angle changes.</div>
+    <div class="lazy" data-fig="V1:multiply" data-preset='{}'></div>
+
+    <h3>4. Why an engineer needs a number with a direction</h3>
+    <ul>
+      <li>Recall the three knobs of a sinusoid: amplitude, frequency, phase.</li>
+      <li>In a circuit driven at one frequency, every voltage and current shares that frequency — so each is fully described by <b>amplitude and phase</b>: a length and an angle: a complex number.</li>
+      <li>A resistor keeps the phase. A capacitor or inductor shifts it by a quarter turn — multiplication by $\mp j$.</li>
+      <li>So impedance is a complex number, Ohm's law becomes $V = ZI$ with complex $Z$, and a circuit that needed differential equations is solved with algebra.</li>
+      <li>That is module 6 — the first place this pays off in your actual coursework.</li>
+    </ul>
+    <div class="key"><b>The sentence to make obvious:</b> a complex number is a length and a direction. Multiplying rotates and stretches. $j$ is a quarter turn.</div>
+    <div class="usage"><b>Where you will meet this</b>
+      <ul>
+        <li>ECE 230: phasors, impedance, complex power — every AC problem.</li>
+        <li>ECE 330: the Fourier transform lives in the complex plane; poles and zeros are complex numbers.</li>
+        <li>ECE 332: root locus is literally "where the roots move in this plane".</li>
+        <li>MRI: the received signal is complex-valued by nature (two quadrature channels).</li>
+      </ul>
+    </div>
+    <div class="check" data-check="complex"></div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section class="card bg" id="euler">
+    <h2>$e^{j\theta}$ — the one identity that runs the whole chain</h2>
+    <p class="lead">Exponential growth with an imaginary rate is rotation.</p>
+
+    <h3>1. What it says</h3>
+    <ul>
+      <li>$e^{j\theta} = \cos\theta + j\sin\theta$.</li>
+      <li>In words: <b>$e^{j\theta}$ is the point on the unit circle at angle $\theta$</b>. Horizontal coordinate $\cos\theta$, vertical coordinate $\sin\theta$.</li>
+      <li>$\theta$ is in radians. Always.</li>
+    </ul>
+    <div class="try"><b>Try:</b> slide $\theta$ to $\pi$: the point is at $-1$, so $e^{j\pi} = -1$. Slide to $\pi/2$: the point is $j$.</div>
+    <div class="lazy" data-fig="V1:euler" data-preset='{"theta":0.9}'></div>
+
+    <h3>2. Why it is true (the picture, not the series)</h3>
+    <ul>
+      <li>The exponential is the function whose rate of change equals its value: $\frac{d}{d\theta}e^{k\theta} = k\,e^{k\theta}$.</li>
+      <li>Put $k = j$. The velocity of the point $z = e^{j\theta}$ is $j$ × its position: <b>its position vector turned a quarter turn</b>, same length.</li>
+      <li>Velocity always perpendicular to position ⇒ the point can neither approach nor leave the origin ⇒ it stays on the circle of radius $|z(0)| = 1$.</li>
+      <li>Speed equal to radius ⇒ it turns at one radian per unit of $\theta$.</li>
+      <li>It starts at $e^0 = 1$. After parameter $\theta$ it has turned through $\theta$. That point is $\cos\theta + j\sin\theta$. Done.</li>
+      <li>The power-series proof reaches the same place by brute force: expand $e^{j\theta}$, use $j^2 = -1$; even terms assemble into $\cos$, odd terms into $j\sin$. The alternating signs in those series are the quarter-turn cycle $1, j, -1, -j$.</li>
+    </ul>
+
+    <h3>3. What it buys you</h3>
+    <ul>
+      <li><b>Polar form becomes an exponential:</b> $r\angle\theta = re^{j\theta}$. Multiplication is $r_1 r_2\, e^{j(\theta_1 + \theta_2)}$ — lengths multiply, angles add, because exponents add.</li>
+      <li><b>Trig identities stop being memorised:</b> $e^{j(A+B)} = e^{jA}e^{jB}$; multiply out the right side; real part is $\cos(A+B)$, imaginary part is $\sin(A+B)$. One line each.</li>
+      <li><b>Sinusoids become exponentials:</b> $\cos\theta = \frac{e^{j\theta} + e^{-j\theta}}{2}$, $\sin\theta = \frac{e^{j\theta} - e^{-j\theta}}{2j}$. A real cosine is two counter-rotating points whose sideways parts cancel.</li>
+      <li><b>Differentiation becomes multiplication:</b> $\frac{d}{dt}e^{j\omega t} = j\omega\,e^{j\omega t}$. For a phasor, "differentiate" = "multiply by $j\omega$", "integrate" = "divide by $j\omega$". A capacitor's $i = C\,dv/dt$ becomes $I = j\omega C\,V$: impedance $1/(j\omega C)$. Calculus has become algebra.</li>
+      <li><b>Damped oscillation is one exponential:</b> $e^{st}$ with $s = \sigma + j\omega$ is $e^{\sigma t}$ (decay if $\sigma < 0$) × $e^{j\omega t}$ (rotation). Where $s$ sits in the plane <i>is</i> the behaviour: module 4, ECE 330's poles, ECE 332's root locus.</li>
+    </ul>
+    <div class="try"><b>Try:</b> a unit-length number raised to successive powers walks round the circle. $e^{j\theta}\cdot e^{j\theta} = e^{j2\theta}$: rotations compose by adding angles, exponentials by adding exponents — the same thing.</div>
+    <div class="lazy" data-fig="V1:powers" data-preset='{"z":"1∠30","n":12}'></div>
+    <div class="key"><b>The sentence to make obvious:</b> $e^{j\theta}$ is pure rotation. Everything from circuits to Fourier is that sentence wearing different clothes.</div>
+    <div class="usage"><b>Where you will meet this</b>
+      <ul>
+        <li>ECE 230: phasors are $e^{j\omega t}$ with the $e^{j\omega t}$ left unwritten.</li>
+        <li>ECE 330: Fourier transform $\int x(t)e^{-j\omega t}dt$ — winding a signal round the circle; Laplace's $e^{-st}$ generalises it.</li>
+        <li>ECE 332: $s$-plane, poles, stability — all positions of $e^{st}$ exponents.</li>
+      </ul>
+    </div>
+    <div class="check" data-check="euler"></div>
+  </section>
+
+  <p class="totop"><a href="#top">↑ back to the top</a> · <a href="../">module list</a></p>
+  <footer>Instrumentation Foundations Trainer · background reading. Figures are the same ones the questions use.</footer>
+</div>
+
+<script src="../shared/complex-plane.js"></script>
+<script src="../shared/answers.js"></script>
+<script src="../shared/background.js"></script>
+<script src="../modules/01-complex/visuals.js"></script>
+<script>window.V1 = window.Visuals;</script>
+<script src="../modules/00-prereq/visuals.js"></script>
+<script>window.V0 = window.Visuals;</script>
+<script src="../modules/00-prereq/items.js"></script>
+<script src="../modules/01-complex/items.js"></script>
+<script>
+(function () {
+  const B = window.Background;
+  /* table of contents */
+  const toc = document.getElementById('toc');
+  Object.keys(B.sections).forEach(id => {
+    const a = document.createElement('a'); a.href = '#' + id;
+    const lead = document.querySelector('#' + id + ' .lead');
+    a.innerHTML = B.sections[id].title + '<span>' + (lead ? lead.textContent : '') + '</span>';
+    toc.appendChild(a);
+  });
+  /* "check yourself" links: every item mapped to this section, with its module */
+  const titles = {};
+  Object.keys(window.MODULES).forEach(mid => window.MODULES[mid].items.forEach(it => { titles[it.id] = { t: it.title, m: mid }; }));
+  document.querySelectorAll('[data-check]').forEach(el => {
+    const ids = B.itemsFor(el.dataset.check).filter(id => titles[id]);
+    if (!ids.length) { el.remove(); return; }
+    el.innerHTML = '<b>Check yourself:</b> ' + ids.map(id => '<a href="../modules/' + titles[id].m + '/?item=' + id + '">' + titles[id].t + '</a>').join(' ');
+  });
+  /* mount the figures, staggered so the page paints first; idle canvases cost nothing */
+  const mount = el => {
+    if (el.dataset.done) return; el.dataset.done = '1';
+    const parts = el.dataset.fig.split(':'), V = window[parts[0]], name = parts[1];
+    let preset = {}; try { preset = JSON.parse(el.dataset.preset || '{}'); } catch (e) { /* ignore */ }
+    el.classList.remove('lazy');
+    if (V) V.mount(name, el, preset);
+  };
+  const figs = [...document.querySelectorAll('[data-fig]')];
+  figs.forEach((f, i) => setTimeout(() => mount(f), 60 * i));
+  if (window.renderMathInElement) renderMathInElement(document.body, { delimiters: [{ left: '$$', right: '$$', display: true }, { left: '$', right: '$', display: false }], throwOnError: false });
+  /* jump to the hash after layout, since figures change heights */
+  if (location.hash) setTimeout(() => { const t = document.querySelector(location.hash); if (t) t.scrollIntoView(); }, 900);
+})();
+</script>
+</body>
+</html>
