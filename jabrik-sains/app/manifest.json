@@ -1,11 +1,11 @@
 {
-    "name": "petualangan_sains",
-    "short_name": "petualangan_sains",
+    "name": "Jabrik Sains — Teman Mengajar IPAS",
+    "short_name": "Jabrik Sains",
     "start_url": ".",
-    "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "display": "browser",
+    "background_color": "#FBF8F1",
+    "theme_color": "#2E9E5B",
+    "description": "Teman mengajar IPAS untuk guru SD Kelas 1-6: 39 pelajaran, 97 eksperimen berbahan rumahan, rubrik penilaian, dan Modul Ajar siap ekspor. Gratis, tanpa internet, tanpa proyektor.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
