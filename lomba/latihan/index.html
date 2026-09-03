@@ -15,9 +15,9 @@
   Supabase — tidak ada satupun yang ditulis ulang di HTML, supaya halaman ini
   tidak pernah berbeda dari kenyataan di server.
 
-  Sponsor: taruh berkas logo (jpg/png/svg) di folder sponsors/ lalu daftarkan
-  di sponsors.json. Kalau file itu tidak ada atau kosong, seluruh bagian
-  sponsor hilang dengan sendirinya — halaman tetap rapi.
+  Sponsor: ditambahkan dari lomba/admin.html (nama + logo + tautan). Kalau
+  event ini belum punya baris sponsor, halaman memakai sponsors.json di folder
+  ini. Tidak ada keduanya: seluruh bagian sponsor hilang — halaman tetap rapi.
   ============================================================================
 -->
 <style>
@@ -225,12 +225,15 @@ async function main() {
 
   const now = new Date();
   const rows = batches ?? [];
-  const open = rows.filter(b => new Date(b.starts_at) <= now && now < new Date(b.ends_at));
+  // Batch latihan tidak punya jendela waktu (aturan latihan, lomba_admin.sql):
+  // selalu terbuka selama event-nya published.
+  const open = rows.filter(b => b.is_practice ||
+    (new Date(b.starts_at) <= now && now < new Date(b.ends_at)));
   const next = rows.find(b => new Date(b.starts_at) > now);
 
   $('ev-status').textContent =
     ev.status === 'closed' ? 'Lomba sudah selesai'
-    : open.length ? 'Sesi sedang berlangsung'
+    : open.length ? (open.every(b => b.is_practice) ? 'Latihan terbuka — mulai kapan saja' : 'Sesi sedang berlangsung')
     : next ? `Sesi berikutnya ${tanggal(next.starts_at)} pukul ${jam(next.starts_at)}`
     : 'Belum ada sesi terjadwal';
 
@@ -251,7 +254,8 @@ async function main() {
     // dibuka berhari-hari, dan menuliskan jamnya saja membuatnya terbaca
     // seperti sesi nol menit ("10.26–10.26").
     const t1 = new Date(b.starts_at), t2 = new Date(b.ends_at);
-    tr.appendChild(cell('td', t1.toDateString() === t2.toDateString()
+    tr.appendChild(cell('td', b.is_practice ? 'Latihan — kapan saja'
+      : t1.toDateString() === t2.toDateString()
       ? `${tanggal(b.starts_at)}, ${jam(b.starts_at)}–${jam(b.ends_at)}`
       : `${tanggal(b.starts_at)} ${jam(b.starts_at)} – ${tanggal(b.ends_at)} ${jam(b.ends_at)}`));
     // Panjang paper berbeda per kelas (K1–2 lebih pendek), jadi tampilkan
@@ -285,43 +289,55 @@ async function main() {
   }
 }
 
-// 3. Sponsor — berkas lokal saja. Nama berkas divalidasi supaya halaman ini
-//    tidak bisa dipakai memuat gambar dari mana pun di internet.
-async function sponsors() {
+// 3. Sponsor — dari Supabase (halaman admin), berkas lokal sebagai cadangan.
+// Sponsor: baris di Supabase dulu (diisi dari lomba/admin.html), lalu — kalau
+// event ini belum punya baris — berkas sponsors.json di folder ini. Jadi
+// folder lama tetap jalan, dan sponsor baru cukup ditambah dari halaman admin.
+async function loadSponsorList() {
+  try {
+    const { data } = await db.from('lomba_sponsors_public').select('*')
+      .eq('event_slug', CFG.event).order('sort');
+    if (data?.length) {
+      return data.map(r => ({ nama: String(r.name ?? ''), src: r.logo_url || null,
+        tautan: r.link || null, tingkat: r.tier === 'utama' ? 'utama' : 'pendukung' }));
+    }
+  } catch { /* jatuh ke berkas */ }
   let list;
   try {
     const res = await fetch('sponsors.json', { cache: 'no-store' });
-    if (!res.ok) return;
+    if (!res.ok) return [];
     list = await res.json();
-  } catch { return; }                       // tidak ada sponsor: bagian ini hilang
-  if (!Array.isArray(list) || !list.length) return;
+  } catch { return []; }
+  if (!Array.isArray(list)) return [];
+  return list.filter(s => /^[\w.-]+\.(png|jpg|jpeg|svg|webp)$/i.test(String(s.berkas ?? '')))
+    .map(s => ({ nama: String(s.nama ?? ''), src: `sponsors/${s.berkas}`,
+      tautan: s.tautan && /^https:\/\//i.test(s.tautan) ? s.tautan : null,
+      tingkat: s.tingkat === 'utama' ? 'utama' : 'pendukung' }));
+}
 
+function sponsorTile(sp, cls) {
+  const box1 = document.createElement(sp.tautan ? 'a' : 'div');
+  box1.className = cls;
+  if (sp.tautan) { box1.href = sp.tautan; box1.target = '_blank'; box1.rel = 'noopener noreferrer'; }
+  if (sp.src) {
+    const img = document.createElement('img');
+    img.src = sp.src; img.alt = sp.nama; img.loading = 'lazy';
+    // Logo hilang? Tampilkan namanya, jangan kotak rusak di layar proyektor.
+    img.onerror = () => { box1.replaceChildren(cell('span', sp.nama)); };
+    box1.appendChild(img);
+  } else {
+    box1.appendChild(cell('span', sp.nama));
+  }
+  return box1;
+}
+
+async function sponsors() {
+  const list = await loadSponsorList();
+  if (!list.length) return;                 // tidak ada sponsor: bagian ini hilang
   const box = $('sponsors');
   box.replaceChildren();
-  let shown = 0;
-  for (const s of list) {
-    const file = String(s.berkas ?? '');
-    if (!/^[\w.-]+\.(png|jpg|jpeg|svg|webp)$/i.test(file)) continue;  // nama berkas polos
-    const tingkat = s.tingkat === 'utama' ? 'utama' : 'pendukung';
-
-    const box1 = document.createElement(s.tautan ? 'a' : 'div');
-    box1.className = `sp sp-${tingkat}`;
-    if (s.tautan && /^https:\/\//i.test(s.tautan)) {
-      box1.href = s.tautan;
-      box1.target = '_blank';
-      box1.rel = 'noopener noreferrer';
-    }
-    const img = document.createElement('img');
-    img.src = `sponsors/${file}`;
-    img.alt = String(s.nama ?? '');
-    img.loading = 'lazy';
-    // Logo hilang? Tampilkan namanya, jangan kotak rusak di layar proyektor.
-    img.onerror = () => { box1.replaceChildren(cell('span', String(s.nama ?? ''))); };
-    box1.appendChild(img);
-    box.appendChild(box1);
-    shown++;
-  }
-  if (shown) $('sponsor-wrap').hidden = false;
+  for (const sp of list) box.appendChild(sponsorTile(sp, `sp sp-${sp.tingkat}`));
+  $('sponsor-wrap').hidden = false;
 }
 
 // 4. Aturan dan keterangan tambahan — supaya panitia bisa mengubah teks tanpa

@@ -24,6 +24,10 @@
   ini untuk penonton di ruang lain, biarkan tampil. Pilihannya tersimpan di
   browser ini saja.
 
+  Sponsor: dari Supabase (lomba/admin.html), berkas sponsors.json sebagai
+  cadangan. Tampil dua kali: kisi di bawah papan, dan STRIP yang menempel di
+  dasar layar — tetap terlihat saat papan digulir.
+
   Untuk event baru: salin folder ini, ganti `event` di blok CFG.
   ============================================================================
 -->
@@ -102,6 +106,22 @@
   .dot{display:inline-block;width:8px;height:8px;border-radius:50%;
        background:var(--muted);margin-right:6px;vertical-align:middle}
   .dot.on{background:var(--sage)}
+  /* Strip sponsor: menempel di dasar layar, tetap terlihat saat halaman
+     digulir (permintaan 2026-09-03), berjalan pelan tanpa henti. */
+  .sp-strip{position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--surface);
+            border-top:1px solid var(--line);padding:9px 0;overflow:hidden;white-space:nowrap}
+  .sp-strip .lbl{position:absolute;left:0;top:0;bottom:0;display:flex;align-items:center;
+                 padding:0 14px 0 12px;font-size:11px;font-weight:800;color:var(--muted);
+                 text-transform:uppercase;letter-spacing:.8px;background:var(--surface);z-index:1}
+  .sp-track{display:inline-flex;gap:38px;align-items:center;padding-left:100vw;
+            animation:sp-scroll var(--dur,40s) linear infinite}
+  .sp-strip:hover .sp-track{animation-play-state:paused}
+  @keyframes sp-scroll{to{transform:translateX(-100%)}}
+  .sp-item{display:inline-flex;align-items:center;gap:10px;font-weight:800;font-size:14px;
+           color:var(--text);text-decoration:none}
+  .sp-item img{height:36px;width:auto;max-width:150px;object-fit:contain;background:#fff;
+               border-radius:8px;padding:4px;display:block}
+  body.has-strip{padding-bottom:66px}
 </style>
 </head>
 <body>
@@ -147,6 +167,12 @@
   <div id="sponsor-wrap" hidden>
     <div class="sponsors" id="sponsors"></div>
   </div>
+</div>
+<div class="sp-strip" id="sp-strip" hidden aria-label="Sponsor">
+  <span class="lbl">Didukung oleh</span>
+  <div class="sp-track" id="sp-track"></div>
+</div>
+<div class="wrap" style="padding-top:0">
 
   <footer>
     <p><a href="index.html">← Halaman lomba</a> · Platform <b>AyoMath</b></p>
@@ -216,8 +242,10 @@ async function loadEvent() {
 
 function pickBatch() {
   const now = Date.now();
-  const live = S.batches.find(b =>
-    new Date(b.starts_at).getTime() <= now && now < new Date(b.ends_at).getTime());
+  // Batch latihan tidak punya jendela waktu (lomba_admin.sql, aturan latihan):
+  // selalu dianggap berjalan selama event-nya published.
+  const live = S.batches.find(b => b.is_practice ||
+    (new Date(b.starts_at).getTime() <= now && now < new Date(b.ends_at).getTime()));
   const next = S.batches.find(b => new Date(b.starts_at).getTime() > now);
   const prev = [...S.batches].reverse()
     .find(b => new Date(b.ends_at).getTime() <= now);
@@ -227,7 +255,8 @@ function pickBatch() {
   S.batch = chosen;
   if (!chosen) { $('sesi').textContent = 'Belum ada sesi terjadwal'; return; }
 
-  $('sesi').textContent = live ? `${chosen.label} — sedang berlangsung`
+  $('sesi').textContent = live && chosen.is_practice ? `${chosen.label} — latihan, terbuka`
+    : live ? `${chosen.label} — sedang berlangsung`
     : next && chosen.id === next.id ? `${chosen.label} — mulai pukul ${jam(chosen.starts_at)}`
     : `${chosen.label} — sudah selesai`;
 
@@ -391,6 +420,12 @@ $('toggle-skor').textContent = S.showScores ? 'Sembunyikan skor' : 'Tampilkan sk
 function tick() {
   const c = $('clock');
   if (!S.batch) { $('clock-big').textContent = '--:--'; return; }
+  if (S.batch.is_practice) {
+    $('clock-lbl').textContent = 'Latihan';
+    $('clock-big').textContent = 'terbuka';
+    c.classList.remove('low');
+    return;
+  }
   const now = Date.now();
   const start = new Date(S.batch.starts_at).getTime();
   const end = new Date(S.batch.ends_at).getTime();
@@ -428,32 +463,67 @@ db.channel('lomba-live')
 
 // ── Sponsor (sama seperti halaman depan) ─────────────────────────────────────
 
-async function sponsors() {
+// Sponsor: baris di Supabase dulu (diisi dari lomba/admin.html), lalu — kalau
+// event ini belum punya baris — berkas sponsors.json di folder ini. Jadi
+// folder lama tetap jalan, dan sponsor baru cukup ditambah dari halaman admin.
+async function loadSponsorList() {
+  try {
+    const { data } = await db.from('lomba_sponsors_public').select('*')
+      .eq('event_slug', CFG.event).order('sort');
+    if (data?.length) {
+      return data.map(r => ({ nama: String(r.name ?? ''), src: r.logo_url || null,
+        tautan: r.link || null, tingkat: r.tier === 'utama' ? 'utama' : 'pendukung' }));
+    }
+  } catch { /* jatuh ke berkas */ }
   let list;
   try {
     const res = await fetch('sponsors.json', { cache: 'no-store' });
-    if (!res.ok) return;
+    if (!res.ok) return [];
     list = await res.json();
-  } catch { return; }
-  if (!Array.isArray(list) || !list.length) return;
+  } catch { return []; }
+  if (!Array.isArray(list)) return [];
+  return list.filter(s => /^[\w.-]+\.(png|jpg|jpeg|svg|webp)$/i.test(String(s.berkas ?? '')))
+    .map(s => ({ nama: String(s.nama ?? ''), src: `sponsors/${s.berkas}`,
+      tautan: s.tautan && /^https:\/\//i.test(s.tautan) ? s.tautan : null,
+      tingkat: s.tingkat === 'utama' ? 'utama' : 'pendukung' }));
+}
+
+function sponsorTile(sp, cls) {
+  const box1 = document.createElement(sp.tautan ? 'a' : 'div');
+  box1.className = cls;
+  if (sp.tautan) { box1.href = sp.tautan; box1.target = '_blank'; box1.rel = 'noopener noreferrer'; }
+  if (sp.src) {
+    const img = document.createElement('img');
+    img.src = sp.src; img.alt = sp.nama; img.loading = 'lazy';
+    // Logo hilang? Tampilkan namanya, jangan kotak rusak di layar proyektor.
+    img.onerror = () => { box1.replaceChildren(cell('span', sp.nama)); };
+    box1.appendChild(img);
+  } else {
+    box1.appendChild(cell('span', sp.nama));
+  }
+  return box1;
+}
+
+async function sponsors() {
+  const list = await loadSponsorList();
+  if (!list.length) return;
+  // Kisi di bawah papan (sama seperti halaman depan) …
   const box = $('sponsors');
   box.replaceChildren();
-  let shown = 0;
-  for (const s of list) {
-    const file = String(s.berkas ?? '');
-    if (!/^[\w.-]+\.(png|jpg|jpeg|svg|webp)$/i.test(file)) continue;
-    const d = document.createElement('div');
-    d.className = 'sp';
-    const img = document.createElement('img');
-    img.src = `sponsors/${file}`;
-    img.alt = String(s.nama ?? '');
-    img.loading = 'lazy';
-    img.onerror = () => { d.replaceChildren(cell('span', String(s.nama ?? ''))); };
-    d.appendChild(img);
-    box.appendChild(d);
-    shown++;
+  for (const sp of list) box.appendChild(sponsorTile(sp, 'sp'));
+  $('sponsor-wrap').hidden = false;
+  // … dan strip yang menempel di dasar layar, berjalan pelan. Isinya ditulis
+  // dua kali supaya tidak ada jeda kosong yang lama di antara putaran.
+  const track = $('sp-track');
+  track.replaceChildren();
+  for (const sp of list.concat(list)) {
+    const item = sponsorTile(sp, 'sp-item');
+    if (sp.src) item.appendChild(cell('span', sp.nama));
+    track.appendChild(item);
   }
-  if (shown) $('sponsor-wrap').hidden = false;
+  track.style.setProperty('--dur', `${Math.max(24, list.length * 7)}s`);
+  $('sp-strip').hidden = false;
+  document.body.classList.add('has-strip');
 }
 
 // ── Jalan ────────────────────────────────────────────────────────────────────

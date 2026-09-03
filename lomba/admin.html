@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Admin Lomba — AyoMath</title>
+<!--
+  ============================================================================
+  Halaman staf lomba (docs/LOMBA_ADMIN.md). Menggantikan SEMUA tindakan yang
+  dulu lewat SQL editor Supabase: jadwal batch, status event, buka/tutup
+  batch, lepas/hapus peserta, daftar peserta, unduh hasil.
+
+  Masuk dengan kode email (6 angka). Yang boleh masuk ada di tabel
+  lomba_staff; setiap RPC lomba_admin_* memeriksanya sendiri di server, jadi
+  halaman ini tidak "menjaga" apa pun — ia hanya memanggil.
+
+  Kunci jawaban (papers) TIDAK PERNAH sampai ke halaman ini. RPC admin tidak
+  mengembalikannya, bahkan untuk staf.
+
+  Sponsor: nama + logo (diunggah ke bucket Storage 'lomba-sponsors') + tautan,
+  per event, tanpa batas jumlah. Halaman lomba menampilkannya sebagai kisi
+  logo; papan langsung menahannya sebagai strip berjalan di dasar layar.
+
+  Satu halaman untuk semua event (bukan per slug). Tidak ada yang perlu
+  diubah untuk event baru.
+  ============================================================================
+-->
+<style>
+  :root{--bg:#161029;--surface:#241c45;--surface2:#2f2757;--text:#F1ECFF;
+        --muted:#a99cc9;--teal:#4ECEC9;--gold:#F0BE4D;--sage:#5FD39A;
+        --coral:#F47E86;--line:rgba(255,255,255,.10)}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+       background:var(--bg);color:var(--text);line-height:1.5}
+  .wrap{max-width:1100px;margin:0 auto;padding:18px}
+  header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;
+         justify-content:space-between;padding:8px 0 16px}
+  h1{font-size:22px;margin:0;font-weight:900}
+  h2{font-size:17px;margin:0 0 10px;font-weight:900}
+  .sub{color:var(--muted);font-size:13px;margin:2px 0 0}
+  .panel{background:var(--surface);border-radius:18px;padding:16px;margin-bottom:16px}
+  .ptitle{font-size:12px;text-transform:uppercase;letter-spacing:.9px;
+          color:var(--muted);font-weight:800;margin:0 0 10px;
+          display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+  label{display:block;font-size:12px;color:var(--muted);margin:8px 0 3px;font-weight:700}
+  input,select,textarea{width:100%;background:var(--surface2);color:var(--text);
+        border:1px solid var(--line);border-radius:10px;padding:9px 11px;font-size:15px;
+        font-family:inherit}
+  input[type=checkbox]{width:auto;margin-right:8px;vertical-align:middle}
+  textarea{min-height:110px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
+  button{background:var(--teal);color:#10231f;border:0;border-radius:10px;
+         padding:9px 14px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit}
+  button.ghost{background:transparent;color:var(--muted);border:1px solid var(--line)}
+  button.warn{background:var(--coral);color:#2a0d10}
+  button.gold{background:var(--gold);color:#2b2000}
+  button:disabled{opacity:.5;cursor:default}
+  .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 14px}
+  @media (max-width:700px){.grid2,.grid3{grid-template-columns:1fr}}
+  .msg{font-size:13px;color:var(--muted);margin-top:8px;min-height:18px}
+  .msg.ok{color:var(--sage)} .msg.err{color:var(--coral)}
+  .pill{display:inline-block;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:800}
+  .pill.draft{background:var(--surface2);color:var(--muted)}
+  .pill.published{background:var(--sage);color:#0d2a1c}
+  .pill.closed{background:var(--gold);color:#2b2000}
+  .pill.practice{background:var(--surface2);color:var(--teal)}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted)}
+  td.mono{font-variant-numeric:tabular-nums;white-space:nowrap}
+  .batch{border:1px solid var(--line);border-radius:14px;padding:12px;margin-top:10px}
+  .batch .head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline}
+  .batch .code{font-weight:900;font-size:16px;color:var(--teal)}
+  .batch .when{color:var(--muted);font-size:13px}
+  .editor{margin-top:10px;background:var(--surface2);border-radius:12px;padding:12px}
+  .hidden{display:none}
+  a{color:var(--teal)}
+  footer{text-align:center;color:var(--muted);font-size:12px;padding:20px 10px 30px}
+  #login{max-width:420px;margin:60px auto}
+  .sp-thumb{height:34px;width:auto;max-width:120px;object-fit:contain;background:#fff;
+            border-radius:8px;padding:3px;vertical-align:middle}
+  .sp-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:6px 0;
+          border-bottom:1px solid var(--line)}
+  .sp-row .nm{font-weight:800;min-width:160px}
+  .sp-row .lk{color:var(--muted);font-size:12px;overflow:hidden;text-overflow:ellipsis;max-width:260px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Admin Lomba</h1>
+      <p class="sub" id="who">Belum masuk</p>
+    </div>
+    <div class="row">
+      <button class="ghost hidden" id="reload">Muat ulang</button>
+      <button class="ghost hidden" id="logout">Keluar</button>
+    </div>
+  </header>
+
+  <!-- ── Masuk ─────────────────────────────────────────────────────────── -->
+  <div class="panel" id="login">
+    <h2>Masuk</h2>
+    <p class="sub">Kode 6 angka dikirim ke email staf. Tidak ada kata sandi.</p>
+    <div id="step-email">
+      <label for="email">Email staf</label>
+      <input id="email" type="email" autocomplete="email" placeholder="nama@contoh.com">
+      <div class="row" style="margin-top:10px"><button id="send-code">Kirim kode</button></div>
+    </div>
+    <div id="step-code" class="hidden">
+      <label for="code">Kode dari email</label>
+      <input id="code" inputmode="numeric" autocomplete="one-time-code" placeholder="123456">
+      <div class="row" style="margin-top:10px">
+        <button id="verify-code">Masuk</button>
+        <button class="ghost" id="back-email">Ganti email</button>
+      </div>
+    </div>
+    <div class="msg" id="login-msg"></div>
+  </div>
+
+  <!-- ── Aplikasi ──────────────────────────────────────────────────────── -->
+  <div id="app" class="hidden">
+    <div class="panel">
+      <p class="ptitle"><span>Event</span>
+        <button class="ghost" id="toggle-new-event">+ Event baru</button></p>
+      <div id="new-event" class="editor hidden">
+        <div class="grid2">
+          <div><label>Slug (nama folder di ayomath.com/lomba/)</label><input id="ne-slug" placeholder="lombok-tengah-2026"></div>
+          <div><label>Nama event</label><input id="ne-name" placeholder="Lomba Matematika Lombok Tengah 2026"></div>
+          <div><label>Penyelenggara (host)</label><input id="ne-host" placeholder="Dinas Pendidikan Kab. Lombok Tengah"></div>
+          <div><label>Pelaksana (organizer)</label><input id="ne-org" placeholder="IOA"></div>
+        </div>
+        <div class="row" style="margin-top:10px"><button id="ne-save">Simpan sebagai draft</button></div>
+        <div class="msg" id="ne-msg"></div>
+        <p class="sub">Halaman publiknya belum otomatis ada: salin folder <code>lomba/latihan/</code>
+          menjadi <code>lomba/&lt;slug&gt;/</code> dan ganti <code>CFG.event</code> (website/README.md).</p>
+      </div>
+      <div id="events"></div>
+    </div>
+
+    <div class="panel">
+      <p class="ptitle"><span>Staf</span></p>
+      <div id="staff"></div>
+      <div class="row" style="margin-top:8px">
+        <input id="st-email" type="email" placeholder="email staf baru" style="max-width:320px">
+        <button id="st-add">Tambah</button>
+      </div>
+      <div class="msg" id="st-msg"></div>
+    </div>
+  </div>
+
+  <footer>Platform <b>AyoMath</b> · halaman staf, tidak diindeks · jam dalam <b>WIB</b></footer>
+</div>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+const SUPA_URL = 'https://koadqcjejecqpnufkhyx.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtvYWRxY2plamVjcXBudWZraHl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzQ1NDEsImV4cCI6MjA5NTcxMDU0MX0.IQUnBXrGsz1fCRTvUb0f5vI8AKhmASoegvVs09wqbaI';
+const db = createClient(SUPA_URL, SUPA_KEY);
+
+const $ = (id) => document.getElementById(id);
+
+/** Semua teks dari server lewat sini — textContent, tidak pernah innerHTML. */
+function el(tag, text, cls, attrs) {
+  const e = document.createElement(tag);
+  if (text != null) e.textContent = String(text);
+  if (cls) e.className = cls;
+  if (attrs) for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+  return e;
+}
+function btn(text, cls, onClick) {
+  const b = el('button', text, cls);
+  b.onclick = onClick;
+  return b;
+}
+/** Tombol dua-klik untuk tindakan yang tidak bisa dibatalkan — tanpa dialog. */
+function armed(text, cls, onClick) {
+  let armedUntil = 0;
+  const b = el('button', text, cls);
+  b.onclick = async () => {
+    if (Date.now() > armedUntil) {
+      armedUntil = Date.now() + 5000;
+      b.textContent = `${text} — klik lagi untuk konfirmasi`;
+      setTimeout(() => { if (Date.now() >= armedUntil) b.textContent = text; }, 5200);
+      return;
+    }
+    armedUntil = 0; b.textContent = text; b.disabled = true;
+    try { await onClick(); } finally { b.disabled = false; }
+  };
+  return b;
+}
+function say(node, text, ok) {
+  node.textContent = text;
+  node.className = 'msg ' + (ok ? 'ok' : 'err');
+}
+const stamp = () => new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+const errText = (e) => (e?.message ?? String(e)).replace(/^.*?:\s*/, '');
+
+// ── WIB ↔ UTC. WIB tetap +7, tanpa DST, jadi aritmetika saja sudah benar. ──
+const WIB = 7 * 3600 * 1000;
+const toLocalInput = (iso) => new Date(new Date(iso).getTime() + WIB).toISOString().slice(0, 16);
+const fromLocalInput = (v) => new Date(Date.parse(v + ':00Z') - WIB).toISOString();
+const fmtWib = (iso) => new Date(iso).toLocaleString('id-ID',
+  { timeZone: 'Asia/Jakarta', weekday: 'short', day: '2-digit', month: 'short',
+    hour: '2-digit', minute: '2-digit' });
+const mmss = (ms) => {
+  const s = Math.max(0, Math.floor(ms / 1000));
+  return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+};
+
+/** Satu jalur untuk setiap RPC: error dilempar, tidak pernah data-null diam. */
+async function rpc(fn, args) {
+  const { data, error } = await db.rpc(fn, args ?? {});
+  if (error) throw error;
+  return data;
+}
+
+// ── Masuk ────────────────────────────────────────────────────────────────────
+
+$('send-code').onclick = async () => {
+  const email = $('email').value.trim().toLowerCase();
+  if (!email) return say($('login-msg'), 'Isi email dulu.', false);
+  $('send-code').disabled = true;
+  const { error } = await db.auth.signInWithOtp({ email, options: { shouldCreateUser: true } });
+  $('send-code').disabled = false;
+  if (error) return say($('login-msg'), errText(error), false);
+  $('step-email').classList.add('hidden');
+  $('step-code').classList.remove('hidden');
+  say($('login-msg'), `Kode dikirim ke ${email}. Cek juga folder spam.`, true);
+  $('code').focus();
+};
+$('back-email').onclick = () => {
+  $('step-code').classList.add('hidden');
+  $('step-email').classList.remove('hidden');
+};
+$('verify-code').onclick = async () => {
+  const email = $('email').value.trim().toLowerCase();
+  const token = $('code').value.replace(/\D/g, '');
+  if (token.length < 6) return say($('login-msg'), 'Kode 6 angka.', false);
+  $('verify-code').disabled = true;
+  const { error } = await db.auth.verifyOtp({ email, token, type: 'email' });
+  $('verify-code').disabled = false;
+  if (error) return say($('login-msg'), errText(error), false);
+  await boot();
+};
+$('code').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('verify-code').click(); });
+$('email').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('send-code').click(); });
+$('logout').onclick = async () => { await db.auth.signOut(); location.reload(); };
+$('reload').onclick = () => loadAll();
+
+async function boot() {
+  const { data: { session } } = await db.auth.getSession();
+  if (!session) return;                       // halaman masuk tetap tampil
+  let me;
+  try { me = await rpc('lomba_admin_whoami'); }
+  catch (e) { return say($('login-msg'), errText(e), false); }
+  if (!me?.staff) {
+    say($('login-msg'), `${me?.email ?? 'Akun ini'} bukan staf lomba. Minta staf yang ada menambahkan email ini.`, false);
+    $('logout').classList.remove('hidden');
+    return;
+  }
+  $('who').textContent = `Masuk sebagai ${me.email}`;
+  $('login').classList.add('hidden');
+  $('app').classList.remove('hidden');
+  $('logout').classList.remove('hidden');
+  $('reload').classList.remove('hidden');
+  await loadAll();
+}
+
+// ── Data ─────────────────────────────────────────────────────────────────────
+
+const S = { events: [], batches: [], open: new Set() };
+
+async function loadAll() {
+  try {
+    [S.events, S.batches] = await Promise.all([
+      rpc('lomba_admin_events'), rpc('lomba_admin_batches'),
+    ]);
+    drawEvents();
+    await drawStaff();
+  } catch (e) {
+    $('events').replaceChildren(el('div', 'Gagal memuat: ' + errText(e), 'msg err'));
+  }
+}
+
+// ── Event ────────────────────────────────────────────────────────────────────
+
+$('toggle-new-event').onclick = () => $('new-event').classList.toggle('hidden');
+$('ne-save').onclick = async () => {
+  try {
+    await rpc('lomba_admin_create_event', {
+      p_slug: $('ne-slug').value.trim().toLowerCase(), p_name: $('ne-name').value,
+      p_host: $('ne-host').value, p_organizer: $('ne-org').value });
+    say($('ne-msg'), `Disimpan ${stamp()} — masih draft.`, true);
+    await loadAll();
+  } catch (e) { say($('ne-msg'), errText(e), false); }
+};
+
+function drawEvents() {
+  const box = $('events');
+  box.replaceChildren();
+  if (!S.events.length) { box.appendChild(el('p', 'Belum ada event.', 'sub')); return; }
+  for (const ev of S.events) box.appendChild(eventCard(ev));
+}
+
+function eventCard(ev) {
+  const card = el('div', null, 'batch');
+  const head = el('div', null, 'head');
+  const left = el('div');
+  left.appendChild(el('span', ev.name, 'code'));
+  left.appendChild(document.createTextNode(' '));
+  left.appendChild(el('span', ev.status, 'pill ' + ev.status));
+  left.appendChild(el('div', `${ev.host} · ${ev.organizer} · /lomba/${ev.slug}/`, 'when'));
+  head.appendChild(left);
+
+  const links = el('div', null, 'row');
+  const a1 = el('a', 'halaman', null, { href: `${ev.slug}/index.html`, target: '_blank', rel: 'noopener' });
+  const a2 = el('a', 'papan langsung', null, { href: `${ev.slug}/live.html`, target: '_blank', rel: 'noopener' });
+  links.append(a1, document.createTextNode(' · '), a2);
+  head.appendChild(links);
+  card.appendChild(head);
+
+  const msg = el('div', null, 'msg');
+  const status = el('div', null, 'row');
+  status.style.marginTop = '8px';
+  for (const s of ['draft', 'published', 'closed']) {
+    const b = btn(s === 'draft' ? 'Draft' : s === 'published' ? 'Published' : 'Closed',
+      s === ev.status ? '' : 'ghost', async () => {
+        try {
+          await rpc('lomba_admin_set_event_status', { p_event: ev.id, p_status: s });
+          say(msg, `Status → ${s}, ${stamp()}`, true);
+          await loadAll();
+        } catch (e) { say(msg, errText(e), false); }
+      });
+    status.appendChild(b);
+  }
+  card.appendChild(status);
+  card.appendChild(msg);
+
+  const mine = S.batches.filter(b => b.event_id === ev.id);
+  if (!mine.length) card.appendChild(el('p', 'Belum ada batch. Salin dari batch event lain, atau buat lewat lomba_seed.sql.', 'sub'));
+  for (const b of mine) card.appendChild(batchCard(b));
+  card.appendChild(sponsorSection(ev));
+  return card;
+}
+
+// ── Sponsor ──────────────────────────────────────────────────────────────────
+// Logo diunggah ke bucket publik 'lomba-sponsors' (maks 500 KB, png/jpg/svg/
+// webp — batas itu ditegakkan bucket-nya), lalu URL publiknya disimpan di
+// baris sponsor. Tidak ada batas jumlah sponsor.
+
+const BUCKET = 'lomba-sponsors';
+
+async function uploadLogo(ev, file) {
+  if (!file) return null;
+  if (file.size > 512000) throw new Error('Logo lebih dari 500 KB — kecilkan dulu.');
+  const ext = (file.name.match(/\.(png|jpe?g|svg|webp)$/i)?.[1] ?? 'png').toLowerCase();
+  const base = file.name.replace(/\.[^.]+$/, '').toLowerCase().replace(/[^a-z0-9-]+/g, '-').replace(/^-+|-+$/g, '') || 'logo';
+  const path = `${ev.slug}/${Date.now()}-${base}.${ext}`;
+  const { error } = await db.storage.from(BUCKET).upload(path, file, { contentType: file.type || undefined, upsert: false });
+  if (error) throw error;
+  return db.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
+}
+
+async function removeLogo(url) {
+  // Best effort: an orphaned file is harmless, a failed delete must not block.
+  const m = String(url ?? '').match(new RegExp(`/${BUCKET}/(.+)$`));
+  if (!m) return;
+  try { await db.storage.from(BUCKET).remove([decodeURIComponent(m[1])]); } catch {}
+}
+
+function sponsorSection(ev) {
+  const box = el('div', null, 'batch');
+  const title = el('p', null, 'ptitle');
+  title.appendChild(el('span', 'Sponsor'));
+  const toggle = btn('+ Tambah sponsor', 'ghost', () => form.classList.toggle('hidden'));
+  title.appendChild(toggle);
+  box.appendChild(title);
+  const msg = el('div', null, 'msg');
+  const list = el('div');
+  const form = sponsorForm(ev, null, msg, async () => { form.classList.add('hidden'); await drawSponsors(ev, list, msg); });
+  form.classList.add('hidden');
+  box.append(form, list, msg);
+  drawSponsors(ev, list, msg);
+  return box;
+}
+
+async function drawSponsors(ev, list, msg) {
+  let rows;
+  try { rows = await rpc('lomba_admin_sponsors', { p_event: ev.id }); }
+  catch (e) { list.replaceChildren(el('p', errText(e), 'msg err')); return; }
+  list.replaceChildren();
+  if (!rows?.length) { list.appendChild(el('p', 'Belum ada sponsor. Halaman lomba memakai berkas sponsors.json di foldernya (kalau ada).', 'sub')); return; }
+  for (const sp of rows) {
+    const row = el('div', null, 'sp-row');
+    if (sp.logo_url) { const img = el('img', null, 'sp-thumb', { src: sp.logo_url, alt: sp.name, loading: 'lazy' }); row.appendChild(img); }
+    row.appendChild(el('span', sp.name, 'nm'));
+    row.appendChild(el('span', sp.tier, 'pill ' + (sp.tier === 'utama' ? 'closed' : 'draft')));
+    row.appendChild(el('span', `urutan ${sp.sort}`, 'lk'));
+    if (!sp.active) row.appendChild(el('span', 'nonaktif', 'pill draft'));
+    if (sp.link) row.appendChild(el('span', sp.link, 'lk'));
+    const acts = el('span', null, 'row');
+    const editor = sponsorForm(ev, sp, msg, async () => { editor.classList.add('hidden'); await drawSponsors(ev, list, msg); });
+    editor.classList.add('hidden');
+    acts.appendChild(btn('Ubah', 'ghost', () => editor.classList.toggle('hidden')));
+    acts.appendChild(armed('Hapus', 'warn', async () => {
+      try {
+        const logo = await rpc('lomba_admin_sponsor_delete', { p_id: sp.id });
+        await removeLogo(logo);
+        say(msg, `${sp.name} dihapus, ${stamp()}`, true);
+        await drawSponsors(ev, list, msg);
+      } catch (e) { say(msg, errText(e), false); }
+    }));
+    row.appendChild(acts);
+    list.append(row, editor);
+  }
+}
+
+function sponsorForm(ev, sp, msg, onSaved) {
+  const f = el('div', null, 'editor');
+  const g = el('div', null, 'grid3');
+  const fName = field(g, 'Nama sponsor', el('input', null, null, { value: sp?.name ?? '', placeholder: 'Toko Buku Contoh' }));
+  const fLink = field(g, 'Tautan (https, opsional)', el('input', null, null, { value: sp?.link ?? '', placeholder: 'https://…' }));
+  const fTier = field(g, 'Tingkat', select([['utama', 'utama — logo besar'], ['pendukung', 'pendukung']], sp?.tier ?? 'pendukung'));
+  const fSort = field(g, 'Urutan (kecil = lebih dulu)', el('input', null, null, { type: 'number', value: sp?.sort ?? 100 }));
+  const fFile = field(g, sp?.logo_url ? 'Ganti logo (opsional)' : 'Logo (png/jpg/svg/webp, maks 500 KB)', el('input', null, null, { type: 'file', accept: 'image/png,image/jpeg,image/svg+xml,image/webp' }));
+  f.appendChild(g);
+  const act = el('label');
+  const cb = el('input', null, null, { type: 'checkbox' }); cb.checked = sp ? sp.active : true;
+  act.append(cb, document.createTextNode('Tampilkan di halaman lomba dan papan langsung'));
+  f.appendChild(act);
+  const row = el('div', null, 'row'); row.style.marginTop = '10px';
+  row.appendChild(btn(sp ? 'Simpan' : 'Tambah', '', async () => {
+    let logo = sp?.logo_url ?? null;
+    try {
+      const file = fFile.files?.[0];
+      if (file) {
+        const fresh = await uploadLogo(ev, file);
+        if (logo && fresh !== logo) await removeLogo(logo);
+        logo = fresh;
+      }
+      await rpc('lomba_admin_sponsor_save', {
+        p_id: sp?.id ?? null, p_event: ev.id, p_name: fName.value,
+        p_logo_url: logo, p_link: fLink.value, p_tier: fTier.value,
+        p_sort: +fSort.value || 100, p_active: cb.checked });
+      say(msg, `${fName.value} disimpan, ${stamp()}`, true);
+      if (!sp) { fName.value = ''; fLink.value = ''; fFile.value = ''; }
+      await onSaved();
+    } catch (e) { say(msg, errText(e), false); }
+  }));
+  f.appendChild(row);
+  return f;
+}
+
+// ── Batch ────────────────────────────────────────────────────────────────────
+
+function batchCard(b) {
+  const card = el('div', null, 'batch');
+  const head = el('div', null, 'head');
+  const left = el('div');
+  left.appendChild(el('span', b.code, 'code'));
+  left.appendChild(document.createTextNode(' '));
+  left.appendChild(el('span', b.label));
+  if (b.is_practice) { left.appendChild(document.createTextNode(' ')); left.appendChild(el('span', 'latihan', 'pill practice')); }
+  const when = b.is_practice
+    ? `Latihan: tanpa jendela waktu — Mulai kapan saja selama event published · kelas ${b.kelas_min}–${b.kelas_max}`
+    : `${fmtWib(b.starts_at)} → ${fmtWib(b.ends_at)} WIB · kelas ${b.kelas_min}–${b.kelas_max} · ruang tunggu ${b.lobby_sec}s`;
+  left.appendChild(el('div', when, 'when'));
+  left.appendChild(el('div',
+    `Soal untuk kelas ${(b.kelas_list ?? []).join(', ') || '—'} · peserta ${b.entries} (selesai ${b.done})`
+    + ` · daftar peserta ${b.roster ? b.roster + ' nomor (tertutup)' : 'terbuka'} · papan: ${b.live_board}`, 'when'));
+  head.appendChild(left);
+  card.appendChild(head);
+
+  const msg = el('div', null, 'msg');
+  const actions = el('div', null, 'row');
+  actions.style.marginTop = '8px';
+  const editor = el('div', null, 'editor hidden');
+  const peserta = el('div', null, 'editor hidden');
+  const roster = el('div', null, 'editor hidden');
+
+  actions.appendChild(btn('Ubah', 'ghost', () => { editor.classList.toggle('hidden'); if (!editor.childElementCount) fillEditor(editor, b, msg); }));
+  actions.appendChild(btn('Peserta', 'ghost', async () => { peserta.classList.toggle('hidden'); if (!peserta.classList.contains('hidden')) await fillEntries(peserta, b, msg); }));
+  actions.appendChild(btn('Daftar peserta', 'ghost', async () => { roster.classList.toggle('hidden'); if (!roster.classList.contains('hidden')) await fillRoster(roster, b, msg); }));
+  actions.appendChild(armed('Buka sekarang (+5 mnt)', 'gold', async () => {
+    try {
+      const r = await rpc('lomba_admin_open_now', { p_batch: b.id, p_delay_sec: 300 });
+      say(msg, `Soal dibuka ${fmtWib(r.starts_at)} WIB, ${stamp()}`, true);
+      await loadAll();
+    } catch (e) { say(msg, errText(e), false); }
+  }));
+  actions.appendChild(armed('Tutup batch', 'warn', async () => {
+    try {
+      const n = await rpc('lomba_admin_close_batch', { p_batch: b.id });
+      say(msg, `${n} peserta yang belum selesai dinilai dari jawaban tersimpan, ${stamp()}`, true);
+      await loadAll();
+    } catch (e) { say(msg, errText(e), false); }
+  }));
+  actions.appendChild(btn('Unduh hasil (CSV)', 'ghost', async () => {
+    try {
+      const rows = await rpc('lomba_results', { p_batch: b.id });
+      const cols = ['kelas', 'rank', 'nomor', 'sekolah', 'score', 'points', 'max_points', 'time_ms', 'done'];
+      const esc = (v) => { const s = v == null ? '' : String(v); return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
+      const csv = [cols.join(',')].concat((rows ?? []).map(r => cols.map(c => esc(r[c])).join(','))).join('\n');
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+      a.download = `hasil-${b.code}.csv`;
+      a.click();
+      say(msg, `${rows?.length ?? 0} baris, ${stamp()}`, true);
+    } catch (e) { say(msg, errText(e), false); }
+  }));
+  card.appendChild(actions);
+  card.appendChild(msg);
+  card.append(editor, peserta, roster);
+  return card;
+}
+
+function field(parent, labelText, input) {
+  const wrap = el('div');
+  wrap.appendChild(el('label', labelText));
+  wrap.appendChild(input);
+  parent.appendChild(wrap);
+  return input;
+}
+function select(options, value) {
+  const s = el('select');
+  for (const [v, t] of options) { const o = el('option', t, null, { value: v }); if (v === value) o.selected = true; s.appendChild(o); }
+  return s;
+}
+
+function fillEditor(editor, b, msg) {
+  const g = el('div', null, 'grid3');
+  const fLabel = field(g, 'Label', el('input', null, null, { value: b.label }));
+  const fMin = field(g, 'Kelas min', el('input', null, null, { type: 'number', min: 1, max: 6, value: b.kelas_min }));
+  const fMax = field(g, 'Kelas max', el('input', null, null, { type: 'number', min: 1, max: 6, value: b.kelas_max }));
+  const fStart = field(g, 'Mulai (WIB)', el('input', null, null, { type: 'datetime-local', value: toLocalInput(b.starts_at) }));
+  const fEnd = field(g, 'Selesai (WIB)', el('input', null, null, { type: 'datetime-local', value: toLocalInput(b.ends_at) }));
+  const fLobby = field(g, 'Ruang tunggu (detik)', el('input', null, null, { type: 'number', min: 0, max: 1800, value: b.lobby_sec }));
+  const fDur = field(g, 'Batas per peserta (detik, kosong = dari soal)', el('input', null, null, { type: 'number', min: 60, max: 7200, value: b.duration_sec ?? '' }));
+  const fSpq = field(g, 'Detik per soal', el('input', null, null, { type: 'number', min: 10, max: 600, value: b.sec_per_question }));
+  const fBoard = field(g, 'Papan langsung', select([['full', 'full — skor & peringkat tampil'], ['progress', 'progress — bar saja, tanpa ✓/✗'], ['hidden', 'hidden — disembunyikan']], b.live_board));
+  const fRank = field(g, 'Peringkat', select([['accuracy', 'accuracy — nilai, lalu waktu'], ['speed', 'speed — sempurna tercepat dulu']], b.rank_by));
+  const fWrong = field(g, 'Penalti salah (× bobot)', el('input', null, null, { type: 'number', step: '0.25', min: 0, max: 5, value: b.wrong_penalty }));
+  const fBlank = field(g, 'Kredit kosong (× bobot)', el('input', null, null, { type: 'number', step: '0.25', min: 0, max: 5, value: b.blank_credit }));
+  editor.appendChild(g);
+
+  const pr = el('label');
+  const cb = el('input', null, null, { type: 'checkbox' }); cb.checked = b.is_practice;
+  pr.append(cb, document.createTextNode('Batch latihan — tanpa jendela waktu, peringkat tidak disegel, peserta boleh dihapus'));
+  editor.appendChild(pr);
+
+  const row = el('div', null, 'row'); row.style.marginTop = '10px';
+  row.appendChild(btn('Simpan', '', async () => {
+    const patch = {
+      label: fLabel.value, kelas_min: +fMin.value, kelas_max: +fMax.value,
+      starts_at: fromLocalInput(fStart.value), ends_at: fromLocalInput(fEnd.value),
+      lobby_sec: +fLobby.value, duration_sec: fDur.value === '' ? null : +fDur.value,
+      sec_per_question: +fSpq.value, live_board: fBoard.value, rank_by: fRank.value,
+      wrong_penalty: +fWrong.value, blank_credit: +fBlank.value, is_practice: cb.checked,
+    };
+    try {
+      await rpc('lomba_admin_set_batch', { p_batch: b.id, p_patch: patch });
+      say(msg, `Disimpan ${stamp()}`, true);
+      await loadAll();
+    } catch (e) { say(msg, errText(e), false); }
+  }));
+  const cloneCode = el('input', null, null, { placeholder: 'kode batch baru, mis. LATIHAN-2' });
+  cloneCode.style.maxWidth = '240px';
+  row.appendChild(cloneCode);
+  row.appendChild(btn('Salin batch', 'ghost', async () => {
+    try {
+      await rpc('lomba_admin_clone_batch', { p_from: b.id, p_code: cloneCode.value, p_label: null });
+      say(msg, `Batch ${cloneCode.value.toUpperCase()} dibuat (Sabtu depan 09:30–11:00 WIB, soal sama), ${stamp()}`, true);
+      await loadAll();
+    } catch (e) { say(msg, errText(e), false); }
+  }));
+  editor.appendChild(row);
+  editor.appendChild(el('p', 'Soal (papers) tidak bisa diubah dari sini — dibuat dengan tool/make_paper.dart dan lomba_seed.sql.', 'sub'));
+}
+
+async function fillEntries(box, b, msg) {
+  box.replaceChildren(el('p', 'Memuat…', 'sub'));
+  let rows;
+  try { rows = await rpc('lomba_admin_entries', { p_batch: b.id }); }
+  catch (e) { box.replaceChildren(el('p', errText(e), 'msg err')); return; }
+  box.replaceChildren();
+  if (!rows?.length) { box.appendChild(el('p', 'Belum ada peserta.', 'sub')); return; }
+  const t = el('table');
+  const th = el('tr');
+  for (const h of ['Peserta', 'Kelas', 'Sekolah', 'Mulai', 'Dijawab', 'Nilai', 'Waktu', 'Perangkat', '']) th.appendChild(el('th', h));
+  t.appendChild(th);
+  for (const r of rows) {
+    const tr = el('tr');
+    tr.appendChild(el('td', `Peserta ${r.nomor}`, 'mono'));
+    tr.appendChild(el('td', r.kelas));
+    tr.appendChild(el('td', r.sekolah || '—'));
+    tr.appendChild(el('td', fmtWib(r.started_at), 'mono'));
+    tr.appendChild(el('td', r.answered, 'mono'));
+    tr.appendChild(el('td', r.submitted_at ? `${r.score} (${r.points} poin)` : 'mengerjakan', 'mono'));
+    tr.appendChild(el('td', r.time_ms != null ? mmss(r.time_ms) : '—', 'mono'));
+    tr.appendChild(el('td', r.connected ? 'terhubung' : 'dilepas'));
+    const acts = el('td', null, 'row');
+    if (!r.submitted_at) acts.appendChild(armed('Lepas', 'ghost', async () => {
+      try {
+        const n = await rpc('lomba_admin_release_entry', { p_batch: b.id, p_nomor: r.nomor });
+        say(msg, n ? `Peserta ${r.nomor} dilepas — bisa Mulai lagi dari perangkat lain, ${stamp()}` : 'Tidak ada yang berubah.', !!n);
+        await fillEntries(box, b, msg);
+      } catch (e) { say(msg, errText(e), false); }
+    }));
+    if (b.is_practice) acts.appendChild(armed('Hapus', 'warn', async () => {
+      try {
+        await rpc('lomba_admin_delete_entry', { p_batch: b.id, p_nomor: r.nomor });
+        say(msg, `Peserta ${r.nomor} dihapus, ${stamp()}`, true);
+        await fillEntries(box, b, msg); await loadAll();
+      } catch (e) { say(msg, errText(e), false); }
+    }));
+    tr.appendChild(acts);
+    t.appendChild(tr);
+  }
+  box.appendChild(t);
+  if (!b.is_practice) box.appendChild(el('p', 'Batch resmi: peserta dilepas, tidak pernah dihapus (LOMBA.md §10).', 'sub'));
+}
+
+async function fillRoster(box, b, msg) {
+  box.replaceChildren(el('p', 'Memuat…', 'sub'));
+  let rows;
+  try { rows = await rpc('lomba_admin_roster', { p_batch: b.id }); }
+  catch (e) { box.replaceChildren(el('p', errText(e), 'msg err')); return; }
+  box.replaceChildren();
+  box.appendChild(el('label', 'Satu baris per peserta: nomor, sekolah. Kosongkan semua = batch terbuka untuk nomor apa pun.'));
+  const ta = el('textarea');
+  ta.value = (rows ?? []).map(r => `${r.nomor}, ${r.sekolah}`).join('\n');
+  ta.placeholder = '017, SDN 3 Praya\n018, SDN 4 Praya';
+  box.appendChild(ta);
+  const row = el('div', null, 'row'); row.style.marginTop = '8px';
+  row.appendChild(armed('Simpan daftar (mengganti seluruhnya)', '', async () => {
+    const list = ta.value.split('\n').map(l => l.trim()).filter(Boolean).map(l => {
+      const m = l.match(/^([^,;\t]+)[,;\t]?\s*(.*)$/);
+      return { nomor: (m?.[1] ?? '').trim(), sekolah: (m?.[2] ?? '').trim() };
+    });
+    try {
+      const n = await rpc('lomba_admin_roster_replace', { p_batch: b.id, p_rows: list });
+      say(msg, `${n} nomor tersimpan, ${stamp()}`, true);
+      await loadAll();
+    } catch (e) { say(msg, errText(e), false); }
+  }));
+  box.appendChild(row);
+}
+
+// ── Staf ─────────────────────────────────────────────────────────────────────
+
+async function drawStaff() {
+  const box = $('staff');
+  let rows;
+  try { rows = await rpc('lomba_admin_staff'); }
+  catch (e) { box.replaceChildren(el('p', errText(e), 'msg err')); return; }
+  box.replaceChildren();
+  for (const s of rows ?? []) {
+    const r = el('div', null, 'row');
+    r.appendChild(el('span', s.email));
+    if (s.note) r.appendChild(el('span', s.note, 'pill draft'));
+    r.appendChild(armed('Hapus', 'ghost', async () => {
+      try { await rpc('lomba_admin_remove_staff', { p_email: s.email }); say($('st-msg'), `${s.email} dihapus`, true); await drawStaff(); }
+      catch (e) { say($('st-msg'), errText(e), false); }
+    }));
+    box.appendChild(r);
+  }
+}
+$('st-add').onclick = async () => {
+  try {
+    await rpc('lomba_admin_add_staff', { p_email: $('st-email').value, p_note: null });
+    say($('st-msg'), `${$('st-email').value} ditambahkan — mereka masuk dengan kode email.`, true);
+    $('st-email').value = '';
+    await drawStaff();
+  } catch (e) { say($('st-msg'), errText(e), false); }
+};
+
+// ── Jalan ────────────────────────────────────────────────────────────────────
+await boot();
+</script>
+</body>
+</html>
