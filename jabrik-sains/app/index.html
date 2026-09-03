@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
   <!--
     If you are serving your web app in a path other than the root, change the
@@ -18,63 +18,21 @@
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="description" content="Jabrik Sains — teman mengajar IPAS untuk guru SD Kelas 1–6. 39 pelajaran, 97 eksperimen berbahan rumahan, rubrik penilaian, dan Modul Ajar siap ekspor. Gratis dan bisa dibawakan tanpa proyektor.">
-  <meta name="theme-color" content="#2E9E5B">
+  <meta name="description" content="A new Flutter project.">
 
   <!-- iOS meta tags & icons -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="Jabrik Sains">
+  <meta name="apple-mobile-web-app-title" content="petualangan_sains">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>Jabrik Sains — Teman Mengajar IPAS untuk Guru SD</title>
+  <title>petualangan_sains</title>
   <link rel="manifest" href="manifest.json">
-
-  <style>
-    html, body { margin: 0; padding: 0; height: 100%; background: #FBF8F1; }
-    /* Shown while the engine downloads — the first load is a few MB, so a blank
-       white page would look broken on a slow connection. Removed on first frame. */
-    #loading {
-      position: fixed; inset: 0; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: 18px;
-      background: #FBF8F1; color: #1B7A42; z-index: 9999;
-      font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      text-align: center; padding: 24px;
-    }
-    #loading img { width: 96px; height: 96px; border-radius: 24px; }
-    #loading .name { font-size: 22px; font-weight: 800; }
-    #loading .hint { font-size: 14px; color: #5A6B61; max-width: 320px; line-height: 1.5; }
-    #loading .bar {
-      width: 180px; height: 6px; border-radius: 999px; background: #E3F5E9; overflow: hidden;
-    }
-    #loading .bar span {
-      display: block; width: 40%; height: 100%; border-radius: 999px; background: #2E9E5B;
-      animation: slide 1.2s ease-in-out infinite;
-    }
-    @keyframes slide {
-      0%   { transform: translateX(-100%); }
-      100% { transform: translateX(250%); }
-    }
-  </style>
 </head>
 <body>
-  <div id="loading">
-    <img src="icons/Icon-192.png" alt="Jabrik Sains">
-    <div class="name">Jabrik Sains</div>
-    <div class="bar"><span></span></div>
-    <div class="hint">Menyiapkan pelajaran… Pemuatan pertama agak lama, setelah itu jauh lebih cepat.</div>
-  </div>
-
-  <script>
-    window.addEventListener('flutter-first-frame', function () {
-      var el = document.getElementById('loading');
-      if (el) el.remove();
-    });
-  </script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
