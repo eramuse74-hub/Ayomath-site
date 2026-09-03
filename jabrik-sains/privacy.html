@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Jabrik Sains — Kebijakan Privasi, Ketentuan &amp; Penafian</title>
-  <meta name="description" content="Kebijakan privasi, ketentuan penggunaan, dan penafian Jabrik Sains — alat bantu mengajar IPAS gratis untuk guru di Indonesia. Aplikasi bekerja sepenuhnya luring dan tidak mengumpulkan data pribadi apa pun." />
+  <title data-en="Jabrik Sains — Privacy Policy, Terms &amp; Disclaimer">Jabrik Sains — Kebijakan Privasi, Ketentuan &amp; Penafian</title>
+  <meta name="description" content="Kebijakan privasi, ketentuan penggunaan, dan penafian Jabrik Sains — alat bantu mengajar IPAS gratis untuk guru di Indonesia. Aplikasi bekerja sepenuhnya luring dan tidak mengumpulkan data pribadi apa pun." data-en="Privacy policy, terms of use and disclaimer for Jabrik Sains — a free science (IPAS) teaching aid for teachers in Indonesia. The app works fully offline and collects no personal data at all." />
+  <script src="../lang.js"></script>
   <style>
     :root {
       --green: #2E9E5B; --green-dark: #1B7A42; --green-soft: #E3F5E9;
@@ -23,6 +24,7 @@
     header { padding: 8px 0; }
     h1 { font-size: 1.7rem; margin: 0 0 4px; color: var(--ink); }
     .sub { color: var(--ink-soft); font-size: 0.95rem; margin: 0; }
+    .note { color: var(--ink-soft); font-size: 0.85rem; font-style: italic; margin: 6px 0 0; }
     .intro {
       background: var(--green-soft); color: var(--green-dark);
       border-radius: 16px; padding: 16px; margin: 20px 0; font-size: 0.98rem;
@@ -38,12 +40,26 @@
     .card p { margin: 0; color: var(--ink); }
     footer { text-align: center; color: var(--ink-soft); font-size: 0.85rem; margin-top: 28px; }
     a { color: var(--green-dark); }
+    /* ID ⇄ EN toggle — see ../lang.js */
+    .langbar { display: flex; justify-content: space-between; align-items: center; }
+    .lang { display: inline-flex; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 3px; gap: 2px; margin-left: auto; }
+    .lang button { border: 0; background: none; font: inherit; font-weight: 800; font-size: 13px; padding: 4px 12px; border-radius: 999px; color: var(--ink-soft); cursor: pointer; }
+    .lang button.on { background: var(--green); color: #fff; }
+    html:not([data-lang="en"]) [lang="en"], html[data-lang="en"] [lang="id"] { display: none; }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <a class="back" href="./">← Jabrik Sains</a>
+    <div class="langbar">
+      <a class="back" href="./">← Jabrik Sains</a>
+      <span class="lang" role="group" aria-label="Bahasa / Language">
+        <button type="button" data-set-lang="id" title="Bahasa Indonesia">ID</button>
+        <button type="button" data-set-lang="en" title="English">EN</button>
+      </span>
+    </div>
 
+    <!-- ======================= BAHASA INDONESIA ======================= -->
+    <div lang="id">
     <header>
       <h1>Jabrik Sains — Kebijakan Privasi, Ketentuan &amp; Penafian</h1>
       <p class="sub">Berlaku sejak Agustus 2026 · Aplikasi Android <code>com.rickola.jabrik_sains</code></p>
@@ -128,6 +144,93 @@
       Aplikasi Android: <code>com.rickola.jabrik_sains</code><br />
       Bagian dari <a href="../">Eramuse</a> · Dibuat dengan 💚 untuk guru Indonesia.
     </footer>
+    </div>
+
+    <!-- ============================ ENGLISH ============================ -->
+    <div lang="en">
+    <header>
+      <h1>Jabrik Sains — Privacy Policy, Terms &amp; Disclaimer</h1>
+      <p class="sub">Effective from August 2026 · Android app <code>com.rickola.jabrik_sains</code></p>
+      <p class="note">This English translation is provided for convenience. If the two versions differ, the Indonesian version applies.</p>
+    </header>
+
+    <div class="intro">
+      Jabrik Sains was made as a gift to teachers — free, no ads, no hidden costs.
+      This page explains how it may be used, briefly and honestly. Jabrik Sains is a
+      science (IPAS) teaching aid for teachers in Indonesia.
+    </div>
+
+    <div class="card">
+      <h2><span class="emoji">🔒</span> Data &amp; privacy</h2>
+      <p>Jabrik Sains works fully offline. All notes, journals and profiles are stored only
+      on your device — never sent to any server, no tracking, no ads. If the app is
+      uninstalled, its data is deleted with it, so keep a backup if needed. <b>Jabrik Sains
+      does not collect, store or share any personal data</b> — neither the teacher's nor
+      the pupils'. We also share no data with third parties, because we receive none.</p>
+    </div>
+
+    <div class="card">
+      <h2><span class="emoji">🎁</span> Free for every teacher</h2>
+      <p>Jabrik Sains is free and will always be free to use for teaching. Use it in public
+      or private schools, in cities or remote areas, without paying anything. Please share
+      it with fellow teachers.</p>
+    </div>
+
+    <div class="card">
+      <h2><span class="emoji">📚</span> A teaching aid, not a replacement for the teacher</h2>
+      <p>The materials, experiments and lesson plans here are aids. You are the expert in
+      your classroom. Always apply your own professional judgement before presenting or
+      carrying out anything with children.</p>
+    </div>
+
+    <div class="card">
+      <h2><span class="emoji">⚠️</span> Accuracy disclaimer</h2>
+      <p>We try to keep the science content as accurate as possible, but we do not
+      guarantee that everything is 100% accurate, complete or up to date. There may be
+      typos, simplifications or mistakes. If something looks wrong, please double-check
+      with a trusted source before using it — and let us know so it can be fixed.</p>
+    </div>
+
+    <div class="card">
+      <h2><span class="emoji">🧪</span> Activity safety</h2>
+      <p>Some activities involve real objects (water, small flames, sharp objects,
+      household materials). Supervise the children, put safety first, and adapt to your
+      classroom conditions. Responsibility for safety during an activity rests with the
+      supervising adult on site.</p>
+    </div>
+
+    <div class="card">
+      <h2><span class="emoji">🛡️</span> No warranty</h2>
+      <p>This app is provided "as is", without warranty of any kind. The maker is not
+      liable for any loss that may arise from the use of the app or its contents. Use it
+      at your own discretion.</p>
+    </div>
+
+    <div class="card">
+      <h2><span class="emoji">💚</span> Appropriate use</h2>
+      <p>Feel free to use and share Jabrik Sains for teaching. Please do not resell it or
+      claim it as your own work. Let's keep it free for every teacher.</p>
+    </div>
+
+    <div class="card">
+      <h2><span class="emoji">🔄</span> Changes</h2>
+      <p>These terms may be updated as the app evolves. The latest version is always on
+      this page.</p>
+    </div>
+
+    <div class="card">
+      <h2><span class="emoji">✉️</span> Contact &amp; report errors</h2>
+      <p>Found an error in the material, or have feedback? Let us know at
+      <a href="mailto:eramuse74@gmail.com">eramuse74@gmail.com</a>. Every report helps
+      improve Jabrik Sains for all teachers.</p>
+    </div>
+
+    <footer>
+      Jabrik Sains v2.1.0 · Effective from August 2026<br />
+      Android app: <code>com.rickola.jabrik_sains</code><br />
+      Part of <a href="../">Eramuse</a> · Made with 💚 for Indonesian teachers.
+    </footer>
+    </div>
   </div>
 </body>
 </html>

@@ -3,8 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Syarat Penggunaan — AyoMath</title>
-<meta name="description" content="Syarat Penggunaan (EULA) AyoMath: aplikasi gratis & nirlaba untuk anak SD, tanpa iklan dan tanpa pembelian dalam aplikasi.">
+<title data-en="Terms of Use — AyoMath">Syarat Penggunaan — AyoMath</title>
+<meta name="description" content="Syarat Penggunaan (EULA) AyoMath: aplikasi gratis & nirlaba untuk anak SD, tanpa iklan dan tanpa pembelian dalam aplikasi." data-en="AyoMath Terms of Use (EULA): a free, non-profit app for primary-school children, with no ads and no in-app purchases.">
+<script src="lang.js"></script>
 <style>
   :root{--teal:#1F9E8E;--bg:#F7F8FC;--surface:#fff;--text:#2D2A45;--muted:#6b6880}
   *{box-sizing:border-box}
@@ -13,17 +14,32 @@
   h1{font-size:30px;font-weight:900;margin:8px 0 4px}
   h2{font-size:19px;font-weight:800;margin:26px 0 8px;color:var(--teal)}
   .meta{color:var(--muted);font-size:14px;margin-bottom:8px}
+  .note{color:var(--muted);font-size:13px;font-style:italic;margin:0 0 14px}
   a{color:var(--teal)}
   ul{padding-left:20px}
-  .back{display:inline-block;margin-bottom:16px;text-decoration:none;font-weight:700}
+  .back{display:inline-block;text-decoration:none;font-weight:700}
   .surface{background:var(--surface);border-radius:18px;padding:22px 24px;box-shadow:0 2px 14px rgba(45,42,69,.06)}
   footer{color:var(--muted);font-size:14px;margin-top:28px;text-align:center}
+  /* ID ⇄ EN toggle — see lang.js */
+  .langbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+  .lang{display:inline-flex;background:#fff;border:1px solid rgba(45,42,69,.14);border-radius:999px;padding:3px;gap:2px;margin-left:auto}
+  .lang button{border:0;background:none;font:inherit;font-weight:800;font-size:13px;padding:4px 12px;border-radius:999px;color:var(--muted);cursor:pointer}
+  .lang button.on{background:var(--teal);color:#fff}
+  html:not([data-lang="en"]) [lang="en"],html[data-lang="en"] [lang="id"]{display:none}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="ayomath/">← AyoMath</a>
-  <div class="surface">
+  <div class="langbar">
+    <a class="back" href="ayomath/">← AyoMath</a>
+    <span class="lang" role="group" aria-label="Bahasa / Language">
+      <button type="button" data-set-lang="id" title="Bahasa Indonesia">ID</button>
+      <button type="button" data-set-lang="en" title="English">EN</button>
+    </span>
+  </div>
+
+  <!-- ======================= BAHASA INDONESIA ======================= -->
+  <div class="surface" lang="id">
     <h1>Syarat Penggunaan AyoMath</h1>
     <p class="meta"><b>Berlaku sejak:</b> 31 Mei 2026 · <b>Pengembang:</b> ESumar · Kontak: <a href="mailto:ayomath.games@gmail.com">ayomath.games@gmail.com</a></p>
 
@@ -89,7 +105,77 @@
        Anda juga bisa mengirim pesan langsung dari aplikasi: buka
        <b>Area Orang Tua → Pesan &amp; Rekomendasi</b>.</p>
   </div>
-  <footer><a href="ayomath/">AyoMath</a> · <a href="privacy.html">Kebijakan Privasi</a></footer>
+
+  <!-- ============================ ENGLISH ============================ -->
+  <div class="surface" lang="en">
+    <h1>AyoMath Terms of Use</h1>
+    <p class="meta"><b>Effective from:</b> 31 May 2026 · <b>Developer:</b> ESumar · Contact: <a href="mailto:ayomath.games@gmail.com">ayomath.games@gmail.com</a></p>
+    <p class="note">This English translation is provided for convenience. If the two versions differ, the Indonesian version applies.</p>
+
+    <p>Welcome to AyoMath. By installing or using this app, you agree to the following
+       terms. The language here is deliberately simple — because our main users are
+       primary-school children and their parents.</p>
+
+    <h2>1. A free &amp; non-profit app</h2>
+    <p>AyoMath is a <b>free social project</b>. There are no ads, no in-app purchases,
+       no subscriptions, and no donation requests. In-game money &amp; coins are a
+       <b>virtual currency</b> for learning about the value of money — they <b>cannot be
+       exchanged</b> for anything in the real world.</p>
+
+    <h2>2. Who it is for</h2>
+    <p>This app is intended for <b>Indonesian children of primary-school age (Grades 1–6)</b>.
+       Younger children are advised to use the app <b>with a parent or guardian</b>.
+       Important settings (play time, progress reset and so on) are protected in the
+       <b>Parent Area</b>, which is locked behind a problem that is hard for young children.</p>
+
+    <h2>3. Prohibited use</h2>
+    <p>You <b>may not</b>:</p>
+    <ul>
+      <li>reverse engineer the app for malicious purposes;</li>
+      <li>use the app to harass, defraud, or break the law;</li>
+      <li>abuse the leaderboard with fake scores or inappropriate content.</li>
+    </ul>
+    <p>We reserve the right to remove anonymous accounts or scores that violate these terms.</p>
+
+    <h2>4. Code licence (MIT)</h2>
+    <p>AyoMath's source code is shared under the <b>MIT Licence</b>. This means you may
+       <b>use, copy, modify and redistribute</b> the code free of charge. The MIT Licence
+       covers the code; it <b>does not cover the name "AyoMath" or its logo</b> — those are
+       the project's identity and are not granted automatically.</p>
+
+    <h2>5. No warranty (as-is)</h2>
+    <p>This app is <b>provided as is</b>, without warranty of any kind. Although we strive
+       to present correct, curriculum-aligned maths problems, <b>we do not guarantee</b>
+       100% accuracy or uninterrupted availability.</p>
+    <p>To the extent permitted by applicable law, the developer is <b>not liable</b> for
+       any loss (direct or indirect) arising from the use of this app, including but not
+       limited to data loss, device damage, or learning outcomes that fall short of
+       expectations.</p>
+
+    <h2>6. Children's privacy</h2>
+    <p>We <b>do not collect children's personal data</b>. Details are in the
+       <a href="privacy.html">Privacy Policy</a>. Children do not need to create an account.
+       The optional Leaderboard only sends <b>an anonymous ID + nickname + province + grade + XP</b>.</p>
+
+    <h2>7. Changes</h2>
+    <p>We may update the app and these terms from time to time to improve safety, the
+       curriculum, or the learning experience. Major changes will be noted in app updates
+       or on this page.</p>
+
+    <h2>8. Governing law</h2>
+    <p>These terms are governed by the laws of the Republic of Indonesia. Any dispute that
+       cannot be settled amicably will be resolved through the appropriate legal mechanisms
+       in Indonesia.</p>
+
+    <h2>9. Contact</h2>
+    <p>Questions, feedback, or a problem to report? Email us at
+       <a href="mailto:ayomath.games@gmail.com">ayomath.games@gmail.com</a>.
+       You can also send a message directly from the app: open
+       <b>Parent Area → Messages &amp; Recommendations</b>.</p>
+  </div>
+
+  <footer lang="id"><a href="ayomath/">AyoMath</a> · <a href="privacy.html">Kebijakan Privasi</a></footer>
+  <footer lang="en"><a href="ayomath/">AyoMath</a> · <a href="privacy.html">Privacy Policy</a></footer>
 </div>
 </body>
 </html>

@@ -3,8 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kebijakan Privasi — AyoMath</title>
-<meta name="description" content="Kebijakan Privasi AyoMath: aplikasi bekerja offline, tanpa login, tanpa iklan, dan tidak mengumpulkan data pribadi anak.">
+<title data-en="Privacy Policy — AyoMath">Kebijakan Privasi — AyoMath</title>
+<meta name="description" content="Kebijakan Privasi AyoMath: aplikasi bekerja offline, tanpa login, tanpa iklan, dan tidak mengumpulkan data pribadi anak." data-en="AyoMath Privacy Policy: the app works offline, without login, without ads, and does not collect children's personal data.">
+<script src="lang.js"></script>
 <style>
   :root{--teal:#1F9E8E;--bg:#F7F8FC;--surface:#fff;--text:#2D2A45;--muted:#6b6880}
   *{box-sizing:border-box}
@@ -13,20 +14,35 @@
   h1{font-size:30px;font-weight:900;margin:8px 0 4px}
   h2{font-size:20px;font-weight:800;margin:28px 0 8px;color:var(--teal)}
   .meta{color:var(--muted);font-size:14px;margin-bottom:8px}
+  .note{color:var(--muted);font-size:13px;font-style:italic;margin:0 0 14px}
   a{color:var(--teal)}
   table{width:100%;border-collapse:collapse;margin:12px 0;font-size:15px}
   th,td{border:1px solid #e4e3ef;padding:8px 10px;text-align:left;vertical-align:top}
   th{background:#eef6f4}
   ul{padding-left:20px}
-  .back{display:inline-block;margin-bottom:16px;text-decoration:none;font-weight:700}
+  .back{display:inline-block;text-decoration:none;font-weight:700}
   .surface{background:var(--surface);border-radius:18px;padding:22px 24px;box-shadow:0 2px 14px rgba(45,42,69,.06)}
   footer{color:var(--muted);font-size:14px;margin-top:28px;text-align:center}
+  /* ID ⇄ EN toggle — see lang.js */
+  .langbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+  .lang{display:inline-flex;background:#fff;border:1px solid rgba(45,42,69,.14);border-radius:999px;padding:3px;gap:2px;margin-left:auto}
+  .lang button{border:0;background:none;font:inherit;font-weight:800;font-size:13px;padding:4px 12px;border-radius:999px;color:var(--muted);cursor:pointer}
+  .lang button.on{background:var(--teal);color:#fff}
+  html:not([data-lang="en"]) [lang="en"],html[data-lang="en"] [lang="id"]{display:none}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="ayomath/">← AyoMath</a>
-  <div class="surface">
+  <div class="langbar">
+    <a class="back" href="ayomath/">← AyoMath</a>
+    <span class="lang" role="group" aria-label="Bahasa / Language">
+      <button type="button" data-set-lang="id" title="Bahasa Indonesia">ID</button>
+      <button type="button" data-set-lang="en" title="English">EN</button>
+    </span>
+  </div>
+
+  <!-- ======================= BAHASA INDONESIA ======================= -->
+  <div class="surface" lang="id">
     <h1>Kebijakan Privasi AyoMath</h1>
     <p class="meta"><b>Berlaku sejak:</b> 30 Mei 2026 · <b>Pengembang:</b> ESumar · Kontak: <a href="mailto:ayomath.games@gmail.com">ayomath.games@gmail.com</a></p>
 
@@ -83,7 +99,69 @@
     <h2>Kontak</h2>
     <p>Pertanyaan tentang privasi? Email <a href="mailto:ayomath.games@gmail.com">ayomath.games@gmail.com</a>.</p>
   </div>
-  <footer><a href="ayomath/">AyoMath</a> · <a href="terms.html">Syarat Penggunaan</a></footer>
+
+  <!-- ============================ ENGLISH ============================ -->
+  <div class="surface" lang="en">
+    <h1>AyoMath Privacy Policy</h1>
+    <p class="meta"><b>Effective from:</b> 30 May 2026 · <b>Developer:</b> ESumar · Contact: <a href="mailto:ayomath.games@gmail.com">ayomath.games@gmail.com</a></p>
+    <p class="note">This English translation is provided for convenience. If the two versions differ, the Indonesian version applies.</p>
+
+    <p>AyoMath is a free maths practice app for primary-school children. We designed it to be
+       <b>child-friendly and privacy-respecting</b>: the app works <b>offline</b>,
+       <b>without login</b>, and <b>does not collect children's personal data</b>.</p>
+
+    <h2>Data we do NOT collect</h2>
+    <p>We <b>never</b> ask for or store:</p>
+    <ul>
+      <li>real names, email addresses or phone numbers;</li>
+      <li>photos, contacts or voice;</li>
+      <li>date of birth or exact age;</li>
+      <li>GPS / device location;</li>
+      <li>advertising IDs.</li>
+    </ul>
+    <p>There are no ads, no third-party trackers, and we <b>never sell any data</b>.</p>
+
+    <h2>Data stored on the device (offline)</h2>
+    <p>Learning progress (level, XP, coins, stars, streak, shop items and parent settings)
+       is stored <b>only on the phone</b> in the app's local storage. Uninstalling the app
+       deletes this data.</p>
+
+    <h2>Leaderboard data (optional, online)</h2>
+    <p>The Leaderboard is <b>optional</b> and only becomes active if the child selects a
+       <b>province</b>. When active, we send the following <b>anonymous</b> data to our
+       server (Supabase):</p>
+    <table>
+      <tr><th>Data</th><th>Example</th><th>Purpose</th></tr>
+      <tr><td>Anonymous ID</td><td>generated automatically, random</td><td>distinguishes one score row (not an identity)</td></tr>
+      <tr><td>Nickname</td><td>"Kucing Pemberani 42"</td><td>shown on the board (generated automatically, <b>not a real name</b>)</td></tr>
+      <tr><td>Province</td><td>"Jawa Barat"</td><td>groups rankings by region (chosen manually, <b>not GPS</b>)</td></tr>
+      <tr><td>Grade</td><td>3</td><td>ranks children against the same grade, for fairness</td></tr>
+      <tr><td>XP</td><td>12,500</td><td>the ranking score</td></tr>
+    </table>
+    <p>No name, email or precise location is sent. The ID is anonymous (anonymous sign-in),
+       so it is <b>not linked to the child's real identity</b>. All data is sent encrypted
+       (HTTPS).</p>
+
+    <h2>Children's Privacy (Designed for Families)</h2>
+    <p>AyoMath is intended for families and children. In line with this, we do not collect
+       personal information from children. The Parent Area is locked behind a problem that is
+       hard for young children, so settings can only be changed by an adult.</p>
+
+    <h2>Data retention &amp; deletion</h2>
+    <p>Leaderboard data is kept in Supabase for as long as the app is in use. Because the
+       data is anonymous and minimal, no personal information can trace back to a child.
+       For deletion requests or any other question, contact
+       <a href="mailto:ayomath.games@gmail.com">ayomath.games@gmail.com</a> and we will help.</p>
+
+    <h2>Policy changes</h2>
+    <p>If this policy changes, we will update the "Effective from" date above.</p>
+
+    <h2>Contact</h2>
+    <p>Questions about privacy? Email <a href="mailto:ayomath.games@gmail.com">ayomath.games@gmail.com</a>.</p>
+  </div>
+
+  <footer lang="id"><a href="ayomath/">AyoMath</a> · <a href="terms.html">Syarat Penggunaan</a></footer>
+  <footer lang="en"><a href="ayomath/">AyoMath</a> · <a href="terms.html">Terms of Use</a></footer>
 </div>
 </body>
 </html>

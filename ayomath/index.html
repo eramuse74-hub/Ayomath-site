@@ -3,8 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AyoMath — Game Matematika SD Gratis & Ramah Anak</title>
-<meta name="description" content="AyoMath: game latihan matematika SD (Kelas 1–6) yang gratis, offline, tanpa iklan. Banyak mode yang makin menantang seiring kemampuan anak — termasuk Mode Jenius bertaraf internasional (benchmark Singapura & Korea).">
+<title data-en="AyoMath — Free, Child-Friendly Primary Maths Game">AyoMath — Game Matematika SD Gratis & Ramah Anak</title>
+<meta name="description" content="AyoMath: game latihan matematika SD (Kelas 1–6) yang gratis, offline, tanpa iklan. Banyak mode yang makin menantang seiring kemampuan anak — termasuk Mode Jenius bertaraf internasional (benchmark Singapura & Korea)." data-en="AyoMath: a free, offline, ad-free maths practice game for primary school (Grades 1–6). Many modes that grow harder as the child improves — including an international-standard Genius Mode (benchmarked against Singapore & Korea).">
+<script src="../lang.js"></script>
 <style>
   :root{--teal:#1F9E8E;--violet:#6C5CE7;--coral:#FF6B6B;--bg:#F7F8FC;--surface:#fff;--text:#2D2A45;--muted:#6b6880}
   *{box-sizing:border-box}
@@ -32,78 +33,133 @@
   .shots img{flex:0 0 auto;width:200px;height:auto;border-radius:20px;border:1px solid rgba(45,42,69,.08);box-shadow:0 6px 20px rgba(45,42,69,.12);scroll-snap-align:center}
   .shots::-webkit-scrollbar{height:8px}
   .shots::-webkit-scrollbar-thumb{background:rgba(45,42,69,.18);border-radius:8px}
+  /* ID ⇄ EN toggle — see ../lang.js */
+  .langbar{display:flex;justify-content:space-between;align-items:center}
+  .back{display:inline-block;color:var(--muted);text-decoration:none;font-size:14px;font-weight:700;padding:8px 0}
+  .back:hover{color:var(--teal)}
+  .lang{display:inline-flex;background:#fff;border:1px solid rgba(45,42,69,.14);border-radius:999px;padding:3px;gap:2px;margin-left:auto}
+  .lang button{border:0;background:none;font:inherit;font-weight:800;font-size:13px;padding:4px 12px;border-radius:999px;color:var(--muted);cursor:pointer}
+  .lang button.on{background:var(--teal);color:#fff}
+  html:not([data-lang="en"]) [lang="en"],html[data-lang="en"] [lang="id"]{display:none}
 </style>
 </head>
 <body>
 <div class="wrap">
+  <div class="langbar">
+    <a class="back" href="../">← Eramuse</a>
+    <span class="lang" role="group" aria-label="Bahasa / Language">
+      <button type="button" data-set-lang="id" title="Bahasa Indonesia">ID</button>
+      <button type="button" data-set-lang="en" title="English">EN</button>
+    </span>
+  </div>
+
   <header>
     <div class="logo">🐱</div>
     <h1>AyoMath</h1>
-    <p class="tag">Game matematika SD yang gratis, offline, dan ramah anak.</p>
+    <p class="tag" lang="id">Game matematika SD yang gratis, offline, dan ramah anak.</p>
+    <p class="tag" lang="en">A free, offline, child-friendly primary-school maths game.</p>
     <div class="btns">
-      <a class="btn teal" href="https://play.google.com/store/apps/details?id=com.rickola.ayomath">▶ Dapatkan di Google Play</a>
-      <a class="btn violet" href="https://play.ayomath.com">🎮 Main di Browser</a>
+      <a class="btn teal" href="https://play.google.com/store/apps/details?id=com.rickola.ayomath"><span lang="id">▶ Dapatkan di Google Play</span><span lang="en">▶ Get it on Google Play</span></a>
+      <a class="btn violet" href="https://play.ayomath.com"><span lang="id">🎮 Main di Browser</span><span lang="en">🎮 Play in Browser</span></a>
     </div>
     <div class="btns">
-      <a class="btn ghost" href="../privacy.html">Kebijakan Privasi</a>
-      <a class="btn ghost" href="../terms.html">Syarat Penggunaan</a>
+      <a class="btn ghost" href="../privacy.html"><span lang="id">Kebijakan Privasi</span><span lang="en">Privacy Policy</span></a>
+      <a class="btn ghost" href="../terms.html"><span lang="id">Syarat Penggunaan</span><span lang="en">Terms of Use</span></a>
     </div>
   </header>
 
   <div class="card">
-    <p>AyoMath adalah aplikasi latihan matematika untuk anak SD Kelas 1–6 di Indonesia.
+    <p lang="id">AyoMath adalah aplikasi latihan matematika untuk anak SD Kelas 1–6 di Indonesia.
        Dirancang sebagai <b>proyek sosial</b>: gratis, tanpa iklan, dan bisa dipakai
        <b>tanpa internet</b> — agar bisa dipakai di mana saja, termasuk di daerah dengan
        jaringan terbatas.</p>
+    <p lang="en">AyoMath is a maths practice app for primary-school children in Grades 1–6 in
+       Indonesia. Designed as a <b>social project</b>: free, ad-free, and usable
+       <b>without internet</b> — so it works anywhere, including areas with limited
+       connectivity.</p>
 
-    <div class="feat"><span class="ic">📚</span><span><b>Sesuai Kurikulum Merdeka</b>Kelas 1–6, dari berhitung dasar sampai pecahan, desimal, geometri, dan soal cerita bertingkat.</span></div>
-    <div class="feat"><span class="ic">📶</span><span><b>Bekerja offline</b>Progres belajar tersimpan di HP. Tidak butuh akun, tidak butuh kuota.</span></div>
-    <div class="feat"><span class="ic">🛡️</span><span><b>Aman & menghormati privasi</b>Tanpa iklan, tanpa pelacak, tanpa data pribadi anak. Ada batas waktu bermain & Area Orang Tua.</span></div>
-    <div class="feat"><span class="ic">⭐</span><span><b>Belajar nilai baik</b>Setiap petualangan menyelipkan nilai: kebersihan, kejujuran, hormat, dan kebaikan hati.</span></div>
+    <div class="feat"><span class="ic">📚</span>
+      <span lang="id"><b>Sesuai Kurikulum Merdeka</b>Kelas 1–6, dari berhitung dasar sampai pecahan, desimal, geometri, dan soal cerita bertingkat.</span>
+      <span lang="en"><b>Follows Kurikulum Merdeka</b>Grades 1–6, from basic arithmetic to fractions, decimals, geometry and multi-step word problems.</span></div>
+    <div class="feat"><span class="ic">📶</span>
+      <span lang="id"><b>Bekerja offline</b>Progres belajar tersimpan di HP. Tidak butuh akun, tidak butuh kuota.</span>
+      <span lang="en"><b>Works offline</b>Learning progress is saved on the phone. No account, no data plan needed.</span></div>
+    <div class="feat"><span class="ic">🛡️</span>
+      <span lang="id"><b>Aman & menghormati privasi</b>Tanpa iklan, tanpa pelacak, tanpa data pribadi anak. Ada batas waktu bermain & Area Orang Tua.</span>
+      <span lang="en"><b>Safe &amp; privacy-respecting</b>No ads, no trackers, no personal data from children. Includes a play-time limit &amp; a Parent Area.</span></div>
+    <div class="feat"><span class="ic">⭐</span>
+      <span lang="id"><b>Belajar nilai baik</b>Setiap petualangan menyelipkan nilai: kebersihan, kejujuran, hormat, dan kebaikan hati.</span>
+      <span lang="en"><b>Learning good values</b>Every adventure weaves in a value: cleanliness, honesty, respect and kindness.</span></div>
   </div>
 
-  <h2 class="sectitle">Mode &amp; Fitur</h2>
-  <p class="subtle">Lebih dari sekadar latihan. AyoMath punya banyak mode — dan <b>semua mulai dari yang mudah, lalu makin menantang</b> seiring kemampuan anak bertambah, jadi selalu pas dengan levelnya.</p>
+  <h2 class="sectitle" lang="id">Mode &amp; Fitur</h2>
+  <h2 class="sectitle" lang="en">Modes &amp; Features</h2>
+  <p class="subtle" lang="id">Lebih dari sekadar latihan. AyoMath punya banyak mode — dan <b>semua mulai dari yang mudah, lalu makin menantang</b> seiring kemampuan anak bertambah, jadi selalu pas dengan levelnya.</p>
+  <p class="subtle" lang="en">More than just drills. AyoMath has many modes — and <b>all of them start easy, then grow more challenging</b> as the child's ability grows, so it always matches their level.</p>
 
   <div class="card">
-    <div class="feat"><span class="ic">🚀</span><span><b>Petualangan</b>Jalur belajar utama tanpa batas. Anak naik level dan menjelajah Dunia demi Dunia; soal <b>bertambah sulit secara bertahap</b> mengikuti kemajuannya. Kumpulkan XP &amp; stiker koleksi.</span></div>
-    <div class="feat"><span class="ic">🪐</span><span><b>Belajar per Kelas</b>Pilih Kelas 1–6 dan latih topik tertentu — penjumlahan, pengurangan, perkalian, pembagian, pecahan, desimal, geometri, sampai soal cerita.</span></div>
-    <div class="feat"><span class="ic">🎲</span><span><b>Permainan Asik</b>Game singkat yang mengasah logika &amp; ketelitian: Pilah Sampah, Lari Ciko, Tangram, Sudoku Anak, Lukis Angka, dan Warung Oren. Tingkat kesulitannya naik saat anak makin mahir.</span></div>
-    <div class="feat"><span class="ic">⚡</span><span><b>Mode Cepat</b>Latih kecepatan berhitung di luar kepala. Target waktunya <b>makin ketat</b> untuk melatih kelancaran (fluency).</span></div>
-    <div class="feat"><span class="ic">🧠</span><span><b>Mode Jenius — bertaraf internasional</b>Soal penalaran mendalam &amp; non-rutin per kelas, <b>dipatok (benchmark) ke standar Singapura &amp; Korea</b> — negara dengan prestasi matematika terbaik dunia. Memakai <b>model bar</b>, langkah bertingkat, dan berpikir mundur; kesulitannya terus meningkat. Raih Bintang Jenius ⭐ tanpa memengaruhi progres utama.</span></div>
-    <div class="feat"><span class="ic">🏆</span><span><b>Papan Juara</b>Adu XP dengan teman sekelas, se-provinsi, dan seluruh Indonesia. Tanpa nama asli — tetap aman &amp; privat.</span></div>
-    <div class="feat"><span class="ic">🛍️</span><span><b>Toko &amp; Profil</b>Belanja topi &amp; teman hewan dengan koin hasil bermain, lalu pantau kemampuan, level, dan pangkat anak di Profil.</span></div>
+    <div class="feat"><span class="ic">🚀</span>
+      <span lang="id"><b>Petualangan</b>Jalur belajar utama tanpa batas. Anak naik level dan menjelajah Dunia demi Dunia; soal <b>bertambah sulit secara bertahap</b> mengikuti kemajuannya. Kumpulkan XP &amp; stiker koleksi.</span>
+      <span lang="en"><b>Adventure</b>The main, endless learning path. Children level up and explore World after World; problems <b>get harder step by step</b> as they progress. Collect XP &amp; collectible stickers.</span></div>
+    <div class="feat"><span class="ic">🪐</span>
+      <span lang="id"><b>Belajar per Kelas</b>Pilih Kelas 1–6 dan latih topik tertentu — penjumlahan, pengurangan, perkalian, pembagian, pecahan, desimal, geometri, sampai soal cerita.</span>
+      <span lang="en"><b>Learn by Grade</b>Pick Grade 1–6 and practise a specific topic — addition, subtraction, multiplication, division, fractions, decimals, geometry, all the way to word problems.</span></div>
+    <div class="feat"><span class="ic">🎲</span>
+      <span lang="id"><b>Permainan Asik</b>Game singkat yang mengasah logika &amp; ketelitian: Pilah Sampah, Lari Ciko, Tangram, Sudoku Anak, Lukis Angka, dan Warung Oren. Tingkat kesulitannya naik saat anak makin mahir.</span>
+      <span lang="en"><b>Fun Games</b>Short games that sharpen logic &amp; accuracy: Cipi's Cleanup, Ciko's Run, Leo's Tangram, Tora's Sudoku, Bobo's Painting and Oren's Shop. Difficulty rises as the child gets better.</span></div>
+    <div class="feat"><span class="ic">⚡</span>
+      <span lang="id"><b>Mode Cepat</b>Latih kecepatan berhitung di luar kepala. Target waktunya <b>makin ketat</b> untuk melatih kelancaran (fluency).</span>
+      <span lang="en"><b>Quick Mode</b>Train mental-arithmetic speed. The time target <b>gets tighter</b> to build fluency.</span></div>
+    <div class="feat"><span class="ic">🧠</span>
+      <span lang="id"><b>Mode Jenius — bertaraf internasional</b>Soal penalaran mendalam &amp; non-rutin per kelas, <b>dipatok (benchmark) ke standar Singapura &amp; Korea</b> — negara dengan prestasi matematika terbaik dunia. Memakai <b>model bar</b>, langkah bertingkat, dan berpikir mundur; kesulitannya terus meningkat. Raih Bintang Jenius ⭐ tanpa memengaruhi progres utama.</span>
+      <span lang="en"><b>Genius Mode — international standard</b>Deep, non-routine reasoning problems for each grade, <b>benchmarked against Singapore &amp; Korea</b> — the world's top-performing countries in maths. Uses <b>bar models</b>, multi-step working and working backwards; difficulty keeps rising. Earn Genius Stars ⭐ without affecting the main progress.</span></div>
+    <div class="feat"><span class="ic">🏆</span>
+      <span lang="id"><b>Papan Juara</b>Adu XP dengan teman sekelas, se-provinsi, dan seluruh Indonesia. Tanpa nama asli — tetap aman &amp; privat.</span>
+      <span lang="en"><b>Leaderboard</b>Compete on XP with classmates, your province and all of Indonesia. No real names — safe &amp; private.</span></div>
+    <div class="feat"><span class="ic">🛍️</span>
+      <span lang="id"><b>Toko &amp; Profil</b>Belanja topi &amp; teman hewan dengan koin hasil bermain, lalu pantau kemampuan, level, dan pangkat anak di Profil.</span>
+      <span lang="en"><b>Shop &amp; Profile</b>Buy hats &amp; animal friends with coins earned by playing, then track the child's skills, level and rank in the Profile.</span></div>
   </div>
 
   <div class="card" style="background:linear-gradient(135deg,#f0eefe,#e7fbf7)">
-    <div class="feat"><span class="ic">📈</span><span><b>Tumbuh bersama anak</b>Tidak ada mode yang “terlalu mudah” untuk selamanya. Dari berhitung dasar sampai penalaran ala Singapura/Korea di Mode Jenius, tingkat kesulitan naik bertahap — menantang tanpa membuat anak menyerah.</span></div>
+    <div class="feat"><span class="ic">📈</span>
+      <span lang="id"><b>Tumbuh bersama anak</b>Tidak ada mode yang “terlalu mudah” untuk selamanya. Dari berhitung dasar sampai penalaran ala Singapura/Korea di Mode Jenius, tingkat kesulitan naik bertahap — menantang tanpa membuat anak menyerah.</span>
+      <span lang="en"><b>Grows with the child</b>No mode stays “too easy” forever. From basic arithmetic to Singapore/Korea-style reasoning in Genius Mode, difficulty rises gradually — challenging without making children give up.</span></div>
   </div>
 
-  <h2 class="sectitle">Lihat AyoMath</h2>
-  <p class="subtle">Belajar jadi petualangan seru — naik level, soal pilihan ganda, koreksi yang lembut, dan banyak permainan asik.</p>
+  <h2 class="sectitle" lang="id">Lihat AyoMath</h2>
+  <h2 class="sectitle" lang="en">See AyoMath</h2>
+  <p class="subtle" lang="id">Belajar jadi petualangan seru — naik level, soal pilihan ganda, koreksi yang lembut, dan banyak permainan asik.</p>
+  <p class="subtle" lang="en">Learning becomes an adventure — level up, multiple-choice problems, gentle corrections and lots of fun games.</p>
   <div class="shots">
-    <img src="screenshots/01_petualangan.png" width="1080" height="2400" alt="Peta petualangan AyoMath" loading="lazy">
-    <img src="screenshots/02_soal.png" width="1080" height="2400" alt="Soal pilihan ganda" loading="lazy">
-    <img src="screenshots/03_koreksi.png" width="1080" height="2400" alt="Koreksi lembut saat jawaban salah" loading="lazy">
-    <img src="screenshots/04_lariciko.png" width="1080" height="2400" alt="Permainan Lari Ciko" loading="lazy">
-    <img src="screenshots/05_toko.png?v=2" width="1080" height="2400" alt="Toko Oren — koin, hewan, kostum" loading="lazy">
-    <img src="screenshots/06_profil.png" width="1080" height="2400" alt="Profil dan kemajuan belajar" loading="lazy">
+    <img src="screenshots/01_petualangan.png" width="1080" height="2400" alt="Peta petualangan AyoMath" data-en="AyoMath adventure map" loading="lazy">
+    <img src="screenshots/02_soal.png" width="1080" height="2400" alt="Soal pilihan ganda" data-en="Multiple-choice problem" loading="lazy">
+    <img src="screenshots/03_koreksi.png" width="1080" height="2400" alt="Koreksi lembut saat jawaban salah" data-en="Gentle correction on a wrong answer" loading="lazy">
+    <img src="screenshots/04_lariciko.png" width="1080" height="2400" alt="Permainan Lari Ciko" data-en="Ciko's Run game" loading="lazy">
+    <img src="screenshots/05_toko.png?v=2" width="1080" height="2400" alt="Toko Oren — koin, hewan, kostum" data-en="Oren's Shop — coins, animals, outfits" loading="lazy">
+    <img src="screenshots/06_profil.png" width="1080" height="2400" alt="Profil dan kemajuan belajar" data-en="Profile and learning progress" loading="lazy">
   </div>
-  <p class="subtle" style="font-size:13px">🪙 Koin (Rp) di dalam game <b>hanya didapat dengan bermain</b> — bukan uang asli, dan <b>tidak ada pembelian dalam aplikasi</b>.</p>
+  <p class="subtle" style="font-size:13px" lang="id">🪙 Koin (Rp) di dalam game <b>hanya didapat dengan bermain</b> — bukan uang asli, dan <b>tidak ada pembelian dalam aplikasi</b>.</p>
+  <p class="subtle" style="font-size:13px" lang="en">🪙 In-game coins (Rp) are <b>earned only by playing</b> — not real money, and there are <b>no in-app purchases</b>.</p>
 
   <div class="card">
-    <div class="feat"><span class="ic">🤝</span><span><b>Mendukung guru Indonesia</b>AyoMath mendukung <a href="https://ioa.or.id">IOA</a> (ioa.or.id) dalam meningkatkan kompetensi guru di Indonesia — termasuk <b>pelatihan kepemimpinan transformasional</b> bagi para guru.</span></div>
+    <div class="feat"><span class="ic">🤝</span>
+      <span lang="id"><b>Mendukung guru Indonesia</b>AyoMath mendukung <a href="https://ioa.or.id">IOA</a> (ioa.or.id) dalam meningkatkan kompetensi guru di Indonesia — termasuk <b>pelatihan kepemimpinan transformasional</b> bagi para guru.</span>
+      <span lang="en"><b>Supporting Indonesian teachers</b>AyoMath supports <a href="https://ioa.or.id">IOA</a> (ioa.or.id) in raising teacher competence across Indonesia — including <b>transformational-leadership training</b> for teachers.</span></div>
   </div>
 
   <div class="btns" style="margin-top:24px">
-    <a class="btn teal" href="https://play.google.com/store/apps/details?id=com.rickola.ayomath">▶ Unduh gratis di Google Play</a>
-    <a class="btn violet" href="https://play.ayomath.com">🎮 Main di Browser</a>
+    <a class="btn teal" href="https://play.google.com/store/apps/details?id=com.rickola.ayomath"><span lang="id">▶ Unduh gratis di Google Play</span><span lang="en">▶ Download free on Google Play</span></a>
+    <a class="btn violet" href="https://play.ayomath.com"><span lang="id">🎮 Main di Browser</span><span lang="en">🎮 Play in Browser</span></a>
   </div>
 
   <footer>
-    <p>Dikembangkan oleh Eramuse.<br>
+    <p lang="id">Dikembangkan oleh Eramuse.<br>
        Pertanyaan atau masukan? <a href="mailto:ayomath.games@gmail.com">ayomath.games@gmail.com</a></p>
-    <p><a href="../privacy.html">Privasi</a> · <a href="../terms.html">Syarat Penggunaan</a></p>
+    <p lang="en">Developed by Eramuse.<br>
+       Questions or feedback? <a href="mailto:ayomath.games@gmail.com">ayomath.games@gmail.com</a></p>
+    <p lang="id"><a href="../privacy.html">Privasi</a> · <a href="../terms.html">Syarat Penggunaan</a></p>
+    <p lang="en"><a href="../privacy.html">Privacy</a> · <a href="../terms.html">Terms of Use</a></p>
   </footer>
 </div>
 </body>

@@ -3,8 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Jabrik Sains — Teman Mengajar IPAS untuk Guru SD</title>
-<meta name="description" content="Jabrik Sains: teman mengajar IPAS SD Kelas 1–6 untuk guru Indonesia. 39 pelajaran lengkap Fase A–C, 97 eksperimen berbahan rumahan, rubrik penilaian, dan Modul Ajar siap ekspor. Gratis, tanpa internet, tanpa proyektor.">
+<title data-en="Jabrik Sains — A Science Teaching Companion for Primary Teachers">Jabrik Sains — Teman Mengajar IPAS untuk Guru SD</title>
+<meta name="description" content="Jabrik Sains: teman mengajar IPAS SD Kelas 1–6 untuk guru Indonesia. 39 pelajaran lengkap Fase A–C, 97 eksperimen berbahan rumahan, rubrik penilaian, dan Modul Ajar siap ekspor. Gratis, tanpa internet, tanpa proyektor." data-en="Jabrik Sains: a primary-science (IPAS) teaching companion for Indonesian teachers, Grades 1–6. 39 complete lessons across Phases A–C, 97 experiments with household materials, assessment rubrics and ready-to-export lesson plans. Free, offline, no projector needed.">
+<script src="../lang.js"></script>
 <style>
   :root{--green:#2E9E5B;--green-dark:#1B7A42;--green-soft:#E3F5E9;--bg:#FBF8F1;--surface:#fff;--ink:#1C2B22;--muted:#5A6B61;--line:#E7E2D6}
   *{box-sizing:border-box}
@@ -31,66 +32,114 @@
   .promise{background:var(--green-soft);border-radius:20px;padding:24px;margin:16px 0;color:var(--green-dark)}
   footer{text-align:center;color:var(--muted);font-size:14px;padding:32px 24px 48px}
   footer a{color:var(--green-dark)}
+  /* ID ⇄ EN toggle — see ../lang.js */
+  .langbar{display:flex;justify-content:space-between;align-items:center}
+  .lang{display:inline-flex;background:#fff;border:1px solid var(--line);border-radius:999px;padding:3px;gap:2px;margin-left:auto}
+  .lang button{border:0;background:none;font:inherit;font-weight:800;font-size:13px;padding:4px 12px;border-radius:999px;color:var(--muted);cursor:pointer}
+  .lang button.on{background:var(--green);color:#fff}
+  html:not([data-lang="en"]) [lang="en"],html[data-lang="en"] [lang="id"]{display:none}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="../">← Eramuse</a>
+  <div class="langbar">
+    <a class="back" href="../">← Eramuse</a>
+    <span class="lang" role="group" aria-label="Bahasa / Language">
+      <button type="button" data-set-lang="id" title="Bahasa Indonesia">ID</button>
+      <button type="button" data-set-lang="en" title="English">EN</button>
+    </span>
+  </div>
 
   <header>
     <div class="logo">🌿</div>
     <h1>Jabrik Sains</h1>
-    <p class="tag">Teman mengajar IPAS untuk guru SD — tanpa internet, tanpa proyektor.</p>
+    <p class="tag" lang="id">Teman mengajar IPAS untuk guru SD — tanpa internet, tanpa proyektor.</p>
+    <p class="tag" lang="en">A science (IPAS) teaching companion for primary teachers — no internet, no projector.</p>
     <div class="btns">
-      <a class="btn green" href="app/">🌐 Coba Langsung di Browser</a>
-      <a class="btn ghost" href="privacy.html">Kebijakan Privasi &amp; Ketentuan</a>
+      <a class="btn green" href="app/"><span lang="id">🌐 Coba Langsung di Browser</span><span lang="en">🌐 Try it in your Browser</span></a>
+      <a class="btn ghost" href="privacy.html"><span lang="id">Kebijakan Privasi &amp; Ketentuan</span><span lang="en">Privacy Policy &amp; Terms</span></a>
     </div>
-    <p class="subtle" style="margin-top:14px;font-size:14px">Versi uji coba — bisa langsung
+    <p class="subtle" style="margin-top:14px;font-size:14px" lang="id">Versi uji coba — bisa langsung
        dibuka di HP atau laptop, tanpa memasang apa pun. Aplikasi Android menyusul.</p>
+    <p class="subtle" style="margin-top:14px;font-size:14px" lang="en">Trial version — opens straight
+       away on a phone or laptop, nothing to install. Android app coming soon.</p>
   </header>
 
   <div class="card">
-    <p>Jabrik Sains dibuat sebagai <b>hadiah untuk guru</b>: gratis, tanpa iklan, dan
+    <p lang="id">Jabrik Sains dibuat sebagai <b>hadiah untuk guru</b>: gratis, tanpa iklan, dan
        bisa dipakai sepenuhnya <b>tanpa internet</b>. Seluruh pelajaran dirancang
        <b>screen-optional</b> — naskah lisannya cukup hangat dan lengkap untuk
        membawakan satu jam pelajaran meski HP disimpan di saku.</p>
+    <p lang="en">Jabrik Sains was made as a <b>gift to teachers</b>: free, ad-free, and fully
+       usable <b>without internet</b>. Every lesson is designed to be
+       <b>screen-optional</b> — the spoken script is warm and complete enough to carry
+       a whole lesson period with the phone kept in your pocket.</p>
 
-    <div class="feat"><span class="ic">📚</span><span><b>39 pelajaran, Kelas 1–6 lengkap</b>Seluruh kurikulum IPAS SD (Fase A, B, dan C) plus paket Pengayaan 🌟 untuk anak yang ingin tahu lebih.</span></div>
-    <div class="feat"><span class="ic">🧪</span><span><b>97 eksperimen berbahan rumahan</b>Semua memakai bahan murah &amp; mudah dicari di desa, sudah dicek kebenaran sainsnya, dengan tingkat keamanan yang jelas.</span></div>
-    <div class="feat"><span class="ic">📄</span><span><b>Modul Ajar format Kurikulum Merdeka</b>Ekspor PDF mengikuti struktur resmi (Informasi Umum / Komponen Inti / Lampiran) — siap diserahkan ke kepala sekolah.</span></div>
-    <div class="feat"><span class="ic">🔒</span><span><b>Guru tidak pernah dipantau</b>Tidak ada dasbor pengawas, tidak ada nilai per-siswa yang dikirim ke mana pun. Semua tersimpan di HP Anda sendiri.</span></div>
+    <div class="feat"><span class="ic">📚</span>
+      <span lang="id"><b>39 pelajaran, Kelas 1–6 lengkap</b>Seluruh kurikulum IPAS SD (Fase A, B, dan C) plus paket Pengayaan 🌟 untuk anak yang ingin tahu lebih.</span>
+      <span lang="en"><b>39 lessons, Grades 1–6 complete</b>The entire primary IPAS curriculum (Phases A, B and C) plus 🌟 Enrichment packs for children who want to know more.</span></div>
+    <div class="feat"><span class="ic">🧪</span>
+      <span lang="id"><b>97 eksperimen berbahan rumahan</b>Semua memakai bahan murah &amp; mudah dicari di desa, sudah dicek kebenaran sainsnya, dengan tingkat keamanan yang jelas.</span>
+      <span lang="en"><b>97 experiments with household materials</b>All use cheap materials that are easy to find in a village, science-checked, with clear safety levels.</span></div>
+    <div class="feat"><span class="ic">📄</span>
+      <span lang="id"><b>Modul Ajar format Kurikulum Merdeka</b>Ekspor PDF mengikuti struktur resmi (Informasi Umum / Komponen Inti / Lampiran) — siap diserahkan ke kepala sekolah.</span>
+      <span lang="en"><b>Lesson plans in Kurikulum Merdeka format</b>PDF export follows the official structure (General Information / Core Components / Appendices) — ready to hand to the principal.</span></div>
+    <div class="feat"><span class="ic">🔒</span>
+      <span lang="id"><b>Guru tidak pernah dipantau</b>Tidak ada dasbor pengawas, tidak ada nilai per-siswa yang dikirim ke mana pun. Semua tersimpan di HP Anda sendiri.</span>
+      <span lang="en"><b>Teachers are never monitored</b>No supervisor dashboard, no per-student grades sent anywhere. Everything stays on your own phone.</span></div>
   </div>
 
-  <h2 class="sectitle">Enam babak tiap pelajaran</h2>
-  <p class="subtle">Setiap pelajaran memakai alur yang sama, jadi guru cepat hafal polanya — sekitar 30 menit, dengan perkiraan waktu per babak.</p>
+  <h2 class="sectitle" lang="id">Enam babak tiap pelajaran</h2>
+  <h2 class="sectitle" lang="en">Six beats in every lesson</h2>
+  <p class="subtle" lang="id">Setiap pelajaran memakai alur yang sama, jadi guru cepat hafal polanya — sekitar 30 menit, dengan perkiraan waktu per babak.</p>
+  <p class="subtle" lang="en">Every lesson follows the same flow, so teachers learn the pattern quickly — about 30 minutes, with a time estimate per beat.</p>
   <div class="beats">
-    <span class="beat">🎣 Pancing</span>
-    <span class="beat">👀 Amati</span>
-    <span class="beat">💡 Temukan</span>
-    <span class="beat">🔬 Coba</span>
-    <span class="beat">🙋 Tanya</span>
-    <span class="beat">🤯 Kejutan</span>
+    <span class="beat" lang="id">🎣 Pancing</span><span class="beat" lang="en">🎣 Hook</span>
+    <span class="beat" lang="id">👀 Amati</span><span class="beat" lang="en">👀 Observe</span>
+    <span class="beat" lang="id">💡 Temukan</span><span class="beat" lang="en">💡 Discover</span>
+    <span class="beat" lang="id">🔬 Coba</span><span class="beat" lang="en">🔬 Try</span>
+    <span class="beat" lang="id">🙋 Tanya</span><span class="beat" lang="en">🙋 Ask</span>
+    <span class="beat" lang="id">🤯 Kejutan</span><span class="beat" lang="en">🤯 Surprise</span>
   </div>
 
-  <h2 class="sectitle">Bantuan saat mengajar</h2>
+  <h2 class="sectitle" lang="id">Bantuan saat mengajar</h2>
+  <h2 class="sectitle" lang="en">Help while teaching</h2>
   <div class="card">
-    <div class="feat"><span class="ic">🔍</span><span><b>Rubrik “apa yang dilihat”</b>Tiga tingkat — 🌱 Belum · 🌿 Berkembang · 💚 Paham — berisi perilaku nyata yang bisa diamati, agar guru tak perlu menebak apakah anak benar-benar paham.</span></div>
-    <div class="feat"><span class="ic">🧭</span><span><b>“Kalau anak bilang…”</b>Saat anak menjawab keliru, aplikasi membisikkan cara menanggapi yang hangat dan benar — untuk mata guru saja.</span></div>
-    <div class="feat"><span class="ic">🧩</span><span><b>Diferensiasi ringan</b>Jalur ⚡ “sudah cepat paham” dan 🤔 “kalau masih bingung” untuk kelas dengan kecepatan berbeda-beda.</span></div>
-    <div class="feat"><span class="ic">👪</span><span><b>Lembar untuk orang tua</b>Sekali ketuk: bahan sederhana di rumah, 3 pertanyaan untuk diobrolkan, dan 1 kegiatan lanjutan — kirim lewat WhatsApp atau cetak.</span></div>
-    <div class="feat"><span class="ic">🚀</span><span><b>Sains masa kini</b>Tiap pelajaran Kelas 3+ menautkan materinya ke sains terkini — biomimikri, roket yang mendarat kembali, penjelajah Mars, MRI — semuanya fakta terverifikasi.</span></div>
-    <div class="feat"><span class="ic">📓</span><span><b>Jurnal &amp; portofolio</b>Catat refleksi tiap mengajar, lalu ekspor portofolio PDF — bukti mengajar yang rapi tanpa kerja tambahan.</span></div>
+    <div class="feat"><span class="ic">🔍</span>
+      <span lang="id"><b>Rubrik “apa yang dilihat”</b>Tiga tingkat — 🌱 Belum · 🌿 Berkembang · 💚 Paham — berisi perilaku nyata yang bisa diamati, agar guru tak perlu menebak apakah anak benar-benar paham.</span>
+      <span lang="en"><b>“What you'll see” rubrics</b>Three levels — 🌱 Not yet · 🌿 Developing · 💚 Got it — listing real, observable behaviours, so teachers never have to guess whether a child truly understands.</span></div>
+    <div class="feat"><span class="ic">🧭</span>
+      <span lang="id"><b>“Kalau anak bilang…”</b>Saat anak menjawab keliru, aplikasi membisikkan cara menanggapi yang hangat dan benar — untuk mata guru saja.</span>
+      <span lang="en"><b>“If a child says…”</b>When a child answers incorrectly, the app whispers a warm, correct way to respond — for the teacher's eyes only.</span></div>
+    <div class="feat"><span class="ic">🧩</span>
+      <span lang="id"><b>Diferensiasi ringan</b>Jalur ⚡ “sudah cepat paham” dan 🤔 “kalau masih bingung” untuk kelas dengan kecepatan berbeda-beda.</span>
+      <span lang="en"><b>Light differentiation</b>A ⚡ “got it fast” path and a 🤔 “still confused” path for classes moving at different speeds.</span></div>
+    <div class="feat"><span class="ic">👪</span>
+      <span lang="id"><b>Lembar untuk orang tua</b>Sekali ketuk: bahan sederhana di rumah, 3 pertanyaan untuk diobrolkan, dan 1 kegiatan lanjutan — kirim lewat WhatsApp atau cetak.</span>
+      <span lang="en"><b>A sheet for parents</b>One tap: simple materials at home, 3 questions to talk about and 1 follow-up activity — send via WhatsApp or print.</span></div>
+    <div class="feat"><span class="ic">🚀</span>
+      <span lang="id"><b>Sains masa kini</b>Tiap pelajaran Kelas 3+ menautkan materinya ke sains terkini — biomimikri, roket yang mendarat kembali, penjelajah Mars, MRI — semuanya fakta terverifikasi.</span>
+      <span lang="en"><b>Science today</b>Every Grade 3+ lesson links its topic to current science — biomimicry, rockets that land again, Mars rovers, MRI — all verified facts.</span></div>
+    <div class="feat"><span class="ic">📓</span>
+      <span lang="id"><b>Jurnal &amp; portofolio</b>Catat refleksi tiap mengajar, lalu ekspor portofolio PDF — bukti mengajar yang rapi tanpa kerja tambahan.</span>
+      <span lang="en"><b>Journal &amp; portfolio</b>Note a reflection after each lesson, then export a PDF portfolio — tidy evidence of teaching with no extra work.</span></div>
   </div>
 
   <div class="promise">
-    <div class="feat"><span class="ic">💚</span><span><b>Janji inti kami</b>Tanpa internet · di perangkat saja · screen-optional · guru tidak pernah dipantau · tanpa nilai per-siswa · sains terverifikasi.</span></div>
+    <div class="feat"><span class="ic">💚</span>
+      <span lang="id"><b>Janji inti kami</b>Tanpa internet · di perangkat saja · screen-optional · guru tidak pernah dipantau · tanpa nilai per-siswa · sains terverifikasi.</span>
+      <span lang="en"><b>Our core promise</b>No internet · on-device only · screen-optional · teachers never monitored · no per-student grades · verified science.</span></div>
   </div>
 
   <footer>
-    <p>Bagian dari <a href="../">Eramuse</a> — aplikasi belajar gratis untuk anak &amp; guru Indonesia.<br>
+    <p lang="id">Bagian dari <a href="../">Eramuse</a> — aplikasi belajar gratis untuk anak &amp; guru Indonesia.<br>
        Menemukan materi yang keliru atau punya masukan?
        <a href="mailto:eramuse74@gmail.com">eramuse74@gmail.com</a></p>
-    <p><a href="privacy.html">Kebijakan Privasi &amp; Ketentuan</a></p>
+    <p lang="en">Part of <a href="../">Eramuse</a> — free learning apps for Indonesian children &amp; teachers.<br>
+       Found an error in the material, or have feedback?
+       <a href="mailto:eramuse74@gmail.com">eramuse74@gmail.com</a></p>
+    <p lang="id"><a href="privacy.html">Kebijakan Privasi &amp; Ketentuan</a></p>
+    <p lang="en"><a href="privacy.html">Privacy Policy &amp; Terms</a></p>
   </footer>
 </div>
 </body>

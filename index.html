@@ -3,8 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Eramuse — Aplikasi Belajar Gratis untuk Anak &amp; Guru Indonesia</title>
-<meta name="description" content="Eramuse membuat aplikasi belajar gratis, offline, dan tanpa iklan untuk anak dan guru di Indonesia: AyoMath (matematika SD) dan Jabrik Sains (teman mengajar IPAS untuk guru).">
+<title data-en="Eramuse — Free Learning Apps for Indonesian Children &amp; Teachers">Eramuse — Aplikasi Belajar Gratis untuk Anak &amp; Guru Indonesia</title>
+<meta name="description" content="Eramuse membuat aplikasi belajar gratis, offline, dan tanpa iklan untuk anak dan guru di Indonesia: AyoMath (matematika SD) dan Jabrik Sains (teman mengajar IPAS untuk guru)." data-en="Eramuse builds free, offline, ad-free learning apps for children and teachers in Indonesia: AyoMath (primary-school maths) and Jabrik Sains (a science teaching companion for teachers).">
+<script src="lang.js"></script>
 <style>
   :root{--teal:#1F9E8E;--violet:#6C5CE7;--green:#2E9E5B;--green-dark:#1B7A42;--bg:#F7F8FC;--surface:#fff;--text:#2D2A45;--muted:#6b6880}
   *{box-sizing:border-box}
@@ -33,62 +34,101 @@
   .sectitle{font-size:24px;font-weight:900;margin:36px 0 4px;text-align:center}
   footer{text-align:center;color:var(--muted);font-size:14px;padding:32px 24px 48px}
   footer a{color:var(--teal)}
+  /* ID ⇄ EN toggle — see lang.js */
+  .langbar{display:flex;justify-content:flex-end;align-items:center}
+  .lang{display:inline-flex;background:#fff;border:1px solid rgba(45,42,69,.14);border-radius:999px;padding:3px;gap:2px}
+  .lang button{border:0;background:none;font:inherit;font-weight:800;font-size:13px;padding:4px 12px;border-radius:999px;color:var(--muted);cursor:pointer}
+  .lang button.on{background:var(--teal);color:#fff}
+  html:not([data-lang="en"]) [lang="en"],html[data-lang="en"] [lang="id"]{display:none}
 </style>
 </head>
 <body>
 <div class="wrap">
+  <div class="langbar">
+    <span class="lang" role="group" aria-label="Bahasa / Language">
+      <button type="button" data-set-lang="id" title="Bahasa Indonesia">ID</button>
+      <button type="button" data-set-lang="en" title="English">EN</button>
+    </span>
+  </div>
+
   <header>
     <h1>Eramuse</h1>
-    <p class="tag">Aplikasi belajar <b>gratis</b>, <b>offline</b>, dan <b>tanpa iklan</b>
+    <p class="tag" lang="id">Aplikasi belajar <b>gratis</b>, <b>offline</b>, dan <b>tanpa iklan</b>
        untuk anak dan guru di Indonesia.</p>
+    <p class="tag" lang="en"><b>Free</b>, <b>offline</b>, <b>ad-free</b> learning apps
+       for children and teachers in Indonesia.</p>
   </header>
 
-  <h2 class="sectitle">Aplikasi kami</h2>
+  <h2 class="sectitle" lang="id">Aplikasi kami</h2>
+  <h2 class="sectitle" lang="en">Our apps</h2>
 
   <div class="app">
     <div class="logo">🐱</div>
     <h2>AyoMath</h2>
-    <p class="who">Untuk anak · Kelas 1–6</p>
-    <p>Game latihan matematika SD sesuai Kurikulum Merdeka — dari berhitung dasar
+    <p class="who" lang="id">Untuk anak · Kelas 1–6</p>
+    <p class="who" lang="en">For children · Grades 1–6</p>
+    <p lang="id">Game latihan matematika SD sesuai Kurikulum Merdeka — dari berhitung dasar
        sampai pecahan, geometri, dan soal cerita. Ada Mode Jenius bertaraf
        internasional (benchmark Singapura &amp; Korea). Bekerja tanpa internet,
        tanpa iklan, tanpa data pribadi anak.</p>
+    <p lang="en">A primary-school maths practice game aligned with Indonesia's Kurikulum
+       Merdeka — from basic arithmetic to fractions, geometry and word problems. Includes
+       an international-standard Genius Mode (benchmarked against Singapore &amp; Korea).
+       Works without internet, without ads, and without any personal data from children.</p>
     <div class="btns">
       <a class="btn teal" href="https://play.google.com/store/apps/details?id=com.rickola.ayomath">▶ Google Play</a>
-      <a class="btn violet" href="https://play.ayomath.com">🎮 Main di Browser</a>
-      <a class="btn ghost" href="ayomath/">Selengkapnya</a>
+      <a class="btn violet" href="https://play.ayomath.com"><span lang="id">🎮 Main di Browser</span><span lang="en">🎮 Play in Browser</span></a>
+      <a class="btn ghost" href="ayomath/"><span lang="id">Selengkapnya</span><span lang="en">Learn more</span></a>
     </div>
   </div>
 
   <div class="app">
     <div class="logo">🌿</div>
     <h2>Jabrik Sains</h2>
-    <p class="who">Untuk guru · IPAS SD Kelas 1–6</p>
-    <p>Teman mengajar IPAS untuk guru SD — 39 pelajaran lengkap Fase A, B, C dengan
+    <p class="who" lang="id">Untuk guru · IPAS SD Kelas 1–6</p>
+    <p class="who" lang="en">For teachers · Primary science (IPAS) · Grades 1–6</p>
+    <p lang="id">Teman mengajar IPAS untuk guru SD — 39 pelajaran lengkap Fase A, B, C dengan
        naskah lisan yang hangat, 97 eksperimen berbahan rumahan, rubrik penilaian,
        dan Modul Ajar siap ekspor. Bisa dibawakan <b>tanpa proyektor dan tanpa
        internet</b> — dan guru tidak pernah dipantau.</p>
+    <p lang="en">A science-teaching companion for primary-school teachers — 39 complete lessons
+       across Phases A, B and C with warm spoken scripts, 97 experiments using household
+       materials, assessment rubrics, and ready-to-export lesson plans (Modul Ajar).
+       Can be taught <b>without a projector and without internet</b> — and teachers
+       are never monitored.</p>
     <div class="btns">
-      <a class="btn green" href="jabrik-sains/app/">🌐 Coba di Browser</a>
-      <a class="btn ghost-green" href="jabrik-sains/">Selengkapnya</a>
+      <a class="btn green" href="jabrik-sains/app/"><span lang="id">🌐 Coba di Browser</span><span lang="en">🌐 Try in Browser</span></a>
+      <a class="btn ghost-green" href="jabrik-sains/"><span lang="id">Selengkapnya</span><span lang="en">Learn more</span></a>
     </div>
   </div>
 
   <div class="promise">
-    <div class="feat"><span class="ic">🎁</span><span><b>Gratis, selamanya</b>Dibuat sebagai proyek sosial. Tanpa iklan, tanpa pembelian dalam aplikasi, tanpa biaya tersembunyi.</span></div>
-    <div class="feat"><span class="ic">📶</span><span><b>Bekerja tanpa internet</b>Semua berjalan di perangkat — agar bisa dipakai di mana saja, termasuk daerah dengan jaringan terbatas.</span></div>
-    <div class="feat"><span class="ic">🛡️</span><span><b>Menghormati privasi</b>Tanpa pelacak dan tanpa data pribadi. Data belajar tersimpan di HP masing-masing, bukan di server kami.</span></div>
+    <div class="feat"><span class="ic">🎁</span>
+      <span lang="id"><b>Gratis, selamanya</b>Dibuat sebagai proyek sosial. Tanpa iklan, tanpa pembelian dalam aplikasi, tanpa biaya tersembunyi.</span>
+      <span lang="en"><b>Free, forever</b>Built as a social project. No ads, no in-app purchases, no hidden costs.</span></div>
+    <div class="feat"><span class="ic">📶</span>
+      <span lang="id"><b>Bekerja tanpa internet</b>Semua berjalan di perangkat — agar bisa dipakai di mana saja, termasuk daerah dengan jaringan terbatas.</span>
+      <span lang="en"><b>Works without internet</b>Everything runs on the device — so it can be used anywhere, including areas with limited connectivity.</span></div>
+    <div class="feat"><span class="ic">🛡️</span>
+      <span lang="id"><b>Menghormati privasi</b>Tanpa pelacak dan tanpa data pribadi. Data belajar tersimpan di HP masing-masing, bukan di server kami.</span>
+      <span lang="en"><b>Respects privacy</b>No trackers and no personal data. Learning data stays on each phone, not on our servers.</span></div>
   </div>
 
   <div class="app">
-    <div class="feat"><span class="ic">🤝</span><span><b>Mendukung guru Indonesia</b>Kami mendukung <a href="https://ioa.or.id">IOA</a> (ioa.or.id) dalam meningkatkan kompetensi guru di Indonesia — termasuk pelatihan kepemimpinan transformasional bagi para guru.</span></div>
+    <div class="feat"><span class="ic">🤝</span>
+      <span lang="id"><b>Mendukung guru Indonesia</b>Kami mendukung <a href="https://ioa.or.id">IOA</a> (ioa.or.id) dalam meningkatkan kompetensi guru di Indonesia — termasuk pelatihan kepemimpinan transformasional bagi para guru.</span>
+      <span lang="en"><b>Supporting Indonesian teachers</b>We support <a href="https://ioa.or.id">IOA</a> (ioa.or.id) in raising teacher competence across Indonesia — including transformational-leadership training for teachers.</span></div>
   </div>
 
   <footer>
-    <p>Dikembangkan oleh Eramuse.<br>
+    <p lang="id">Dikembangkan oleh Eramuse.<br>
        Pertanyaan atau masukan? <a href="mailto:eramuse74@gmail.com">eramuse74@gmail.com</a></p>
-    <p><b>AyoMath:</b> <a href="privacy.html">Privasi</a> · <a href="terms.html">Syarat Penggunaan</a><br>
+    <p lang="en">Developed by Eramuse.<br>
+       Questions or feedback? <a href="mailto:eramuse74@gmail.com">eramuse74@gmail.com</a></p>
+    <p lang="id"><b>AyoMath:</b> <a href="privacy.html">Privasi</a> · <a href="terms.html">Syarat Penggunaan</a><br>
        <b>Jabrik Sains:</b> <a href="jabrik-sains/privacy.html">Privasi &amp; Ketentuan</a></p>
+    <p lang="en"><b>AyoMath:</b> <a href="privacy.html">Privacy</a> · <a href="terms.html">Terms of Use</a><br>
+       <b>Jabrik Sains:</b> <a href="jabrik-sains/privacy.html">Privacy &amp; Terms</a></p>
   </footer>
 </div>
 </body>
