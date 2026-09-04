@@ -227,13 +227,17 @@ async function main() {
   const rows = batches ?? [];
   // Batch latihan tidak punya jendela waktu (aturan latihan, lomba_admin.sql):
   // selalu terbuka selama event-nya published.
-  const open = rows.filter(b => b.is_practice ||
-    (new Date(b.starts_at) <= now && now < new Date(b.ends_at)));
+  const open = rows.filter(b => (b.is_practice && !b.practice_closed) ||
+    (!b.is_practice && new Date(b.starts_at) <= now && now < new Date(b.ends_at)));
   const next = rows.find(b => new Date(b.starts_at) > now);
+  // Latihan ditutup otomatis selama sesi resmi event yang sama berlangsung
+  // (aturan latihan, lomba_admin.sql): praktik bebas dihentikan sementara.
+  const anyPracticeClosed = rows.some(b => b.is_practice && b.practice_closed);
 
   $('ev-status').textContent =
     ev.status === 'closed' ? 'Lomba sudah selesai'
-    : open.length ? (open.every(b => b.is_practice) ? 'Latihan terbuka — mulai kapan saja' : 'Sesi sedang berlangsung')
+    : open.length ? (open.every(b => b.is_practice) ? 'Latihan terbuka — mulai kapan saja, berulang-ulang' : 'Sesi sedang berlangsung')
+    : anyPracticeClosed ? 'Latihan ditutup sementara — lomba sedang berlangsung'
     : next ? `Sesi berikutnya ${tanggal(next.starts_at)} pukul ${jam(next.starts_at)}`
     : 'Belum ada sesi terjadwal';
 
@@ -254,7 +258,8 @@ async function main() {
     // dibuka berhari-hari, dan menuliskan jamnya saja membuatnya terbaca
     // seperti sesi nol menit ("10.26–10.26").
     const t1 = new Date(b.starts_at), t2 = new Date(b.ends_at);
-    tr.appendChild(cell('td', b.is_practice ? 'Latihan — kapan saja'
+    tr.appendChild(cell('td', b.is_practice
+      ? (b.practice_closed ? 'Ditutup saat lomba' : 'Latihan — kapan saja')
       : t1.toDateString() === t2.toDateString()
       ? `${tanggal(b.starts_at)}, ${jam(b.starts_at)}–${jam(b.ends_at)}`
       : `${tanggal(b.starts_at)} ${jam(b.starts_at)} – ${tanggal(b.ends_at)} ${jam(b.ends_at)}`));
