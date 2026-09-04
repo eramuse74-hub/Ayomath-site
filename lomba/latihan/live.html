@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Papan Langsung — Lomba AyoMath</title>
 <meta name="description" content="Papan skor langsung lomba matematika AyoMath: soal yang sedang dikerjakan dan hasil peserta secara real-time.">
+<script>
+/* Gerbang Skeddo (docs/LOMBA.md §8): papan ini dibuka lewat tombol Watch di
+   event Skeddo, yang membawa ?dari=skeddo. Tanpa tanda itu halaman tidak 404
+   — pengunjung melihat layar "gabung melalui Skeddo" (.sk-gate di bawah). */
+if (new URLSearchParams(location.search).get('dari') !== 'skeddo')
+  document.documentElement.classList.add('sk-gate');
+</script>
 <!--
   ============================================================================
   Papan proyektor + penonton jarak jauh (docs/LOMBA.md §7).
@@ -122,9 +129,30 @@
   .sp-item img{height:36px;width:auto;max-width:150px;object-fit:contain;background:#fff;
                border-radius:8px;padding:4px;display:block}
   body.has-strip{padding-bottom:66px}
+  /* Gerbang Skeddo: tanpa ?dari=skeddo, seluruh papan diganti layar ini. */
+  .sk-gate{display:none;text-align:center;padding:80px 24px}
+  .sk-gate .logo{font-size:56px;line-height:1}
+  .sk-gate h1{font-size:28px;margin:14px 0 8px;font-weight:900}
+  .sk-gate p{color:var(--muted);max-width:520px;margin:0 auto 24px}
+  html.sk-gate .wrap{display:none}
+  html.sk-gate .sp-strip{display:none}
+  html.sk-gate .sk-gate{display:block}
+  html.sk-gate body{background:var(--bg)}
+  .sk-gate a.btn{display:inline-block;text-decoration:none;font-weight:800;
+                 padding:14px 26px;border-radius:14px;font-size:17px;
+                 background:var(--teal);color:#10231f}
 </style>
 </head>
 <body>
+<!-- Gerbang Skeddo — tampil hanya kalau script di <head> menandai html.sk-gate.
+     TODO(founder): ganti href dengan URL grup/event Skeddo AyoMath yang sebenarnya. -->
+<div class="sk-gate">
+  <div class="logo">🏆</div>
+  <h1>Papan Langsung di Skeddo</h1>
+  <p>Papan skor AyoMath ditonton dari event Skeddo — tekan tombol <b>Watch</b>
+    di sana. Peserta bergabung lewat tombol <b>Join now</b>.</p>
+  <a class="btn" id="sk-gate-btn" href="https://app.skeddo.com">Gabung melalui Skeddo</a>
+</div>
 <div class="wrap">
   <header>
     <div>
@@ -232,7 +260,13 @@ const S = {
 async function loadEvent() {
   const { data: ev } = await db.from('lomba_events').select('*')
     .eq('slug', CFG.event).maybeSingle();
-  if (ev) { $('ev-name').textContent = ev.name; document.title = ev.name + ' — Papan Langsung'; }
+  if (ev) {
+    $('ev-name').textContent = ev.name;
+    document.title = ev.name + ' — Papan Langsung';
+    // Tautan event Skeddo yang asli (diisi staf di lomba/admin.html) dipakai
+    // tombol gerbang; tanpanya tombol tetap ke app.skeddo.com.
+    if (ev.skeddo_url) $('sk-gate-btn').href = ev.skeddo_url;
+  }
 
   const { data } = await db.from('lomba_batches_public').select('*')
     .eq('event_slug', CFG.event).order('starts_at');

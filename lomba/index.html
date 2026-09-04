@@ -33,6 +33,17 @@
   .lang button{border:0;background:none;font:inherit;font-weight:800;font-size:13px;padding:4px 12px;border-radius:999px;color:var(--muted);cursor:pointer}
   .lang button.on{background:var(--teal);color:#fff}
   html:not([data-lang="en"]) [lang="en"],html[data-lang="en"] [lang="id"]{display:none}
+  /* Jadwal — diisi dari Supabase (lomba_batches_public), bukan ditulis tangan. */
+  .sched{margin-top:6px}
+  .sched .ev{font-weight:900;font-size:17px;margin:14px 0 2px}
+  .sched .ev .org2{color:var(--muted);font-weight:400;font-size:13px}
+  .sched table{width:100%;border-collapse:collapse;font-size:14px}
+  .sched th,.sched td{text-align:left;padding:7px 6px;border-bottom:1px solid rgba(45,42,69,.08)}
+  .sched th{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)}
+  .badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:12px;font-weight:800;white-space:nowrap}
+  .badge.open{background:rgba(31,158,142,.14);color:var(--teal)}
+  .badge.soon{background:rgba(108,92,231,.14);color:var(--violet)}
+  .badge.done{background:rgba(45,42,69,.08);color:var(--muted)}
 </style>
 </head>
 <body>
@@ -64,9 +75,28 @@
       <span lang="id"><b>Papan Skor Langsung</b>Saat event berlangsung, pantau peringkat peserta secara langsung di halaman Live.</span>
       <span lang="en"><b>Live Score Board</b>While an event is running, follow the participants' rankings live on the Live page.</span></div>
     <div class="btns">
-      <a class="btn teal" href="./latihan/"><span lang="id">🚀 Buka Halaman Latihan</span><span lang="en">🚀 Open Practice Page</span></a>
+      <!-- Tombol utama mengarah ke event Skeddo (URL diisi dinamis dari
+           lomba_events.skeddo_url; cadangan: app.skeddo.com). Ikut serta
+           selalu lewat event Skeddo — halaman latihan dan gamenya hanya
+           terbuka dari link yang membawa ?dari=skeddo. -->
+      <a class="btn teal" id="sk-join" href="https://app.skeddo.com" target="_blank" rel="noopener">
+        <span lang="id">🚀 Gabung melalui Skeddo</span>
+        <span lang="en">🚀 Join via Skeddo</span></a>
       <a class="btn ghost" href="../ayomath/"><span lang="id">Tentang AyoMath</span><span lang="en">About AyoMath</span></a>
     </div>
+  </div>
+
+  <div class="card">
+    <h2 lang="id" style="margin:0 0 2px;font-size:22px">📅 Jadwal</h2>
+    <h2 lang="en" style="margin:0 0 2px;font-size:22px">📅 Schedule</h2>
+    <p class="subtle" style="text-align:left;margin:0 0 8px" lang="id">Sesi
+      resmi berjalan sesuai jendela waktunya; latihan terbuka kapan saja
+      selama event berjalan.</p>
+    <p class="subtle" style="text-align:left;margin:0 0 8px" lang="en">Official
+      sessions run inside their time window; practice is open any time while
+      its event runs.</p>
+    <div class="sched" id="sched"><p class="subtle" style="text-align:left" lang="id">Memuat jadwal…</p>
+      <p class="subtle" style="text-align:left" lang="en">Loading schedule…</p></div>
   </div>
 
   <footer>
@@ -78,5 +108,113 @@
     <p lang="en"><a href="../privacy.html">Privacy</a> · <a href="../terms.html">Terms of Use</a></p>
   </footer>
 </div>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+// Kunci anon memang publik: RLS dan view lomba_batches_public yang menjaga data.
+const SUPA_URL = 'https://koadqcjejecqpnufkhyx.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtvYWRxY2plamVjcXBudWZraHl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzQ1NDEsImV4cCI6MjA5NTcxMDU0MX0.IQUnBXrGsz1fCRTvUb0f5vI8AKhmASoegvVs09wqbaI';
+const db = createClient(SUPA_URL, SUPA_KEY);
+
+const FALLBACK_SKEDDO = 'https://app.skeddo.com';
+
+const jam = (iso) => new Date(iso).toLocaleTimeString('id-ID',
+  { hour: '2-digit', minute: '2-digit' });
+const tanggal = (iso) => new Date(iso).toLocaleDateString('id-ID',
+  { day: 'numeric', month: 'long', year: 'numeric' });
+
+function cell(tag, text, cls) {
+  const el = document.createElement(tag);
+  el.textContent = text ?? '';
+  if (cls) el.className = cls;
+  return el;
+}
+
+/** Satu baris sesi. Batch latihan tidak punya jendela waktu (aturan latihan,
+    lomba_admin.sql): selalu "terbuka" selama event published. */
+function batchRow(b) {
+  const now = new Date();
+  const open = b.is_practice ? !b.practice_closed
+    : new Date(b.starts_at) <= now && now < new Date(b.ends_at);
+  const future = !b.is_practice && new Date(b.starts_at) > now;
+
+  const tr = document.createElement('tr');
+  tr.appendChild(cell('td', b.label));
+  tr.appendChild(cell('td', b.kelas_min === b.kelas_max
+    ? `${b.kelas_min}` : `${b.kelas_min}–${b.kelas_max}`));
+  tr.appendChild(cell('td', b.is_practice
+    ? 'Kapan saja'
+    : `${tanggal(b.starts_at)}, ${jam(b.starts_at)}–${jam(b.ends_at)}`));
+  const soal = Object.values(b.durations ?? {}).map(d => Math.round(d / 60));
+  const min = Math.min(...soal), max = Math.max(...soal);
+  tr.appendChild(cell('td', soal.length
+    ? (min === max ? `${min} mnt` : `${min}–${max} mnt`) : '—'));
+
+  const badge = cell('span', open
+      ? (b.is_practice ? 'Latihan terbuka' : 'Berlangsung')
+      : future ? 'Segera' : 'Selesai',
+    'badge ' + (open ? 'open' : future ? 'soon' : 'done'));
+  const td = document.createElement('td');
+  td.appendChild(badge);
+  tr.appendChild(td);
+  return tr;
+}
+
+async function main() {
+  // Jadwal = lomba_batches_public, yang diisi staf dari lomba/admin.html.
+  // Event Skeddo-nya membaca jadwal yang sama di Skeddo (lihat
+  // docs/SKEDDO_EVENT_LATIHAN.md, "Scheduling & syncing with Skeddo").
+  const { data: events } = await db.from('lomba_events').select('*')
+    .eq('status', 'published').order('created_at');
+
+  const sched = document.getElementById('sched');
+  sched.replaceChildren();
+
+  const firstUrl = events?.find(e => e.skeddo_url)?.skeddo_url;
+  if (firstUrl) document.getElementById('sk-join').href = firstUrl;
+
+  if (!events?.length) {
+    sched.appendChild(cell('p', 'Belum ada event terjadwal — pantau grup ' +
+      'Skeddo AyoMath untuk pengumuman berikutnya.'));
+    return;
+  }
+
+  for (const ev of events) {
+    const { data: batches } = await db.from('lomba_batches_public').select('*')
+      .eq('event_slug', ev.slug).order('starts_at');
+
+    const h = cell('div', null, 'ev');
+    h.appendChild(cell('span', ev.name));
+    h.appendChild(document.createTextNode(' '));
+    h.appendChild(cell('span', `${ev.host} · ${ev.organizer}`, 'org2'));
+    sched.appendChild(h);
+
+    const rows = batches ?? [];
+    if (!rows.length) {
+      sched.appendChild(cell('p', 'Jadwal belum diumumkan.',
+        'subtle'));
+      continue;
+    }
+    const table = document.createElement('table');
+    const thead = document.createElement('thead');
+    const htr = document.createElement('tr');
+    for (const t of ['Sesi', 'Kelas', 'Waktu', 'Durasi', 'Status']) {
+      htr.appendChild(cell('th', t));
+    }
+    thead.appendChild(htr);
+    table.appendChild(thead);
+    const tb = document.createElement('tbody');
+    for (const b of rows) tb.appendChild(batchRow(b));
+    table.appendChild(tb);
+    sched.appendChild(table);
+  }
+}
+
+main().catch(() => {
+  document.getElementById('sched').replaceChildren(
+    cell('p', 'Jadwal tidak bisa dimuat. Periksa koneksi internet.'));
+});
+</script>
 </body>
 </html>

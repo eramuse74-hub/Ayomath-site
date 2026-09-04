@@ -338,6 +338,26 @@ function eventCard(ev) {
     status.appendChild(b);
   }
   card.appendChild(status);
+
+  // Tautan event Skeddo (lomba_admin.sql §1b): tombol "Gabung melalui Skeddo"
+  // di semua halaman publik mengarah ke URL ini. Kosong = tombol jatuh ke
+  // app.skeddo.com sebagai cadangan. Hanya https yang diterima server.
+  const skRow = el('div', null, 'row');
+  skRow.style.marginTop = '8px';
+  const skIn = document.createElement('input');
+  skIn.type = 'url';
+  skIn.placeholder = 'https://app.skeddo.com/e/… (tautan event Skeddo)';
+  skIn.value = ev.skeddo_url ?? '';
+  skIn.style.maxWidth = '420px';
+  const skMsg = el('span', null, 'msg');
+  skRow.append(skIn, btn('Simpan tautan', 'ghost', async () => {
+    try {
+      await rpc('lomba_admin_set_event_url', { p_event: ev.id, p_url: skIn.value || null });
+      say(skMsg, `Disimpan ${stamp()}`, true);
+      await loadAll();
+    } catch (e) { say(skMsg, errText(e), false); }
+  }), skMsg);
+  card.appendChild(skRow);
   card.appendChild(msg);
 
   const mine = S.batches.filter(b => b.event_id === ev.id);

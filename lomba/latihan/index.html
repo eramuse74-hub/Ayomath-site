@@ -5,6 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Lomba Matematika — AyoMath</title>
 <meta name="description" content="Halaman lomba matematika SD di platform AyoMath: jadwal sesi, aturan, dan tombol mulai untuk peserta.">
+<script>
+/* Gerbang Skeddo (docs/LOMBA.md §8): halaman ini dibuka lewat link event
+   Skeddo, yang membawa ?dari=skeddo. Tanpa tanda itu halaman tidak 404 —
+   pengunjung melihat layar "gabung melalui Skeddo" (.sk-gate di bawah).
+   admin.html tidak pakai gerbang ini. */
+if (new URLSearchParams(location.search).get('dari') !== 'skeddo')
+  document.documentElement.classList.add('sk-gate');
+</script>
 <!--
   ============================================================================
   Halaman depan sebuah lomba (docs/LOMBA.md §7).
@@ -73,6 +81,12 @@
   footer a{color:var(--teal)}
   .err{background:rgba(255,107,107,.12);color:#b3403f;border-radius:14px;
        padding:14px 16px;margin:16px 0}
+  /* Gerbang Skeddo: tanpa ?dari=skeddo, seluruh halaman diganti layar ini. */
+  .sk-gate{display:none;text-align:center;padding:64px 24px}
+  .sk-gate h1{font-size:28px;margin:10px 0 6px;font-weight:900}
+  .sk-gate .tag{margin:0 auto 22px}
+  html.sk-gate .wrap{display:none}
+  html.sk-gate .sk-gate{display:block}
   @media (prefers-color-scheme: dark){
     :root{--bg:#161029;--surface:#241c45;--text:#F1ECFF;--muted:#a99cc9;
           --line:rgba(255,255,255,.10);--teal:#4ECEC9;--gold:#F0BE4D}
@@ -83,6 +97,16 @@
 </style>
 </head>
 <body>
+<!-- Gerbang Skeddo — tampil hanya kalau script di <head> menandai html.sk-gate.
+     TODO(founder): ganti href dengan URL grup/event Skeddo AyoMath yang sebenarnya. -->
+<div class="sk-gate">
+  <div class="logo">🏆</div>
+  <h1>Lomba AyoMath di Skeddo</h1>
+  <p class="tag">Lomba dan latihan AyoMath diadakan melalui Skeddo. Gabung lewat
+    event-nya: di sana ada tombol <b>Join</b> untuk peserta dan <b>Watch</b>
+    untuk papan skor langsung.</p>
+  <a class="btn teal" id="sk-gate-btn" href="https://app.skeddo.com">Gabung melalui Skeddo</a>
+</div>
 <div class="wrap">
   <header>
     <div class="logo">🏆</div>
@@ -137,7 +161,7 @@
   </div>
 
   <footer>
-    <p><a id="live-link" href="live.html">📺 Papan skor langsung</a></p>
+    <p><a id="live-link" href="live.html?dari=skeddo">📺 Papan skor langsung</a></p>
     <p>Diselenggarakan di atas platform <b>AyoMath</b> ·
        <a href="https://www.ayomath.com/ayomath/">Tentang AyoMath</a> ·
        <a href="https://www.ayomath.com/privacy.html">Kebijakan Privasi</a></p>
@@ -204,6 +228,9 @@ async function main() {
 
   $('ev-name').textContent = ev.name;
   document.title = ev.name + ' — AyoMath';
+  // Tautan event Skeddo yang asli (diisi staf di lomba/admin.html) dipakai
+  // tombol gerbang; tanpanya tombol tetap ke app.skeddo.com.
+  if (ev.skeddo_url) $('sk-gate-btn').href = ev.skeddo_url;
 
   const org = $('ev-org');
   org.replaceChildren();
@@ -280,8 +307,10 @@ async function main() {
       a.className = 'btn teal';
       // ?lomba= dan bukan #/lomba/ : Flutter menulis ulang fragment URL saat
       // aplikasi mulai, jadi bentuk query inilah yang selamat kalau peserta
-      // menekan refresh di tengah lomba.
-      a.href = `${CFG.play}/?lomba=${encodeURIComponent(b.code)}`;
+      // menekan refresh di tengah lomba. &dari=skeddo membawa tanda gerbang
+      // Skeddo — pengunjung halaman ini sudah lewat gerbang, jangan suruh
+      // mereka lewat lagi di game-nya.
+      a.href = `${CFG.play}/?lomba=${encodeURIComponent(b.code)}&dari=skeddo`;
       a.textContent = open.length > 1 ? `▶ MULAI — ${b.code}` : '▶ MULAI';
       mulai.appendChild(a);
     }
