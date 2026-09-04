@@ -363,8 +363,48 @@ function eventCard(ev) {
   const mine = S.batches.filter(b => b.event_id === ev.id);
   if (!mine.length) card.appendChild(el('p', 'Belum ada batch. Salin dari batch event lain, atau buat lewat lomba_seed.sql.', 'sub'));
   for (const b of mine) card.appendChild(batchCard(b));
+  card.appendChild(skeddoLinksSection(ev, mine));
   card.appendChild(sponsorSection(ev));
   return card;
+}
+
+// Tautan siap-salin untuk form event Skeddo (docs/SKEDDO_EVENT_LATIHAN.md).
+// Skeddo tidak membuat tautan apa pun — admin menyalin dari sini lalu menempel
+// di kolom "Online meeting link" dan "Live stream link" saat membuat event.
+// ?dari=skeddo sudah termasuk, supaya tombol Join/Watch di Skeddo langsung
+// lolos gerbang.
+function skeddoLinksSection(ev, batches) {
+  const box = el('div', null, 'batch');
+  box.appendChild(el('p', 'Tautan untuk Skeddo — salin, tempel di form event ' +
+    '(meeting link per batch, stream link satu per event):', 'ptitle'));
+  box.appendChild(skLinkRow('Live stream (kolom "Live stream link")',
+    `${location.origin}/lomba/${ev.slug}/live.html?dari=skeddo`));
+  for (const b of batches) {
+    box.appendChild(skLinkRow(`Meeting ${b.code} (kolom "Online meeting link")`,
+      `https://play.ayomath.com/?lomba=${encodeURIComponent(b.code)}&dari=skeddo`));
+  }
+  if (!batches.length) box.appendChild(el('p', 'Belum ada batch — meeting link muncul begitu batch dibuat.', 'sub'));
+  return box;
+}
+
+function skLinkRow(label, url) {
+  const row = el('div', null, 'row');
+  row.style.marginTop = '6px';
+  const lab = el('span', label, null);
+  lab.style.minWidth = '260px';
+  const a = el('a', url, null, { href: url, target: '_blank', rel: 'noopener' });
+  a.style.fontSize = '13px';
+  a.style.wordBreak = 'break-all';
+  const msg = el('span', null, 'msg');
+  row.append(lab, a, btn('Salin', 'ghost', async () => {
+    try {
+      await navigator.clipboard.writeText(url);
+      say(msg, 'Tersalin ✓', true);
+    } catch {
+      say(msg, 'Gagal — salin manual dari tautan', false);
+    }
+  }), msg);
+  return row;
 }
 
 // ── Sponsor ──────────────────────────────────────────────────────────────────
