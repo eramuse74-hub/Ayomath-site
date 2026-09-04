@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title data-en="AyoMath Competition — Online Practice & Events">Lomba AyoMath — Latihan Online &amp; Event</title>
+<meta name="description" content="Halaman resmi Lomba AyoMath: latihan soal online sesuai kelas (1–6), jadwal event, dan papan skor langsung. Gratis, tanpa iklan." data-en="The official AyoMath Competition page: free online practice by grade (1–6), event schedules, and a live score board. Free, ad-free.">
+<script src="../lang.js"></script>
+<style>
+  :root{--teal:#1F9E8E;--violet:#6C5CE7;--bg:#F7F8FC;--surface:#fff;--text:#2D2A45;--muted:#6b6880}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+  .wrap{max-width:760px;margin:0 auto;padding:24px}
+  header{text-align:center;padding:40px 24px 16px}
+  .logo{font-size:56px;line-height:1}
+  h1{font-size:32px;margin:12px 0 6px;font-weight:900}
+  .tag{color:var(--muted);font-size:17px;margin:0 auto;max-width:520px}
+  .card{background:var(--surface);border-radius:20px;padding:24px;margin:16px 0;box-shadow:0 2px 14px rgba(45,42,69,.06)}
+  .feat{display:flex;gap:12px;align-items:flex-start;margin:12px 0}
+  .feat .ic{font-size:26px;line-height:1.2}
+  .feat b{display:block}
+  .btns{display:flex;flex-wrap:wrap;gap:12px;margin-top:20px;justify-content:center}
+  a.btn{display:inline-block;text-decoration:none;font-weight:800;padding:12px 20px;border-radius:14px}
+  a.teal{background:var(--teal);color:#fff}
+  a.violet{background:var(--violet);color:#fff}
+  a.ghost{background:#fff;color:var(--teal);border:2px solid var(--teal)}
+  footer{text-align:center;color:var(--muted);font-size:14px;padding:32px 24px 48px}
+  footer a{color:var(--teal)}
+  /* ID ⇄ EN toggle — see ../lang.js */
+  .langbar{display:flex;justify-content:space-between;align-items:center}
+  .back{color:var(--muted);text-decoration:none;font-weight:700}
+  .lang{display:inline-flex;background:#fff;border:1px solid rgba(45,42,69,.14);border-radius:999px;padding:3px;gap:2px;margin-left:auto}
+  .lang button{border:0;background:none;font:inherit;font-weight:800;font-size:13px;padding:4px 12px;border-radius:999px;color:var(--muted);cursor:pointer}
+  .lang button.on{background:var(--teal);color:#fff}
+  html:not([data-lang="en"]) [lang="en"],html[data-lang="en"] [lang="id"]{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="langbar">
+    <a class="back" href="../">← Eramuse</a>
+    <span class="lang" role="group" aria-label="Bahasa / Language">
+      <button type="button" data-set-lang="id" title="Bahasa Indonesia">ID</button>
+      <button type="button" data-set-lang="en" title="English">EN</button>
+    </span>
+  </div>
+
+  <header>
+    <div class="logo">🏆</div>
+    <h1 lang="id">Lomba AyoMath</h1>
+    <h1 lang="en">AyoMath Competition</h1>
+    <p class="tag" lang="id">Latihan soal matematika online sesuai kelas (1–6), jadwal event, dan papan skor langsung — gratis dan tanpa iklan.</p>
+    <p class="tag" lang="en">Online maths practice by grade (1–6), event schedules, and a live score board — free and ad-free.</p>
+  </header>
+
+  <div class="card">
+    <div class="feat"><span class="ic">📝</span>
+      <span lang="id"><b>Latihan Online</b>Kerjakan paket soal lomba yang disusun mengikuti Kurikulum Merdeka — angka dan topik sesuai kelas, dari Kelas 1 sampai Kelas 6. Ada mode latihan yang selalu terbuka dan paket latihan resmi dengan batas waktu.</span>
+      <span lang="en"><b>Online Practice</b>Work competition paper sets aligned to the Merdeka Curriculum — numbers and topics matched to each grade, from Grade 1 to Grade 6. There's an always-open practice mode plus official timed practice batches.</span></div>
+    <div class="feat"><span class="ic">📅</span>
+      <span lang="id"><b>Jadwal Event</b>Lihat jadwal lomba berikutnya: tanggal, kelas yang diikuti, jumlah soal, dan waktu pengerjaan.</span>
+      <span lang="en"><b>Event Schedule</b>See upcoming competitions: date, participating grades, number of questions, and time limits.</span></div>
+    <div class="feat"><span class="ic">📡</span>
+      <span lang="id"><b>Papan Skor Langsung</b>Saat event berlangsung, pantau peringkat peserta secara langsung di halaman Live.</span>
+      <span lang="en"><b>Live Score Board</b>While an event is running, follow the participants' rankings live on the Live page.</span></div>
+    <div class="btns">
+      <a class="btn teal" href="./latihan/"><span lang="id">🚀 Buka Halaman Latihan</span><span lang="en">🚀 Open Practice Page</span></a>
+      <a class="btn ghost" href="../ayomath/"><span lang="id">Tentang AyoMath</span><span lang="en">About AyoMath</span></a>
+    </div>
+  </div>
+
+  <footer>
+    <p lang="id">Dikembangkan oleh Eramuse.<br>
+       Pertanyaan atau masukan? <a href="mailto:ayomath.games@gmail.com">ayomath.games@gmail.com</a></p>
+    <p lang="en">Developed by Eramuse.<br>
+       Questions or feedback? <a href="mailto:ayomath.games@gmail.com">ayomath.games@gmail.com</a></p>
+    <p lang="id"><a href="../privacy.html">Privasi</a> · <a href="../terms.html">Syarat Penggunaan</a></p>
+    <p lang="en"><a href="../privacy.html">Privacy</a> · <a href="../terms.html">Terms of Use</a></p>
+  </footer>
+</div>
+</body>
+</html>
