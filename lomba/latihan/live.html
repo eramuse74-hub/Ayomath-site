@@ -10,7 +10,7 @@
    event Skeddo, yang membawa ?dari=skeddo. Tanpa tanda itu halaman tidak 404
    — pengunjung melihat layar "gabung melalui Skeddo" (.sk-gate di bawah). */
 if (new URLSearchParams(location.search).get('dari') !== 'skeddo')
-  document.documentElement.classList.add('sk-gate');
+  document.documentElement.classList.add('sk-gated');
 </script>
 <!--
   ============================================================================
@@ -137,17 +137,20 @@ if (new URLSearchParams(location.search).get('dari') !== 'skeddo')
   .sk-gate .logo{font-size:56px;line-height:1}
   .sk-gate h1{font-size:28px;margin:14px 0 8px;font-weight:900}
   .sk-gate p{color:var(--muted);max-width:520px;margin:0 auto 24px}
-  html.sk-gate .wrap{display:none}
-  html.sk-gate .sp-strip{display:none}
-  html.sk-gate .sk-gate{display:block}
-  html.sk-gate body{background:var(--bg)}
+  html.sk-gated .wrap{display:none}
+  html.sk-gated .sp-strip{display:none}
+  html.sk-gated .sk-gate{display:block}
+  html.sk-gated body{background:var(--bg)}
   .sk-gate a.btn{display:inline-block;text-decoration:none;font-weight:800;
                  padding:14px 26px;border-radius:14px;font-size:17px;
                  background:var(--teal);color:#10231f}
 </style>
 </head>
 <body>
-<!-- Gerbang Skeddo — tampil hanya kalau script di <head> menandai html.sk-gate.
+<!-- Gerbang Skeddo — tampil hanya kalau script di <head> menandai html.sk-gated.
+     Nama class penanda SENGAJA beda dari .sk-gate: kalau sama, aturan
+     .sk-gate{display:none} ikut mengenai elemen <html> dan seluruh halaman
+     jadi putih kosong.
      TODO(founder): ganti href dengan URL grup/event Skeddo AyoMath yang sebenarnya. -->
 <div class="sk-gate">
   <div class="logo">🏆</div>

@@ -11,7 +11,7 @@
    pengunjung melihat layar "gabung melalui Skeddo" (.sk-gate di bawah).
    admin.html tidak pakai gerbang ini. */
 if (new URLSearchParams(location.search).get('dari') !== 'skeddo')
-  document.documentElement.classList.add('sk-gate');
+  document.documentElement.classList.add('sk-gated');
 </script>
 <!--
   ============================================================================
@@ -85,8 +85,8 @@ if (new URLSearchParams(location.search).get('dari') !== 'skeddo')
   .sk-gate{display:none;text-align:center;padding:64px 24px}
   .sk-gate h1{font-size:28px;margin:10px 0 6px;font-weight:900}
   .sk-gate .tag{margin:0 auto 22px}
-  html.sk-gate .wrap{display:none}
-  html.sk-gate .sk-gate{display:block}
+  html.sk-gated .wrap{display:none}
+  html.sk-gated .sk-gate{display:block}
   @media (prefers-color-scheme: dark){
     :root{--bg:#161029;--surface:#241c45;--text:#F1ECFF;--muted:#a99cc9;
           --line:rgba(255,255,255,.10);--teal:#4ECEC9;--gold:#F0BE4D}
@@ -97,7 +97,10 @@ if (new URLSearchParams(location.search).get('dari') !== 'skeddo')
 </style>
 </head>
 <body>
-<!-- Gerbang Skeddo — tampil hanya kalau script di <head> menandai html.sk-gate.
+<!-- Gerbang Skeddo — tampil hanya kalau script di <head> menandai html.sk-gated.
+     Nama class penanda SENGAJA beda dari .sk-gate: kalau sama, aturan
+     .sk-gate{display:none} ikut mengenai elemen <html> dan seluruh halaman
+     jadi putih kosong.
      TODO(founder): ganti href dengan URL grup/event Skeddo AyoMath yang sebenarnya. -->
 <div class="sk-gate">
   <div class="logo">🏆</div>
