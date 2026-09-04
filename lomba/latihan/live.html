@@ -36,6 +36,9 @@ if (new URLSearchParams(location.search).get('dari') !== 'skeddo')
   dasar layar — tetap terlihat saat papan digulir.
 
   Untuk event baru: salin folder ini, ganti `event` di blok CFG.
+  Dua sesi berjalan bersamaan: buka papan dengan ?batch=<KODE> di tiap layar
+  supaya masing-masing menempel pada sesinya (tanpa itu papan memilih sendiri
+  SATU sesi yang sedang berjalan).
   ============================================================================
 -->
 <style>
@@ -276,6 +279,20 @@ async function loadEvent() {
 
 function pickBatch() {
   const now = Date.now();
+  // ?batch=<KODE> membakukan papan ke satu sesi: kalau dua sesi berjalan
+  // bersamaan, tiap layar/proyektor membuka papan dengan kodenya masing-
+  // masing. Kode yang tak dikenal jatuh ke pemilihan biasa — layar tidak
+  // pernah boleh kosong karena salah ketik.
+  const pin = new URLSearchParams(location.search).get('batch');
+  if (pin) {
+    const pb = S.batches.find(b => b.code.toUpperCase() === pin.toUpperCase());
+    if (pb) {
+      const t1 = new Date(pb.starts_at).getTime(), t2 = new Date(pb.ends_at).getTime();
+      applyBatch(pb, (pb.is_practice || (t1 <= now && now < t2)) ? pb : null,
+        t1 > now ? pb : null);
+      return;
+    }
+  }
   // Batch latihan tidak punya jendela waktu (lomba_admin.sql, aturan latihan):
   // selalu dianggap berjalan selama event-nya published.
   const live = S.batches.find(b => b.is_practice ||
@@ -283,7 +300,10 @@ function pickBatch() {
   const next = S.batches.find(b => new Date(b.starts_at).getTime() > now);
   const prev = [...S.batches].reverse()
     .find(b => new Date(b.ends_at).getTime() <= now);
-  const chosen = live ?? next ?? prev ?? null;
+  applyBatch(live ?? next ?? prev ?? null, live, next);
+}
+
+function applyBatch(chosen, live, next) {
 
   const changed = chosen?.id !== S.batch?.id;
   S.batch = chosen;

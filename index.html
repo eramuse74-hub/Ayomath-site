@@ -40,6 +40,14 @@
   .lang button{border:0;background:none;font:inherit;font-weight:800;font-size:13px;padding:4px 12px;border-radius:999px;color:var(--muted);cursor:pointer}
   .lang button.on{background:var(--teal);color:#fff}
   html:not([data-lang="en"]) [lang="en"],html[data-lang="en"] [lang="id"]{display:none}
+  /* Ticker jadwal lomba — diisi dari Supabase; kosong = teks "nantikan". */
+  .tick{overflow:hidden;white-space:nowrap;margin:12px 0 4px;background:#f2fbf9;
+        border:1px solid rgba(31,158,142,.25);border-radius:12px;padding:9px 0}
+  .tick .track{display:inline-flex;gap:44px;align-items:center;padding-left:100vw;
+               animation:tick-move var(--dur,30s) linear infinite;font-size:14px;font-weight:700}
+  .tick:hover .track{animation-play-state:paused}
+  @keyframes tick-move{to{transform:translateX(-100%)}}
+  .tick .it b{color:var(--teal)}
 </style>
 </head>
 <body>
@@ -76,6 +84,8 @@
        sessions, always-open practice, and a live score board. Everything runs
        through <b>Skeddo</b> — see the schedule on the competition page, then
        join via the Skeddo event.</p>
+    <div class="tick" id="lomba-tick" hidden><div class="track" id="lomba-tick-track"></div></div>
+    <p class="who" id="lomba-tick-none" hidden><span lang="id">Belum ada jadwal — nantikan pengumuman berikutnya.</span><span lang="en">No schedule yet — stay tuned for the next announcement.</span></p>
     <div class="btns">
       <a class="btn teal" href="lomba/"><span lang="id">🏆 Lihat Jadwal Lomba</span><span lang="en">🏆 Competition Schedule</span></a>
     </div>
@@ -153,5 +163,72 @@
        <b>Jabrik Sains:</b> <a href="jabrik-sains/privacy.html">Privacy &amp; Terms</a></p>
   </footer>
 </div>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+// Kunci anon memang publik: RLS dan view lomba_batches_public yang menjaga data.
+const SUPA_URL = 'https://koadqcjejecqpnufkhyx.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtvYWRxY2plamVjcXBudWZraHl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzQ1NDEsImV4cCI6MjA5NTcxMDU0MX0.IQUnBXrGsz1fCRTvUb0f5vI8AKhmASoegvVs09wqbaI';
+const db = createClient(SUPA_URL, SUPA_KEY);
+
+const jam = (iso) => new Date(iso).toLocaleTimeString('id-ID',
+  { hour: '2-digit', minute: '2-digit' });
+const tanggal = (iso) => new Date(iso).toLocaleDateString('id-ID',
+  { day: 'numeric', month: 'long', year: 'numeric' });
+
+/** Ticker hanya membawa yang sedang berjalan atau akan datang: latihan yang
+    terbuka dan sesi resmi yang belum selesai. Yang sudah lewat tidak
+    ditampilkan — bukan berita lagi. */
+function tickItem(evName, b) {
+  const now = new Date();
+  if (b.is_practice && b.practice_closed) return null;
+  if (!b.is_practice && new Date(b.ends_at) <= now) return null;
+  const open = b.is_practice ||
+    (new Date(b.starts_at) <= now && now < new Date(b.ends_at));
+  const waktu = b.is_practice ? 'latihan · kapan saja'
+    : `${tanggal(b.starts_at)}, ${jam(b.starts_at)}–${jam(b.ends_at)}`;
+  const status = open ? (b.is_practice ? 'terbuka' : 'sedang berlangsung') : 'segera';
+  return `${evName} — ${b.label} · ${waktu} · ${status}`;
+}
+
+async function main() {
+  const { data: events } = await db.from('lomba_events').select('*')
+    .eq('status', 'published').order('created_at');
+
+  const items = [];
+  for (const ev of events ?? []) {
+    const { data: batches } = await db.from('lomba_batches_public').select('*')
+      .eq('event_slug', ev.slug).order('starts_at');
+    for (const b of batches ?? []) {
+      const t = tickItem(ev.name, b);
+      if (t) items.push(t);
+    }
+  }
+
+  const tick = document.getElementById('lomba-tick');
+  if (!items.length) {
+    document.getElementById('lomba-tick-none').hidden = false;
+    return;
+  }
+  // Isi dua kali supaya putaran tidak punya jeda kosong (pola strip sponsor).
+  const track = document.getElementById('lomba-tick-track');
+  for (let round = 0; round < 2; round++) {
+    for (const t of items) {
+      const s = document.createElement('span');
+      s.className = 'it';
+      s.textContent = `🏆 ${t}`;
+      track.appendChild(s);
+    }
+  }
+  track.style.setProperty('--dur', `${Math.max(24, items.length * 9)}s`);
+  tick.hidden = false;
+}
+
+main().catch(() => {
+  // Ticker adalah hiasan — kalau gagal, biarkan saja hilang, jangan ganggu halaman.
+  document.getElementById('lomba-tick').hidden = true;
+});
+</script>
 </body>
 </html>

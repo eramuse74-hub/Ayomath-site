@@ -33,17 +33,14 @@
   .lang button{border:0;background:none;font:inherit;font-weight:800;font-size:13px;padding:4px 12px;border-radius:999px;color:var(--muted);cursor:pointer}
   .lang button.on{background:var(--teal);color:#fff}
   html:not([data-lang="en"]) [lang="en"],html[data-lang="en"] [lang="id"]{display:none}
-  /* Jadwal — diisi dari Supabase (lomba_batches_public), bukan ditulis tangan. */
-  .sched{margin-top:6px}
-  .sched .ev{font-weight:900;font-size:17px;margin:14px 0 2px}
-  .sched .ev .org2{color:var(--muted);font-weight:400;font-size:13px}
-  .sched table{width:100%;border-collapse:collapse;font-size:14px}
-  .sched th,.sched td{text-align:left;padding:7px 6px;border-bottom:1px solid rgba(45,42,69,.08)}
-  .sched th{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)}
-  .badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:12px;font-weight:800;white-space:nowrap}
-  .badge.open{background:rgba(31,158,142,.14);color:var(--teal)}
-  .badge.soon{background:rgba(108,92,231,.14);color:var(--violet)}
-  .badge.done{background:rgba(45,42,69,.08);color:var(--muted)}
+  /* Jadwal — ticker dari Supabase (lomba_batches_public); kosong = "nantikan". */
+  .tick{overflow:hidden;white-space:nowrap;margin:10px 0 2px;background:rgba(31,158,142,.08);
+        border:1px solid rgba(31,158,142,.25);border-radius:12px;padding:10px 0}
+  .tick .track{display:inline-flex;gap:44px;align-items:center;padding-left:100vw;
+               animation:tick-move var(--dur,30s) linear infinite;font-size:14px;font-weight:700}
+  .tick:hover .track{animation-play-state:paused}
+  @keyframes tick-move{to{transform:translateX(-100%)}}
+  .tick .it b{color:var(--teal)}
 </style>
 </head>
 <body>
@@ -95,8 +92,13 @@
     <p class="subtle" style="text-align:left;margin:0 0 8px" lang="en">Official
       sessions run inside their time window; practice is open any time while
       its event runs.</p>
-    <div class="sched" id="sched"><p class="subtle" style="text-align:left" lang="id">Memuat jadwal…</p>
-      <p class="subtle" style="text-align:left" lang="en">Loading schedule…</p></div>
+    <div class="tick" id="sched-tick" hidden><div class="track" id="sched-track"></div></div>
+    <p class="subtle" style="text-align:left" id="sched-empty" hidden
+       lang="id">Belum ada jadwal — nantikan pengumuman berikutnya di grup
+      Skeddo AyoMath.</p>
+    <p class="subtle" style="text-align:left" id="sched-empty-en" hidden
+       lang="en">No schedule yet — stay tuned for the next announcement in the
+      AyoMath Skeddo group.</p>
   </div>
 
   <footer>
@@ -131,89 +133,64 @@ function cell(tag, text, cls) {
   return el;
 }
 
-/** Satu baris sesi. Batch latihan tidak punya jendela waktu (aturan latihan,
-    lomba_admin.sql): selalu "terbuka" selama event published. */
-function batchRow(b) {
+/** Ticker hanya membawa yang sedang berjalan atau akan datang: latihan yang
+    terbuka dan sesi resmi yang belum selesai. Yang sudah lewat tidak
+    ditampilkan — bukan berita lagi. */
+function tickItem(evName, b) {
   const now = new Date();
-  const open = b.is_practice ? !b.practice_closed
-    : new Date(b.starts_at) <= now && now < new Date(b.ends_at);
-  const future = !b.is_practice && new Date(b.starts_at) > now;
-
-  const tr = document.createElement('tr');
-  tr.appendChild(cell('td', b.label));
-  tr.appendChild(cell('td', b.kelas_min === b.kelas_max
-    ? `${b.kelas_min}` : `${b.kelas_min}–${b.kelas_max}`));
-  tr.appendChild(cell('td', b.is_practice
-    ? 'Kapan saja'
-    : `${tanggal(b.starts_at)}, ${jam(b.starts_at)}–${jam(b.ends_at)}`));
-  const soal = Object.values(b.durations ?? {}).map(d => Math.round(d / 60));
-  const min = Math.min(...soal), max = Math.max(...soal);
-  tr.appendChild(cell('td', soal.length
-    ? (min === max ? `${min} mnt` : `${min}–${max} mnt`) : '—'));
-
-  const badge = cell('span', open
-      ? (b.is_practice ? 'Latihan terbuka' : 'Berlangsung')
-      : future ? 'Segera' : 'Selesai',
-    'badge ' + (open ? 'open' : future ? 'soon' : 'done'));
-  const td = document.createElement('td');
-  td.appendChild(badge);
-  tr.appendChild(td);
-  return tr;
+  if (b.is_practice && b.practice_closed) return null;
+  if (!b.is_practice && new Date(b.ends_at) <= now) return null;
+  const open = b.is_practice ||
+    (new Date(b.starts_at) <= now && now < new Date(b.ends_at));
+  const waktu = b.is_practice ? 'latihan · kapan saja'
+    : `${tanggal(b.starts_at)}, ${jam(b.starts_at)}–${jam(b.ends_at)}`;
+  const status = open ? (b.is_practice ? 'terbuka' : 'sedang berlangsung') : 'segera';
+  return `${evName} — ${b.label} · ${waktu} · ${status}`;
 }
 
 async function main() {
-  // Jadwal = lomba_batches_public, yang diisi staf dari lomba/admin.html.
-  // Event Skeddo-nya membaca jadwal yang sama di Skeddo (lihat
+  // Jadwal = lomba_batches_public, yang diisi staf dari lomba/admin.html —
+  // batch tanpa batas jumlah per event, event tanpa batas jumlah. Event
+  // Skeddo-nya membaca jadwal yang sama di Skeddo (lihat
   // docs/SKEDDO_EVENT_LATIHAN.md, "Scheduling & syncing with Skeddo").
   const { data: events } = await db.from('lomba_events').select('*')
     .eq('status', 'published').order('created_at');
 
-  const sched = document.getElementById('sched');
-  sched.replaceChildren();
-
   const firstUrl = events?.find(e => e.skeddo_url)?.skeddo_url;
   if (firstUrl) document.getElementById('sk-join').href = firstUrl;
 
-  if (!events?.length) {
-    sched.appendChild(cell('p', 'Belum ada event terjadwal — pantau grup ' +
-      'Skeddo AyoMath untuk pengumuman berikutnya.'));
-    return;
-  }
-
-  for (const ev of events) {
+  const items = [];
+  for (const ev of events ?? []) {
     const { data: batches } = await db.from('lomba_batches_public').select('*')
       .eq('event_slug', ev.slug).order('starts_at');
-
-    const h = cell('div', null, 'ev');
-    h.appendChild(cell('span', ev.name));
-    h.appendChild(document.createTextNode(' '));
-    h.appendChild(cell('span', `${ev.host} · ${ev.organizer}`, 'org2'));
-    sched.appendChild(h);
-
-    const rows = batches ?? [];
-    if (!rows.length) {
-      sched.appendChild(cell('p', 'Jadwal belum diumumkan.',
-        'subtle'));
-      continue;
+    for (const b of batches ?? []) {
+      const t = tickItem(ev.name, b);
+      if (t) items.push(t);
     }
-    const table = document.createElement('table');
-    const thead = document.createElement('thead');
-    const htr = document.createElement('tr');
-    for (const t of ['Sesi', 'Kelas', 'Waktu', 'Durasi', 'Status']) {
-      htr.appendChild(cell('th', t));
-    }
-    thead.appendChild(htr);
-    table.appendChild(thead);
-    const tb = document.createElement('tbody');
-    for (const b of rows) tb.appendChild(batchRow(b));
-    table.appendChild(tb);
-    sched.appendChild(table);
   }
+
+  if (!items.length) {
+    document.getElementById('sched-empty').hidden = false;
+    document.getElementById('sched-empty-en').hidden = false;
+    return;
+  }
+  // Isi dua kali supaya putaran tidak punya jeda kosong (pola strip sponsor).
+  const track = document.getElementById('sched-track');
+  for (let round = 0; round < 2; round++) {
+    for (const t of items) {
+      const s = document.createElement('span');
+      s.className = 'it';
+      s.textContent = `🏆 ${t}`;
+      track.appendChild(s);
+    }
+  }
+  track.style.setProperty('--dur', `${Math.max(24, items.length * 9)}s`);
+  document.getElementById('sched-tick').hidden = false;
 }
 
 main().catch(() => {
-  document.getElementById('sched').replaceChildren(
-    cell('p', 'Jadwal tidak bisa dimuat. Periksa koneksi internet.'));
+  document.getElementById('sched-empty').hidden = false;
+  document.getElementById('sched-empty-en').hidden = false;
 });
 </script>
 </body>
