@@ -210,8 +210,8 @@ if (new URLSearchParams(location.search).get('dari') !== 'skeddo')
 
   <footer>
     <p><a href="index.html">← Halaman lomba</a> · Platform <b>AyoMath</b></p>
-    <p>Peserta ditampilkan dengan nomor dan asal sekolah. Nama anak tidak pernah
-       disimpan maupun ditampilkan.</p>
+    <p>Peserta ditampilkan dengan nomor peserta, nama panggilan yang diisi
+       sendiri saat masuk (boleh dikosongkan), dan asal sekolah.</p>
   </footer>
 </div>
 
@@ -433,7 +433,7 @@ function drawScores() {
     rows.slice(0, 20).forEach((s, i) => {
       const tr = document.createElement('tr');
       tr.appendChild(cell('td', s.done ? String(i + 1) : '·', 'rank'));
-      tr.appendChild(cell('td', `Peserta ${s.nomor}`, 'nom'));
+      tr.appendChild(cell('td', namaPeserta(s), 'nom'));
       tr.appendChild(cell('td', s.sekolah || '—', 'sek'));
       tr.appendChild(cell('td', s.done ? `${s.score}` : 'mengerjakan', 'skor'));
       tr.appendChild(cell('td', s.done && s.time_ms != null ? mmss(s.time_ms) : '—', 'wkt'));
@@ -442,6 +442,13 @@ function drawScores() {
     table.appendChild(tb);
     box.appendChild(table);
   }
+}
+
+/** "Sinta (017)" when the child typed a name at the join form, else
+ *  "Peserta 017". Names are plain text from a child's keyboard — cell()
+ *  sets textContent, never innerHTML. */
+function namaPeserta(s) {
+  return s.nama ? `${s.nama} (${s.nomor})` : `Peserta ${s.nomor}`;
 }
 
 function drawTicker() {
@@ -458,7 +465,7 @@ function drawTicker() {
   }
   done.forEach((s, i) => {
     if (i) t.appendChild(document.createTextNode('   ·   '));
-    t.appendChild(cell('b', `Peserta ${s.nomor}`));
+    t.appendChild(cell('b', namaPeserta(s)));
     t.appendChild(document.createTextNode(
       `${s.sekolah ? ' · ' + s.sekolah : ''} — ${s.score} benar dalam ${mmss(s.time_ms)}`));
   });

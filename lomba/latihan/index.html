@@ -139,10 +139,12 @@ if (new URLSearchParams(location.search).get('dari') !== 'skeddo')
     <!-- Daftar di bawah ini adalah bawaan. Kalau info.json berisi "aturan",
          seluruh daftar ini diganti — lihat info.example.json. -->
     <div id="aturan">
-    <div class="rule"><span class="ic">🔢</span><span><b>Masuk pakai nomor peserta</b>
-      Tidak ada nama, tidak ada akun, tidak ada login. Panitia yang membagikan nomor.</span></div>
-    <div class="rule"><span class="ic">⏱️</span><span><b>Waktu berjalan sejak menekan MULAI</b>
-      Waktu dihitung oleh server, bukan oleh komputer peserta.</span></div>
+    <div class="rule"><span class="ic">🔢</span><span><b>Masuk pakai nama panggilan (boleh kosong) dan kelas</b>
+      Nomor peserta diberikan otomatis — catat nomormu. Tidak ada akun, tidak ada login.
+      Sesi dengan daftar peserta tertutup memakai nomor dari panitia.</span></div>
+    <div class="rule"><span class="ic">⏱️</span><span><b>Lomba: semua mulai bersama</b>
+      Masuk ke ruang tunggu, lalu hitungan mundur 3-2-1 berbunyi saat soal dibuka.
+      Latihan: waktu berjalan sejak menekan MULAI. Waktu dihitung oleh server, bukan oleh komputer peserta.</span></div>
     <div class="rule"><span class="ic">✏️</span><span><b>Boleh pakai kertas coret-coretan</b>
       Kertas dikumpulkan kembali setelah sesi selesai.</span></div>
     <div class="rule"><span class="ic">🚫</span><span><b>Tidak ada petunjuk dan tidak ada pengulangan</b>
@@ -168,8 +170,9 @@ if (new URLSearchParams(location.search).get('dari') !== 'skeddo')
     <p>Diselenggarakan di atas platform <b>AyoMath</b> ·
        <a href="https://www.ayomath.com/ayomath/">Tentang AyoMath</a> ·
        <a href="https://www.ayomath.com/privacy.html">Kebijakan Privasi</a></p>
-    <p>AyoMath tidak menyimpan nama peserta. Yang tercatat hanya nomor peserta,
-       kelas, asal sekolah, nilai, dan waktu pengerjaan.</p>
+    <p>Yang tercatat: nomor peserta, nama panggilan yang diisi sendiri (boleh
+       dikosongkan), kelas, asal sekolah, nilai, dan waktu pengerjaan. Panitia
+       dapat menghapus data peserta.</p>
   </footer>
 </div>
 
@@ -266,7 +269,7 @@ async function main() {
 
   $('ev-status').textContent =
     ev.status === 'closed' ? 'Lomba sudah selesai'
-    : open.length ? (open.every(b => b.is_practice) ? 'Latihan terbuka — mulai kapan saja, berulang-ulang' : 'Sesi sedang berlangsung')
+    : open.length ? (open.every(b => b.is_practice) ? 'Latihan terbuka — boleh diulang selama jendela latihan' : 'Sesi sedang berlangsung')
     : anyPracticeClosed ? 'Latihan ditutup sementara — lomba sedang berlangsung'
     : next ? `Sesi berikutnya ${tanggal(next.starts_at)} pukul ${jam(next.starts_at)}`
     : 'Belum ada sesi terjadwal';

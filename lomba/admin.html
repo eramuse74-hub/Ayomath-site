@@ -526,12 +526,12 @@ function batchCard(b) {
   left.appendChild(el('span', b.label));
   if (b.is_practice) { left.appendChild(document.createTextNode(' ')); left.appendChild(el('span', 'latihan', 'pill practice')); }
   const when = b.is_practice
-    ? `Latihan: tanpa jendela waktu — Mulai kapan saja selama event published · kelas ${b.kelas_min}–${b.kelas_max}`
-    : `${fmtWib(b.starts_at)} → ${fmtWib(b.ends_at)} WIB · kelas ${b.kelas_min}–${b.kelas_max} · ruang tunggu ${b.lobby_sec}s`;
+    ? `Latihan: ${fmtWib(b.starts_at)} → ${fmtWib(b.ends_at)} WIB (jendela latihan, boleh diulang) · kelas ${b.kelas_min}–${b.kelas_max}`
+    : `${fmtWib(b.starts_at)} → ${fmtWib(b.ends_at)} WIB · kelas ${b.kelas_min}–${b.kelas_max} · ruang tunggu ${b.lobby_sec}s sebelum mulai · kursi ${b.capacity ?? 'tak dibatasi'}`;
   left.appendChild(el('div', when, 'when'));
   left.appendChild(el('div',
     `Soal untuk kelas ${(b.kelas_list ?? []).join(', ') || '—'} · peserta ${b.entries} (selesai ${b.done})`
-    + ` · daftar peserta ${b.roster ? b.roster + ' nomor (tertutup)' : 'terbuka'} · papan: ${b.live_board}`, 'when'));
+    + ` · daftar peserta ${b.roster ? b.roster + ' nomor (tertutup)' : 'terbuka — nama + nomor otomatis'} · papan: ${b.live_board}`, 'when'));
   head.appendChild(left);
   card.appendChild(head);
 
@@ -552,6 +552,15 @@ function batchCard(b) {
       await loadAll();
     } catch (e) { say(msg, errText(e), false); }
   }));
+  // The hall is ready before the clock says so: everyone in the waiting room
+  // gets the 3-2-1 ten seconds from now (their clocks follow starts_at).
+  actions.appendChild(armed('Mulai sekarang (+10 dtk)', 'gold', async () => {
+    try {
+      const r = await rpc('lomba_admin_open_now', { p_batch: b.id, p_delay_sec: 10 });
+      say(msg, `Hitungan mundur berjalan — soal dibuka ${fmtWib(r.starts_at)} WIB, ${stamp()}`, true);
+      await loadAll();
+    } catch (e) { say(msg, errText(e), false); }
+  }));
   actions.appendChild(armed('Tutup batch', 'warn', async () => {
     try {
       const n = await rpc('lomba_admin_close_batch', { p_batch: b.id });
@@ -562,7 +571,7 @@ function batchCard(b) {
   actions.appendChild(btn('Unduh hasil (CSV)', 'ghost', async () => {
     try {
       const rows = await rpc('lomba_results', { p_batch: b.id });
-      const cols = ['kelas', 'rank', 'nomor', 'sekolah', 'score', 'points', 'max_points', 'time_ms', 'done'];
+      const cols = ['kelas', 'rank', 'nomor', 'nama', 'sekolah', 'score', 'points', 'max_points', 'time_ms', 'done'];
       const esc = (v) => { const s = v == null ? '' : String(v); return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
       const csv = [cols.join(',')].concat((rows ?? []).map(r => cols.map(c => esc(r[c])).join(','))).join('\n');
       const a = document.createElement('a');
@@ -598,7 +607,8 @@ function fillEditor(editor, b, msg) {
   const fMax = field(g, 'Kelas max', el('input', null, null, { type: 'number', min: 1, max: 6, value: b.kelas_max }));
   const fStart = field(g, 'Mulai (WIB)', el('input', null, null, { type: 'datetime-local', value: toLocalInput(b.starts_at) }));
   const fEnd = field(g, 'Selesai (WIB)', el('input', null, null, { type: 'datetime-local', value: toLocalInput(b.ends_at) }));
-  const fLobby = field(g, 'Ruang tunggu (detik)', el('input', null, null, { type: 'number', min: 0, max: 1800, value: b.lobby_sec }));
+  const fLobby = field(g, 'Ruang tunggu (detik sebelum Mulai)', el('input', null, null, { type: 'number', min: 0, max: 1800, value: b.lobby_sec }));
+  const fCap = field(g, 'Kursi (kosong = tunggu jam Mulai)', el('input', null, null, { type: 'number', min: 1, max: 1000, value: b.capacity ?? '' }));
   const fDur = field(g, 'Batas per peserta (detik, kosong = dari soal)', el('input', null, null, { type: 'number', min: 60, max: 7200, value: b.duration_sec ?? '' }));
   const fSpq = field(g, 'Detik per soal', el('input', null, null, { type: 'number', min: 10, max: 600, value: b.sec_per_question }));
   const fBoard = field(g, 'Papan langsung', select([['full', 'full — skor & peringkat tampil'], ['progress', 'progress — bar saja, tanpa ✓/✗'], ['hidden', 'hidden — disembunyikan']], b.live_board));
@@ -609,7 +619,7 @@ function fillEditor(editor, b, msg) {
 
   const pr = el('label');
   const cb = el('input', null, null, { type: 'checkbox' }); cb.checked = b.is_practice;
-  pr.append(cb, document.createTextNode('Batch latihan — tanpa jendela waktu, peringkat tidak disegel, peserta boleh dihapus'));
+  pr.append(cb, document.createTextNode('Batch latihan — Mulai kapan saja di dalam jendela Mulai→Selesai (mis. seminggu), boleh diulang, peringkat tidak disegel, peserta boleh dihapus'));
   editor.appendChild(pr);
 
   const row = el('div', null, 'row'); row.style.marginTop = '10px';
@@ -618,6 +628,7 @@ function fillEditor(editor, b, msg) {
       label: fLabel.value, kelas_min: +fMin.value, kelas_max: +fMax.value,
       starts_at: fromLocalInput(fStart.value), ends_at: fromLocalInput(fEnd.value),
       lobby_sec: +fLobby.value, duration_sec: fDur.value === '' ? null : +fDur.value,
+      capacity: fCap.value === '' ? null : +fCap.value,
       sec_per_question: +fSpq.value, live_board: fBoard.value, rank_by: fRank.value,
       wrong_penalty: +fWrong.value, blank_credit: +fBlank.value, is_practice: cb.checked,
     };
@@ -650,11 +661,12 @@ async function fillEntries(box, b, msg) {
   if (!rows?.length) { box.appendChild(el('p', 'Belum ada peserta.', 'sub')); return; }
   const t = el('table');
   const th = el('tr');
-  for (const h of ['Peserta', 'Kelas', 'Sekolah', 'Mulai', 'Dijawab', 'Nilai', 'Waktu', 'Perangkat', '']) th.appendChild(el('th', h));
+  for (const h of ['Peserta', 'Nama', 'Kelas', 'Sekolah', 'Mulai', 'Dijawab', 'Nilai', 'Waktu', 'Perangkat', '']) th.appendChild(el('th', h));
   t.appendChild(th);
   for (const r of rows) {
     const tr = el('tr');
     tr.appendChild(el('td', `Peserta ${r.nomor}`, 'mono'));
+    tr.appendChild(el('td', r.nama || '—'));
     tr.appendChild(el('td', r.kelas));
     tr.appendChild(el('td', r.sekolah || '—'));
     tr.appendChild(el('td', fmtWib(r.started_at), 'mono'));
@@ -690,7 +702,7 @@ async function fillRoster(box, b, msg) {
   try { rows = await rpc('lomba_admin_roster', { p_batch: b.id }); }
   catch (e) { box.replaceChildren(el('p', errText(e), 'msg err')); return; }
   box.replaceChildren();
-  box.appendChild(el('label', 'Satu baris per peserta: nomor, sekolah. Kosongkan semua = batch terbuka untuk nomor apa pun.'));
+  box.appendChild(el('label', 'Satu baris per peserta: nomor, sekolah. Kosongkan semua = batch terbuka: peserta mengisi nama (boleh kosong) dan nomor diberikan otomatis.'));
   const ta = el('textarea');
   ta.value = (rows ?? []).map(r => `${r.nomor}, ${r.sekolah}`).join('\n');
   ta.placeholder = '017, SDN 3 Praya\n018, SDN 4 Praya';
