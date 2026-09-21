@@ -75,31 +75,14 @@
   .badge{display:inline-block;font-size:12px;font-weight:800;padding:3px 10px;border-radius:999px;margin-top:10px}
   .badge.ok{background:#E3F5E9;color:#1B7A42}
   .badge.soon{background:#EFEDFB;color:#6C5CE7}
-  /* Full-book request form (adults only — see privacy.html) */
+  /* Full book = the Eramuse House group on Skeddo */
   .req{background:var(--surface);border-radius:20px;padding:26px;margin:36px 0 8px;box-shadow:0 2px 14px rgba(45,42,69,.06);border-top:5px solid #12475A;scroll-margin-top:16px}
   .req h2{margin:0 0 6px;font-size:22px;font-weight:900}
-  .req ul{margin:8px 0 16px;padding-left:20px}
+  .req ul{margin:8px 0 16px;padding-left:20px;max-width:640px}
   .req li{margin:0 0 4px}
-  .req form{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:640px}
-  .req label{display:block;font-weight:800;font-size:14px}
-  .req input[type=text],.req input[type=email],.req select{width:100%;margin-top:5px;font:inherit;padding:11px 12px;border:2px solid var(--line);border-radius:12px;background:#fff;color:var(--text)}
-  .req input:focus,.req select:focus{outline:0;border-color:#12475A}
-  .req .full{grid-column:1/-1}
-  .req .agree{display:flex;gap:10px;align-items:flex-start;font-weight:600;font-size:14px}
-  .req .agree input{margin-top:4px;width:18px;height:18px;flex:0 0 auto}
-  .req .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
-  .req button{border:0;background:#12475A;color:#fff;font:inherit;font-weight:800;padding:13px 22px;border-radius:14px;cursor:pointer}
-  .req button[disabled]{opacity:.6;cursor:default}
-  .req .msg{margin:14px 0 0;padding:12px 14px;border-radius:12px;font-weight:700;max-width:640px}
-  .req .msg.ok{background:#E3F5E9;color:#1B7A42}
-  .req .msg.err{background:#FDECEC;color:#9B2C2C}
-  .req .skd{background:#EAF4F6;border:1px solid rgba(18,71,90,.2);border-radius:16px;padding:18px 20px;margin:0 0 22px;max-width:640px}
-  .req .skd h3,.req h3.or{margin:0 0 6px;font-size:17px;font-weight:900}
-  .req .skd ul{margin:6px 0 14px}
-  .req .skd a.go{display:inline-block;text-decoration:none;font-weight:800;padding:12px 20px;border-radius:14px;background:#12475A;color:#fff}
-  .req h3.or{margin:0 0 12px}
+  .req a.go{display:inline-block;text-decoration:none;font-weight:800;padding:12px 20px;border-radius:14px;background:#12475A;color:#fff}
   .req .fine{font-size:13px;color:var(--muted);margin:12px 0 0;max-width:640px}
-  @media (max-width:760px){.req form{grid-template-columns:1fr}}
+
   .about{background:linear-gradient(135deg,#f0eefe,#e7fbf7);border-radius:20px;padding:24px;margin:24px 0}
   .about h2{margin:0 0 6px;font-size:20px;font-weight:900}
   .about p{margin:0 0 8px}
@@ -216,7 +199,7 @@
 
       <div class="btns">
         <a class="btn gold" href="satu-napas/baca.html"><span lang="id">📖 Baca 3 Bab Pertama</span><span lang="en">📖 Read the First 3 Chapters</span></a>
-        <a class="btn line" href="#buku-lengkap"><span lang="id">✉ Minta Buku Lengkap</span><span lang="en">✉ Request the Full Book</span></a>
+        <a class="btn line" href="#buku-lengkap"><span lang="id">📖 Dapatkan Buku Lengkap</span><span lang="en">📖 Get the Full Book</span></a>
       </div>
       <p class="note" lang="id">Tiga bab pertama bisa langsung dibaca. Buku lengkapnya (EPUB) kami kirim
          lewat email kepada orang tua dan guru yang memintanya — saat ini tanpa biaya. Ketersediaan
@@ -289,66 +272,31 @@
       <span class="badge soon" lang="id">Sedang disiapkan</span><span class="badge soon" lang="en">In preparation</span></div>
   </div>
 
+  <!-- Buku lengkap = grup Eramuse House di Skeddo. EPUB-nya ada di "Shared
+       folder" grup (hanya anggota): bergabung = langsung dapat. Formulir email
+       dicabut 2026-09-21 — satu pintu saja. id tetap "buku-lengkap" karena hub
+       dan edisi contoh menaut ke sini. -->
   <section class="req" id="buku-lengkap">
-    <h2 lang="id">Minta buku lengkap: Satu Napas</h2>
-    <h2 lang="en">Request the full book: Satu Napas</h2>
+    <h2 lang="id">Buku lengkap: Satu Napas</h2>
+    <h2 lang="en">The full book: Satu Napas</h2>
     <ul lang="id">
       <li>Untuk <b>orang tua dan guru</b>. Anak-anak, minta tolong orang dewasa ya.</li>
-      <li>Kami kirim buku lengkapnya (EPUB, 24 bab) ke email Anda. Saat ini tanpa biaya.</li>
-      <li>Dikirim oleh manusia, jadi bisa perlu beberapa hari.</li>
+      <li>Gabung grup <b>Eramuse House</b> di Skeddo. Buku lengkapnya (EPUB, 24 bab) ada di <b>Shared folder</b> grup — langsung bisa diunduh. Saat ini tanpa biaya.</li>
+      <li>Di grup yang sama, orang tua dan guru membicarakan bukunya: bagian mana yang ramai di rumah, pertanyaan mana yang bikin kelas berdebat.</li>
+      <li>Skeddo aplikasi terpisah dan perlu akun Anda sendiri. Gratis.</li>
     </ul>
     <ul lang="en">
       <li>For <b>parents and teachers</b>. Children: please ask a grown-up.</li>
-      <li>We email you the full book (EPUB, 24 chapters, in Indonesian). Currently at no cost.</li>
-      <li>Sent by a person, so it can take a few days.</li>
+      <li>Join the <b>Eramuse House</b> group on Skeddo. The full book (EPUB, 24 chapters, in Indonesian) is in the group's <b>Shared folder</b> — download it straight away. Currently at no cost.</li>
+      <li>In the same group, parents and teachers talk about the books: which part landed at home, which question split the class.</li>
+      <li>Skeddo is a separate app and needs your own account. Free.</li>
     </ul>
-
-    <!-- Jalur cepat: grup Eramuse House di Skeddo. Buku lengkapnya ada di
-         "Shared folder" grup (hanya anggota), jadi bergabung = langsung dapat,
-         tanpa menunggu kami mengirim email. Formulir di bawah tetap ada. -->
-    <div class="skd">
-      <h3 lang="id">Tidak mau menunggu? Ambil di Skeddo</h3>
-      <h3 lang="en">Rather not wait? Get it on Skeddo</h3>
-      <ul lang="id">
-        <li>Gabung grup <b>Eramuse House</b> di Skeddo. Buku lengkapnya ada di <b>Shared folder</b> grup — langsung bisa diunduh.</li>
-        <li>Di grup yang sama, orang tua dan guru membicarakan bukunya: bagian mana yang ramai di rumah, pertanyaan mana yang bikin kelas berdebat.</li>
-        <li>Skeddo aplikasi terpisah dan perlu akun Anda sendiri. Untuk orang dewasa; gratis.</li>
-      </ul>
-      <ul lang="en">
-        <li>Join the <b>Eramuse House</b> group on Skeddo. The full book is in the group's <b>Shared folder</b> — download it straight away.</li>
-        <li>In the same group, parents and teachers talk about the books: which part landed at home, which question split the class.</li>
-        <li>Skeddo is a separate app and needs your own account. For adults; free.</li>
-      </ul>
-      <a class="go" href="https://app.skeddo.com/g/302d55d5-96ae-479b-aa3d-43d7ba082944/eramuse-house" target="_blank" rel="noopener">
-        <span lang="id">Dapatkan di Skeddo →</span><span lang="en">Get it on Skeddo →</span></a>
-    </div>
-
-    <h3 class="or" lang="id">Atau minta lewat email</h3>
-    <h3 class="or" lang="en">Or ask by email</h3>
-    <form id="reqform" novalidate>
-      <label><span lang="id">Nama Anda</span><span lang="en">Your name</span>
-        <input type="text" name="name" autocomplete="name" maxlength="120" required></label>
-      <label><span lang="id">Email Anda</span><span lang="en">Your email</span>
-        <input type="email" name="email" autocomplete="email" maxlength="200" required></label>
-      <label class="full"><span lang="id">Saya adalah…</span><span lang="en">I am a…</span>
-        <select name="role" required>
-          <option value="orangtua">Orang tua / wali · Parent</option>
-          <option value="guru">Guru · Teacher</option>
-          <option value="lainnya">Pembaca dewasa lainnya · Other adult</option>
-        </select></label>
-      <label class="hp" aria-hidden="true">Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label>
-      <label class="agree full"><input type="checkbox" name="adult" required>
-        <span lang="id">Saya orang dewasa, dan setuju email saya dipakai untuk mengirim buku ini.</span>
-        <span lang="en">I am an adult, and I agree to my email being used to send me this book.</span></label>
-      <div class="full"><button type="submit"><span lang="id">Kirim permintaan</span><span lang="en">Send request</span></button></div>
-    </form>
-    <p class="msg" id="reqmsg" hidden role="status"></p>
-    <p class="fine" lang="id">Kami hanya menyimpan nama, email, dan peran Anda, dan hanya untuk mengirim buku ini.
-       Tidak ada data anak yang diminta. Ingin dihapus? Tulis ke
-       <a href="mailto:eramusehouse@gmail.com">eramusehouse@gmail.com</a>. Lihat <a href="../privacy.html">Kebijakan Privasi</a>.</p>
-    <p class="fine" lang="en">We keep only your name, email and role, and only to send you this book.
-       No data about children is asked for. Want to be removed? Write to
-       <a href="mailto:eramusehouse@gmail.com">eramusehouse@gmail.com</a>. See the <a href="../privacy.html">Privacy Policy</a>.</p>
+    <a class="go" href="https://app.skeddo.com/g/302d55d5-96ae-479b-aa3d-43d7ba082944/eramuse-house" target="_blank" rel="noopener">
+      <span lang="id">Dapatkan di Skeddo →</span><span lang="en">Get it on Skeddo →</span></a>
+    <p class="fine" lang="id">Situs ini tidak meminta data apa pun untuk itu. Ada kendala? Tulis ke
+       <a href="mailto:eramusehouse@gmail.com">eramusehouse@gmail.com</a>.</p>
+    <p class="fine" lang="en">This site asks for no data for that. Stuck? Write to
+       <a href="mailto:eramusehouse@gmail.com">eramusehouse@gmail.com</a>.</p>
   </section>
 
   <!-- Acara publik grup Eramuse House (ngobrol bareng penulis, kelas Jabrik
@@ -405,46 +353,6 @@
     slides.forEach(function(s,i){ if(s.id===id){ go(i,instant); mark(i); } }); }
   mark(0); if(location.hash) setTimeout(function(){fromHash(true)},0);
   window.addEventListener('hashchange',function(){fromHash(false)});
-})();
-</script>
-<script>
-// Full-book request → Supabase RPC book_request() (supabase/book_requests.sql).
-// The page can only call that one function; it cannot read the list. If the
-// call fails for any reason, the visitor is offered a ready-made email instead,
-// so a request is never silently lost.
-(function(){
-  var URL_='https://koadqcjejecqpnufkhyx.supabase.co', KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtvYWRxY2plamVjcXBudWZraHl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzQ1NDEsImV4cCI6MjA5NTcxMDU0MX0.IQUnBXrGsz1fCRTvUb0f5vI8AKhmASoegvVs09wqbaI';
-  var f=document.getElementById('reqform'), msg=document.getElementById('reqmsg'); if(!f) return;
-  function en(){return document.documentElement.getAttribute('data-lang')==='en'}
-  function say(kind,html){msg.className='msg '+kind; msg.innerHTML=html; msg.hidden=false}
-  function mailto(name,role){
-    var s=encodeURIComponent('Minta buku lengkap: Satu Napas');
-    var body=encodeURIComponent('Halo Eramuse House,\n\nSaya ingin meminta buku lengkap Satu Napas (EPUB).\n\nNama: '+name+'\nSaya: '+role+'\n\nTerima kasih.');
-    return 'mailto:eramusehouse@gmail.com?subject='+s+'&body='+body;
-  }
-  f.addEventListener('submit',function(e){
-    e.preventDefault();
-    var d=new FormData(f), name=(d.get('name')||'').trim(), email=(d.get('email')||'').trim(), role=d.get('role');
-    if(d.get('website')) return;                                  // honeypot
-    if(name.length<2){say('err',en()?'Please enter your name.':'Mohon isi nama Anda.');return}
-    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){say('err',en()?'Please check the email address.':'Mohon periksa alamat email Anda.');return}
-    if(!d.get('adult')){say('err',en()?'Please tick the box: this form is for adults.':'Mohon centang kotaknya: formulir ini untuk orang dewasa.');return}
-    var btn=f.querySelector('button'); btn.disabled=true;
-    fetch(URL_+'/rest/v1/rpc/book_request',{method:'POST',
-      headers:{'Content-Type':'application/json','apikey':KEY,'Authorization':'Bearer '+KEY},
-      body:JSON.stringify({p_book:'satu-napas',p_email:email,p_name:name,p_role:role,p_lang:en()?'en':'id'})})
-    .then(function(r){return r.ok?r.json():Promise.reject(r.status)})
-    .then(function(res){
-      if(res==='ok'){ f.hidden=true;
-        say('ok',en()?'Thank you! We will email the full book to '+email.replace(/</g,'&lt;')+'. It is sent by a person, so please allow a few days.'
-                     :'Terima kasih! Buku lengkapnya akan kami kirim ke '+email.replace(/</g,'&lt;')+'. Dikirim oleh manusia, jadi mohon tunggu beberapa hari.'); }
-      else if(res==='bad_email'){ btn.disabled=false; say('err',en()?'Please check the email address.':'Mohon periksa alamat email Anda.'); }
-      else return Promise.reject(res);
-    })
-    .catch(function(){ btn.disabled=false;
-      say('err',(en()?'Sorry, the form could not be sent just now. You can ':'Maaf, formulirnya belum bisa terkirim. Anda bisa ')
-        +'<a href="'+mailto(name,role)+'">'+(en()?'send us this email instead':'mengirim email ini saja')+'</a>.'); });
-  });
 })();
 </script>
 <script src="../skeddo-events.js" defer></script>
