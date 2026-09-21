@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title data-en="Eramuse House Books — Science Fiction for Children">Buku Eramuse House — Fiksi Ilmiah untuk Anak</title>
-<meta name="description" content="Eramuse House juga menerbitkan buku fiksi ilmiah untuk anak. Buku pertama: Tamu di Aikbatu — seorang anak di lereng Rinjani, dan tamu yang jatuh dari langit. Baca online atau unduh EPUB." data-en="Eramuse House also publishes science fiction books for children. First book: Tamu di Aikbatu — a boy on the slopes of Mount Rinjani, and a visitor that fell from the sky. Read online or download the EPUB.">
-<meta property="og:title" content="Tamu di Aikbatu — Eramuse House">
+<meta name="description" content="Eramuse House juga menerbitkan buku fiksi ilmiah untuk anak: Tamu di Aikbatu (langit di atas Lombok) dan Satu Napas (laut di bawah Wakatobi). Baca online atau unduh EPUB." data-en="Eramuse House also publishes science fiction books for children: Tamu di Aikbatu (the sky above Lombok) and Satu Napas (the sea beneath Wakatobi). Read online or download the EPUB.">
+<meta property="og:title" content="Buku Eramuse House — Tamu di Aikbatu · Satu Napas">
 <meta property="og:description" content="Fiksi ilmiah untuk anak, berlatar Lombok. Baca online atau unduh EPUB.">
 <meta property="og:image" content="https://www.ayomath.com/buku/tamu-di-aikbatu/cover.jpg">
 <script src="../lang.js"></script>
@@ -22,10 +22,36 @@
   .lang button.on{background:var(--night2);color:#fff}
   html:not([data-lang="en"]) [lang="en"],html[data-lang="en"] [lang="id"]{display:none}
 
+  .pagehead h1{font-size:30px;font-weight:900;margin:8px 0 2px}
+  .pagehead p{color:var(--muted);margin:0 0 14px;max-width:640px}
+
+  /* Shelf: cover tabs + one slide per book — swipe, arrows, or tap a cover */
+  .tabs{display:flex;gap:10px;overflow-x:auto;padding:4px 2px 12px;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{flex:0 0 auto;display:flex;align-items:center;gap:10px;background:#fff;border:2px solid var(--line);border-radius:14px;padding:6px 14px 6px 6px;font:inherit;color:var(--text);cursor:pointer;text-align:left}
+  .tab img{width:34px;height:52px;object-fit:cover;border-radius:5px;display:block}
+  .tab b{display:block;font-size:14px;line-height:1.2}
+  .tab small{color:var(--muted);font-size:12px}
+  .tab[aria-selected="true"]{border-color:var(--night2);box-shadow:0 3px 12px rgba(27,42,82,.18)}
+  .shelfwrap{position:relative}
+  .shelf{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-radius:24px}
+  .shelf::-webkit-scrollbar{display:none}
+  .shelf>.hero{flex:0 0 94%;scroll-snap-align:start}
+  .shelf>.hero:last-child{flex-basis:100%}
+  .arrow{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;border:0;background:#fff;color:var(--night);font-size:22px;font-weight:900;line-height:1;cursor:pointer;box-shadow:0 4px 16px rgba(14,23,48,.35);z-index:2}
+  .arrow.prev{left:-14px}.arrow.next{right:-14px}
+  .arrow[disabled]{opacity:0;pointer-events:none}
+  .dots{display:flex;justify-content:center;align-items:center;gap:8px;margin:12px 0 0}
+  .dots button{width:10px;height:10px;border-radius:50%;border:0;padding:0;background:rgba(45,42,69,.22);cursor:pointer}
+  .dots button[aria-current="true"]{background:var(--night2);width:26px;border-radius:999px}
+  .hero.sea{background:radial-gradient(120% 140% at 80% 0%,#1B6A7C 0%,#12475A 40%,#0B2A3A 100%)}
+  .hero.sea .kicker{color:#8FE3E0}
+
+
   .hero{background:radial-gradient(120% 140% at 80% 0%,#2B3F7A 0%,var(--night2) 40%,var(--night) 100%);color:#EEF1FA;border-radius:24px;padding:36px;display:grid;grid-template-columns:260px 1fr;gap:36px;align-items:center}
   .hero img{width:100%;height:auto;border-radius:10px;box-shadow:0 18px 40px rgba(0,0,0,.45);display:block}
   .kicker{color:var(--gold);font-weight:800;font-size:13px;letter-spacing:.12em;text-transform:uppercase;margin:0 0 8px}
-  .hero h1{font-family:Georgia,'Times New Roman',serif;font-size:40px;line-height:1.15;margin:0 0 6px;font-weight:700}
+  .hero .bt{font-family:Georgia,'Times New Roman',serif;font-size:40px;line-height:1.15;margin:0 0 6px;font-weight:700}
   .hero .by{color:#B9C2DE;margin:0 0 16px;font-size:15px}
   .hero p{margin:0 0 12px}
   .chips{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 4px}
@@ -49,6 +75,26 @@
   .badge{display:inline-block;font-size:12px;font-weight:800;padding:3px 10px;border-radius:999px;margin-top:10px}
   .badge.ok{background:#E3F5E9;color:#1B7A42}
   .badge.soon{background:#EFEDFB;color:#6C5CE7}
+  /* Full-book request form (adults only — see privacy.html) */
+  .req{background:var(--surface);border-radius:20px;padding:26px;margin:36px 0 8px;box-shadow:0 2px 14px rgba(45,42,69,.06);border-top:5px solid #12475A;scroll-margin-top:16px}
+  .req h2{margin:0 0 6px;font-size:22px;font-weight:900}
+  .req ul{margin:8px 0 16px;padding-left:20px}
+  .req li{margin:0 0 4px}
+  .req form{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:640px}
+  .req label{display:block;font-weight:800;font-size:14px}
+  .req input[type=text],.req input[type=email],.req select{width:100%;margin-top:5px;font:inherit;padding:11px 12px;border:2px solid var(--line);border-radius:12px;background:#fff;color:var(--text)}
+  .req input:focus,.req select:focus{outline:0;border-color:#12475A}
+  .req .full{grid-column:1/-1}
+  .req .agree{display:flex;gap:10px;align-items:flex-start;font-weight:600;font-size:14px}
+  .req .agree input{margin-top:4px;width:18px;height:18px;flex:0 0 auto}
+  .req .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+  .req button{border:0;background:#12475A;color:#fff;font:inherit;font-weight:800;padding:13px 22px;border-radius:14px;cursor:pointer}
+  .req button[disabled]{opacity:.6;cursor:default}
+  .req .msg{margin:14px 0 0;padding:12px 14px;border-radius:12px;font-weight:700;max-width:640px}
+  .req .msg.ok{background:#E3F5E9;color:#1B7A42}
+  .req .msg.err{background:#FDECEC;color:#9B2C2C}
+  .req .fine{font-size:13px;color:var(--muted);margin:12px 0 0;max-width:640px}
+  @media (max-width:760px){.req form{grid-template-columns:1fr}}
   .about{background:linear-gradient(135deg,#f0eefe,#e7fbf7);border-radius:20px;padding:24px;margin:24px 0}
   .about h2{margin:0 0 6px;font-size:20px;font-weight:900}
   .about p{margin:0 0 8px}
@@ -57,8 +103,11 @@
   @media (max-width:760px){
     .hero{grid-template-columns:1fr;padding:24px;gap:22px}
     .hero img{max-width:220px;margin:0 auto}
-    .hero h1{font-size:32px}
+    .hero .bt{font-size:32px}
     .grid,.tri{grid-template-columns:1fr}
+    .shelf>.hero{flex-basis:92%}
+    .arrow{display:none}
+    .pagehead h1{font-size:26px}
   }
 </style>
 </head>
@@ -72,12 +121,27 @@
     </span>
   </div>
 
-  <section class="hero">
+  <div class="pagehead">
+    <h1 lang="id">Buku</h1><h1 lang="en">Books</h1>
+    <p lang="id">Fiksi ilmiah untuk anak, berlatar Indonesia. Pilih sampul, atau geser ke samping.</p>
+    <p lang="en">Science fiction for children, set in Indonesia. Pick a cover, or swipe sideways.</p>
+  </div>
+
+  <div class="tabs" role="tablist" aria-label="Pilih buku / Choose a book">
+    <button class="tab" type="button" role="tab" data-go="tamu-di-aikbatu" aria-selected="true"><img src="tamu-di-aikbatu/cover.jpg" alt="" width="34" height="52"><span><b>Tamu di Aikbatu</b><small lang="id">Langit · Lombok</small><small lang="en">The sky · Lombok</small></span></button>
+    <button class="tab" type="button" role="tab" data-go="satu-napas" aria-selected="false"><img src="satu-napas/cover.jpg" alt="" width="34" height="52"><span><b>Satu Napas</b><small lang="id">Laut · Wakatobi</small><small lang="en">The sea · Wakatobi</small></span></button>
+  </div>
+
+  <div class="shelfwrap">
+  <button class="arrow prev" type="button" aria-label="Buku sebelumnya / Previous book" disabled>‹</button>
+  <button class="arrow next" type="button" aria-label="Buku berikutnya / Next book">›</button>
+  <div class="shelf" id="shelf">
+  <section class="hero" id="tamu-di-aikbatu">
     <img src="tamu-di-aikbatu/cover.jpg" width="768" height="1376" alt="Sampul buku Tamu di Aikbatu: seorang anak berambut jabrik duduk memegang bola batu yang bercahaya biru, dengan Gunung Rinjani dan langit berbintang di belakangnya" data-en="Cover of Tamu di Aikbatu: a spiky-haired boy sitting with a stone sphere glowing blue, with Mount Rinjani and a starry sky behind him">
     <div>
       <p class="kicker" lang="id">Fiksi ilmiah untuk anak · Buku 1 dari 3</p>
       <p class="kicker" lang="en">Science fiction for children · Book 1 of 3</p>
-      <h1>Tamu di Aikbatu</h1>
+      <h2 class="bt">Tamu di Aikbatu</h2>
       <p class="by" lang="id">oleh Eramuse · Eramuse House, 2026</p>
       <p class="by" lang="en">by Eramuse · Eramuse House, 2026 · in Indonesian</p>
 
@@ -97,7 +161,7 @@
          <i>true</i> to say about humankind.</p>
 
       <div class="chips">
-        <span class="chip" lang="id">Usia 8+ · untuk segala umur</span><span class="chip" lang="en">Ages 8+ · for all ages</span>
+        <span class="chip" lang="id">Dibacakan 8+ · baca sendiri 10+</span><span class="chip" lang="en">Read aloud 8+ · read alone 10+</span>
         <span class="chip" lang="id">24 bab</span><span class="chip" lang="en">24 chapters</span>
         <span class="chip" lang="id">Bahasa Indonesia</span><span class="chip" lang="en">In Indonesian</span>
         <span class="chip" lang="id">Berlatar Lombok</span><span class="chip" lang="en">Set in Lombok</span>
@@ -114,19 +178,66 @@
     </div>
   </section>
 
+  <section class="hero sea" id="satu-napas">
+    <img src="satu-napas/cover.jpg" width="572" height="1024" loading="lazy" alt="Sampul buku Satu Napas: seorang anak perempuan menuruni tangga rumah panggung ke dalam laut malam, dengan dua paus bercahaya di bawahnya" data-en="Cover of Satu Napas: a girl climbing down a stilt-house ladder into the night sea, with two glowing whales below her">
+    <div>
+      <p class="kicker" lang="id">Fiksi ilmiah untuk anak · Buku 1 dari 3</p>
+      <p class="kicker" lang="en">Science fiction for children · Book 1 of 3</p>
+      <h2 class="bt">Satu Napas</h2>
+      <p class="by" lang="id">oleh Eramuse · Eramuse House, 2026</p>
+      <p class="by" lang="en">by Eramuse · Eramuse House, 2026 · in Indonesian</p>
+
+      <p lang="id">Di bawah lantai rumah Pari, ada laut. Pari, 11 tahun, tinggal di kampung
+         orang Sama di Wakatobi, di rumah kayu di atas tiang. Setiap senja ia mendengar bunyi
+         dari laut dalam. <i>Tik, tik, tik.</i> Ia kira semua orang mendengarnya. Ternyata tidak.</p>
+      <p lang="id">Waktu kapal penelitian datang, telinga Pari menangkap bunyi yang tidak dikenal
+         komputer paling pintar sekalipun. Lalu kapal survei datang, dan laut mulai berdentum.
+         Bersama Udin, Mbo, dan seluruh kampung, Pari harus berpacu dengan pasang surut untuk
+         menyelamatkan sesuatu yang hanya bisa ia dengar.</p>
+      <p lang="en">Under the floor of Pari's house, there is the sea. Eleven-year-old Pari lives in
+         a Sama village in Wakatobi, in a wooden house on stilts. Every dusk Pari hears a sound from
+         the deep. <i>Tick, tick, tick.</i> Pari thought everyone could hear it. They can't.</p>
+      <p lang="en">When a research ship arrives, Pari's ears catch a sound that even the smartest
+         computer does not recognise. Then a survey ship comes, and the sea starts to boom.
+         With best friend Udin, old Mbo and the whole village, Pari must race the tides to save
+         something only Pari can hear.</p>
+
+      <div class="chips">
+        <span class="chip" lang="id">Dibacakan 8+ · baca sendiri 10+</span><span class="chip" lang="en">Read aloud 8+ · read alone 10+</span>
+        <span class="chip" lang="id">24 bab · 3 bab pertama di sini</span><span class="chip" lang="en">24 chapters · first 3 here</span>
+        <span class="chip" lang="id">Bahasa Indonesia</span><span class="chip" lang="en">In Indonesian</span>
+        <span class="chip" lang="id">Berlatar Wakatobi</span><span class="chip" lang="en">Set in Wakatobi</span>
+      </div>
+
+      <div class="btns">
+        <a class="btn gold" href="satu-napas/baca.html"><span lang="id">📖 Baca 3 Bab Pertama</span><span lang="en">📖 Read the First 3 Chapters</span></a>
+        <a class="btn line" href="#buku-lengkap"><span lang="id">✉ Minta Buku Lengkap</span><span lang="en">✉ Request the Full Book</span></a>
+      </div>
+      <p class="note" lang="id">Tiga bab pertama bisa langsung dibaca. Buku lengkapnya (EPUB) kami kirim
+         lewat email kepada orang tua dan guru yang memintanya — saat ini tanpa biaya. Ketersediaan
+         dan harga edisi lain dapat berbeda.</p>
+      <p class="note" lang="en">The first three chapters are open to read. The full book (EPUB) is emailed
+         to parents and teachers who ask for it — currently at no cost. Availability and pricing of
+         other editions may differ.</p>
+    </div>
+  </section>
+  </div><!-- /shelf -->
+  </div><!-- /shelfwrap -->
+  <div class="dots" id="dots" aria-hidden="true"></div>
+
   <div class="grid">
     <div class="card"><div class="ic">🔭</div>
       <h3 lang="id">Sains yang sungguhan</h3><h3 lang="en">Real science inside</h3>
-      <p lang="id">Tiap bab ditutup dengan <b>Yang Nyata di Bab Ini</b> — misi antariksa, instrumen, dan penemuan asli yang menopang ceritanya.</p>
-      <p lang="en">Every chapter ends with <b>What's Real in This Chapter</b> — the actual space missions, instruments and discoveries behind the story.</p></div>
+      <p lang="id">Bab-babnya ditutup dengan <b>Yang Nyata di Bab Ini</b> — misi antariksa, ilmu laut, instrumen, dan penemuan asli yang menopang ceritanya.</p>
+      <p lang="en">Chapters close with <b>What's Real in This Chapter</b> — the actual space missions, ocean science, instruments and discoveries behind the story.</p></div>
     <div class="card"><div class="ic">💭</div>
       <h3 lang="id">Untuk dipikirkan</h3><h3 lang="en">Things to think about</h3>
       <p lang="id">Pertanyaan terbuka di akhir bab, untuk dibicarakan di rumah atau di kelas. Guru boleh memperbanyak halaman ini untuk mengajar.</p>
       <p lang="en">Open questions at the end of each chapter, for home or the classroom. Teachers may copy these pages for teaching.</p></div>
-    <div class="card"><div class="ic">🌋</div>
-      <h3 lang="id">Berakar di Lombok</h3><h3 lang="en">Rooted in Lombok</h3>
-      <p lang="id">Lereng Rinjani, bahasa Sasak, dan Rowot — gugus bintang penanda musim orang Sasak — menjadi bagian dari ceritanya.</p>
-      <p lang="en">The slopes of Rinjani, the Sasak language, and Rowot — the star cluster the Sasak people read the seasons by — are part of the story.</p></div>
+    <div class="card"><div class="ic">🌏</div>
+      <h3 lang="id">Berakar di Indonesia</h3><h3 lang="en">Rooted in Indonesia</h3>
+      <p lang="id">Lereng Rinjani dan Rowot, gugus bintang penanda musim orang Sasak. Kampung di atas laut dan para penyelam Sama di Wakatobi. Tempatnya nyata.</p>
+      <p lang="en">The slopes of Rinjani and Rowot, the star cluster the Sasak read the seasons by. A village over the sea and the Sama divers of Wakatobi. The places are real.</p></div>
   </div>
 
   <h2 class="sectitle" lang="id">Trilogi Jabrik</h2>
@@ -151,6 +262,67 @@
       <span class="badge soon" lang="id">Sedang disiapkan</span><span class="badge soon" lang="en">In preparation</span></div>
   </div>
 
+  <h2 class="sectitle" lang="id">Trilogi Laut</h2>
+  <h2 class="sectitle" lang="en">The ocean trilogy</h2>
+  <p class="sub" lang="id">Tiga buku tentang Pari dan laut. Setiap buku bisa dibaca sendiri.</p>
+  <p class="sub" lang="en">Three books about Pari and the sea. Each one stands on its own.</p>
+  <div class="tri">
+    <div class="card"><span class="n" lang="id">Buku 1</span><span class="n" lang="en">Book 1</span>
+      <h3>Satu Napas</h3>
+      <p lang="id">Pari umur 11. Untuk anak SD dan siapa saja.</p>
+      <p lang="en">Pari at 11. For primary-school readers and everyone else.</p>
+      <span class="badge ok" lang="id">Sudah terbit</span><span class="badge ok" lang="en">Out now</span></div>
+    <div class="card"><span class="n" lang="id">Buku 2</span><span class="n" lang="en">Book 2</span>
+      <h3 lang="id">Judul menyusul</h3><h3 lang="en">Title to come</h3>
+      <p lang="id">Pari beranjak dewasa.</p>
+      <p lang="en">Pari as a young adult.</p>
+      <span class="badge soon" lang="id">Sedang disiapkan</span><span class="badge soon" lang="en">In preparation</span></div>
+    <div class="card"><span class="n" lang="id">Buku 3</span><span class="n" lang="en">Book 3</span>
+      <h3 lang="id">Judul menyusul</h3><h3 lang="en">Title to come</h3>
+      <p lang="id">Pari dewasa.</p>
+      <p lang="en">Pari grown up.</p>
+      <span class="badge soon" lang="id">Sedang disiapkan</span><span class="badge soon" lang="en">In preparation</span></div>
+  </div>
+
+  <section class="req" id="buku-lengkap">
+    <h2 lang="id">Minta buku lengkap: Satu Napas</h2>
+    <h2 lang="en">Request the full book: Satu Napas</h2>
+    <ul lang="id">
+      <li>Untuk <b>orang tua dan guru</b>. Anak-anak, minta tolong orang dewasa ya.</li>
+      <li>Kami kirim buku lengkapnya (EPUB, 24 bab) ke email Anda. Saat ini tanpa biaya.</li>
+      <li>Dikirim oleh manusia, jadi bisa perlu beberapa hari.</li>
+    </ul>
+    <ul lang="en">
+      <li>For <b>parents and teachers</b>. Children: please ask a grown-up.</li>
+      <li>We email you the full book (EPUB, 24 chapters, in Indonesian). Currently at no cost.</li>
+      <li>Sent by a person, so it can take a few days.</li>
+    </ul>
+    <form id="reqform" novalidate>
+      <label><span lang="id">Nama Anda</span><span lang="en">Your name</span>
+        <input type="text" name="name" autocomplete="name" maxlength="120" required></label>
+      <label><span lang="id">Email Anda</span><span lang="en">Your email</span>
+        <input type="email" name="email" autocomplete="email" maxlength="200" required></label>
+      <label class="full"><span lang="id">Saya adalah…</span><span lang="en">I am a…</span>
+        <select name="role" required>
+          <option value="orangtua">Orang tua / wali · Parent</option>
+          <option value="guru">Guru · Teacher</option>
+          <option value="lainnya">Pembaca dewasa lainnya · Other adult</option>
+        </select></label>
+      <label class="hp" aria-hidden="true">Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+      <label class="agree full"><input type="checkbox" name="adult" required>
+        <span lang="id">Saya orang dewasa, dan setuju email saya dipakai untuk mengirim buku ini.</span>
+        <span lang="en">I am an adult, and I agree to my email being used to send me this book.</span></label>
+      <div class="full"><button type="submit"><span lang="id">Kirim permintaan</span><span lang="en">Send request</span></button></div>
+    </form>
+    <p class="msg" id="reqmsg" hidden role="status"></p>
+    <p class="fine" lang="id">Kami hanya menyimpan nama, email, dan peran Anda, dan hanya untuk mengirim buku ini.
+       Tidak ada data anak yang diminta. Ingin dihapus? Tulis ke
+       <a href="mailto:eramusehouse@gmail.com">eramusehouse@gmail.com</a>. Lihat <a href="../privacy.html">Kebijakan Privasi</a>.</p>
+    <p class="fine" lang="en">We keep only your name, email and role, and only to send you this book.
+       No data about children is asked for. Want to be removed? Write to
+       <a href="mailto:eramusehouse@gmail.com">eramusehouse@gmail.com</a>. See the <a href="../privacy.html">Privacy Policy</a>.</p>
+  </section>
+
   <div class="about">
     <h2 lang="id">Eramuse House juga menerbitkan buku</h2>
     <h2 lang="en">Eramuse House also publishes books</h2>
@@ -160,10 +332,10 @@
     <p lang="en">Alongside our learning apps, we publish <b>science fiction books for children</b> —
        stories set in Indonesia, with science that holds up, that invite children to ask
        questions rather than memorise answers.</p>
-    <p lang="id">Buku ini ditulis dengan bantuan kecerdasan buatan; ide, cerita, dan tokohnya dari
+    <p lang="id">Buku-buku ini ditulis dengan bantuan kecerdasan buatan; ide, cerita, dan tokohnya dari
        manusia. Menemukan yang keliru? Kabari kami di
        <a href="mailto:eramusehouse@gmail.com">eramusehouse@gmail.com</a>.</p>
-    <p lang="en">This book was written with the help of AI; the ideas, story and characters are
+    <p lang="en">These books were written with the help of AI; the ideas, story and characters are
        human. Spotted a mistake? Tell us at
        <a href="mailto:eramusehouse@gmail.com">eramusehouse@gmail.com</a>.</p>
   </div>
@@ -173,5 +345,72 @@
        <a href="../">Eramuse House</a> · <a href="mailto:eramusehouse@gmail.com">eramusehouse@gmail.com</a></p>
   </footer>
 </div>
+<script>
+(function(){
+  var shelf=document.getElementById('shelf'); if(!shelf) return;
+  var slides=[].slice.call(shelf.children), tabs=[].slice.call(document.querySelectorAll('.tab'));
+  var prev=document.querySelector('.arrow.prev'), next=document.querySelector('.arrow.next'), dots=document.getElementById('dots');
+  var cur=0;
+  function go(i,instant){ i=Math.max(0,Math.min(slides.length-1,i));
+    shelf.scrollTo({left:slides[i].offsetLeft-shelf.offsetLeft,behavior:(instant||document.visibilityState!=='visible'||matchMedia('(prefers-reduced-motion:reduce)').matches)?'instant':'smooth'}); }
+  function mark(i){ cur=i;
+    tabs.forEach(function(t,k){t.setAttribute('aria-selected',k===i?'true':'false')});
+    [].forEach.call(dots.children,function(d,k){d.setAttribute('aria-current',k===i?'true':'false')});
+    prev.disabled=i===0; next.disabled=i===slides.length-1; }
+  slides.forEach(function(s,i){ var d=document.createElement('button'); d.type='button'; d.tabIndex=-1;
+    d.onclick=function(){go(i)}; dots.appendChild(d); });
+  tabs.forEach(function(t,i){ t.onclick=function(){ go(i); try{history.replaceState(null,'','#'+t.getAttribute('data-go'))}catch(e){} } });
+  prev.onclick=function(){go(cur-1)}; next.onclick=function(){go(cur+1)};
+  var tick; shelf.addEventListener('scroll',function(){ clearTimeout(tick); tick=setTimeout(function(){
+    var x=shelf.scrollLeft, best=0, bd=1e9;
+    slides.forEach(function(s,i){ var d=Math.abs(s.offsetLeft-shelf.offsetLeft-x); if(d<bd){bd=d;best=i} });
+    if(shelf.scrollLeft+shelf.clientWidth>=shelf.scrollWidth-4) best=slides.length-1;
+    mark(best); },60); });
+  function fromHash(instant){ var id=location.hash.slice(1);
+    slides.forEach(function(s,i){ if(s.id===id){ go(i,instant); mark(i); } }); }
+  mark(0); if(location.hash) setTimeout(function(){fromHash(true)},0);
+  window.addEventListener('hashchange',function(){fromHash(false)});
+})();
+</script>
+<script>
+// Full-book request → Supabase RPC book_request() (supabase/book_requests.sql).
+// The page can only call that one function; it cannot read the list. If the
+// call fails for any reason, the visitor is offered a ready-made email instead,
+// so a request is never silently lost.
+(function(){
+  var URL_='https://koadqcjejecqpnufkhyx.supabase.co', KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtvYWRxY2plamVjcXBudWZraHl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzQ1NDEsImV4cCI6MjA5NTcxMDU0MX0.IQUnBXrGsz1fCRTvUb0f5vI8AKhmASoegvVs09wqbaI';
+  var f=document.getElementById('reqform'), msg=document.getElementById('reqmsg'); if(!f) return;
+  function en(){return document.documentElement.getAttribute('data-lang')==='en'}
+  function say(kind,html){msg.className='msg '+kind; msg.innerHTML=html; msg.hidden=false}
+  function mailto(name,role){
+    var s=encodeURIComponent('Minta buku lengkap: Satu Napas');
+    var body=encodeURIComponent('Halo Eramuse House,\n\nSaya ingin meminta buku lengkap Satu Napas (EPUB).\n\nNama: '+name+'\nSaya: '+role+'\n\nTerima kasih.');
+    return 'mailto:eramusehouse@gmail.com?subject='+s+'&body='+body;
+  }
+  f.addEventListener('submit',function(e){
+    e.preventDefault();
+    var d=new FormData(f), name=(d.get('name')||'').trim(), email=(d.get('email')||'').trim(), role=d.get('role');
+    if(d.get('website')) return;                                  // honeypot
+    if(name.length<2){say('err',en()?'Please enter your name.':'Mohon isi nama Anda.');return}
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){say('err',en()?'Please check the email address.':'Mohon periksa alamat email Anda.');return}
+    if(!d.get('adult')){say('err',en()?'Please tick the box: this form is for adults.':'Mohon centang kotaknya: formulir ini untuk orang dewasa.');return}
+    var btn=f.querySelector('button'); btn.disabled=true;
+    fetch(URL_+'/rest/v1/rpc/book_request',{method:'POST',
+      headers:{'Content-Type':'application/json','apikey':KEY,'Authorization':'Bearer '+KEY},
+      body:JSON.stringify({p_book:'satu-napas',p_email:email,p_name:name,p_role:role,p_lang:en()?'en':'id'})})
+    .then(function(r){return r.ok?r.json():Promise.reject(r.status)})
+    .then(function(res){
+      if(res==='ok'){ f.hidden=true;
+        say('ok',en()?'Thank you! We will email the full book to '+email.replace(/</g,'&lt;')+'. It is sent by a person, so please allow a few days.'
+                     :'Terima kasih! Buku lengkapnya akan kami kirim ke '+email.replace(/</g,'&lt;')+'. Dikirim oleh manusia, jadi mohon tunggu beberapa hari.'); }
+      else if(res==='bad_email'){ btn.disabled=false; say('err',en()?'Please check the email address.':'Mohon periksa alamat email Anda.'); }
+      else return Promise.reject(res);
+    })
+    .catch(function(){ btn.disabled=false;
+      say('err',(en()?'Sorry, the form could not be sent just now. You can ':'Maaf, formulirnya belum bisa terkirim. Anda bisa ')
+        +'<a href="'+mailto(name,role)+'">'+(en()?'send us this email instead':'mengirim email ini saja')+'</a>.'); });
+  });
+})();
+</script>
 </body>
 </html>

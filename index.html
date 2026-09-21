@@ -68,6 +68,20 @@
   .book .fine{font-size:13px;color:#B9C2DE;margin-top:12px}
   .book .btns{margin-top:0;padding-top:14px}
 
+  /* Book shelf: cards side by side, swipe or use the arrows */
+  .shelfwrap{position:relative}
+  .shelf{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-radius:24px;padding-bottom:4px}
+  .shelf::-webkit-scrollbar{display:none}
+  .shelf>.book{flex:0 0 90%;scroll-snap-align:start;box-shadow:none}
+  .shelf>.book:last-child{flex-basis:100%}
+  .book.sea{background:radial-gradient(120% 140% at 85% 0%,#1B6A7C 0%,#12475A 40%,#0B2A3A 100%)}
+  .book.sea .kicker{color:#8FE3E0}
+  .arrow{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;border:0;background:#fff;color:var(--night);font-size:22px;font-weight:900;line-height:1;cursor:pointer;box-shadow:0 4px 16px rgba(14,23,48,.35);z-index:2}
+  .arrow.prev{left:-14px}.arrow.next{right:-14px}
+  .arrow[disabled]{opacity:0;pointer-events:none}
+  .shelfnote{color:var(--muted);font-size:13px;margin:8px 2px 0}
+  .shelfnote a{color:var(--teal);font-weight:700}
+
   /* Competition strip */
   .lomba{display:grid;grid-template-columns:auto 1fr auto;gap:20px;align-items:center}
   .lomba .btns{margin:0;padding:0}
@@ -88,6 +102,8 @@
     .book{grid-template-columns:1fr;padding:22px;gap:20px}
     .book img{max-width:190px;margin:0 auto}
     .book h2{font-size:27px}
+    .shelf>.book{flex-basis:88%}
+    .arrow{display:none}
     .lomba{grid-template-columns:1fr;gap:6px}
     .lomba .btns{padding-top:12px}
     .brand{font-size:15px}
@@ -124,11 +140,15 @@
   <div class="tick" id="lomba-tick" hidden><div class="track" id="lomba-tick-track"></div></div>
 
   <h2 class="sectitle" id="buku"><span lang="id">Buku</span><span lang="en">Books</span></h2>
+  <div class="shelfwrap">
+  <button class="arrow prev" type="button" aria-label="Buku sebelumnya / Previous book" disabled>‹</button>
+  <button class="arrow next" type="button" aria-label="Buku berikutnya / Next book">›</button>
+  <div class="shelf" id="shelf">
   <section class="book">
-    <a class="cover" href="buku/"><img src="buku/tamu-di-aikbatu/cover.jpg" width="768" height="1376" loading="lazy" alt="Sampul buku Tamu di Aikbatu: seorang anak berambut jabrik duduk memegang bola batu yang bercahaya biru, dengan Gunung Rinjani dan langit berbintang di belakangnya" data-en="Cover of Tamu di Aikbatu: a spiky-haired boy sitting with a stone sphere glowing blue, with Mount Rinjani and a starry sky behind him"></a>
+    <a class="cover" href="buku/#tamu-di-aikbatu"><img src="buku/tamu-di-aikbatu/cover.jpg" width="768" height="1376" loading="lazy" alt="Sampul buku Tamu di Aikbatu: seorang anak berambut jabrik duduk memegang bola batu yang bercahaya biru, dengan Gunung Rinjani dan langit berbintang di belakangnya" data-en="Cover of Tamu di Aikbatu: a spiky-haired boy sitting with a stone sphere glowing blue, with Mount Rinjani and a starry sky behind him"></a>
     <div>
-      <p class="kicker" lang="id"><span class="new">BARU</span>Fiksi ilmiah untuk anak · Usia 8+</p>
-      <p class="kicker" lang="en"><span class="new">NEW</span>Science fiction for children · Ages 8+</p>
+      <p class="kicker" lang="id">Fiksi ilmiah untuk anak · Dibacakan 8+ · baca sendiri 10+</p>
+      <p class="kicker" lang="en">Science fiction for children · Read aloud 8+ · alone 10+</p>
       <h2>Tamu di Aikbatu</h2>
       <p lang="id">Kami juga menerbitkan <b>buku fiksi ilmiah untuk anak</b>. Yang pertama:
          suatu malam di lereng Rinjani, sesuatu jatuh dari langit — dan Jabrik, 10 tahun,
@@ -140,12 +160,38 @@
       <div class="btns">
         <a class="btn gold" href="buku/tamu-di-aikbatu/baca.html"><span lang="id">📖 Baca di Browser</span><span lang="en">📖 Read in Browser</span></a>
         <a class="btn line" href="buku/tamu-di-aikbatu/tamu-di-aikbatu.epub" download><span lang="id">⬇ Unduh EPUB</span><span lang="en">⬇ Download EPUB</span></a>
-        <a class="btn line" href="buku/"><span lang="id">Tentang buku ini</span><span lang="en">About the book</span></a>
+        <a class="btn line" href="buku/#tamu-di-aikbatu"><span lang="id">Tentang buku ini</span><span lang="en">About the book</span></a>
       </div>
       <p class="fine" lang="id">Edisi digital ini saat ini bisa dibaca tanpa biaya. Ketersediaan dan harga edisi lain dapat berbeda.</p>
       <p class="fine" lang="en">This digital edition is currently available at no cost. Availability and pricing of other editions may differ.</p>
     </div>
   </section>
+
+  <section class="book sea">
+    <a class="cover" href="buku/#satu-napas"><img src="buku/satu-napas/cover.jpg" width="572" height="1024" loading="lazy" alt="Sampul buku Satu Napas: seorang anak perempuan menuruni tangga rumah panggung ke dalam laut malam, dengan dua paus bercahaya di bawahnya" data-en="Cover of Satu Napas: a girl climbing down a stilt-house ladder into the night sea, with two glowing whales below her"></a>
+    <div>
+      <p class="kicker" lang="id"><span class="new">BARU</span>Fiksi ilmiah untuk anak · Dibacakan 8+ · baca sendiri 10+</p>
+      <p class="kicker" lang="en"><span class="new">NEW</span>Science fiction for children · Read aloud 8+ · alone 10+</p>
+      <h2>Satu Napas</h2>
+      <p lang="id">Di bawah lantai rumah Pari, ada laut. Setiap senja Pari, 11 tahun, mendengar
+         bunyi dari laut dalam yang tidak didengar orang lain. Lalu kapal survei datang, dan laut
+         mulai berdentum. Cerita berlatar Wakatobi, dengan ilmu laut sungguhan di setiap bab.</p>
+      <p lang="en">Under the floor of Pari's house, there is the sea. Every dusk, eleven-year-old
+         Pari hears a sound from the deep that nobody else can hear. Then a survey ship comes, and
+         the sea starts to boom. Set in Wakatobi, with real ocean science in every chapter.
+         (In Indonesian.)</p>
+      <div class="btns">
+        <a class="btn gold" href="buku/satu-napas/baca.html"><span lang="id">📖 Baca 3 Bab Pertama</span><span lang="en">📖 Read the First 3 Chapters</span></a>
+        <a class="btn line" href="buku/#buku-lengkap"><span lang="id">✉ Minta Buku Lengkap</span><span lang="en">✉ Request the Full Book</span></a>
+        <a class="btn line" href="buku/#satu-napas"><span lang="id">Tentang buku ini</span><span lang="en">About the book</span></a>
+      </div>
+      <p class="fine" lang="id">Tiga bab pertama bisa langsung dibaca. Buku lengkapnya kami kirim lewat email kepada orang tua dan guru — saat ini tanpa biaya.</p>
+      <p class="fine" lang="en">The first three chapters are open to read. The full book is emailed to parents and teachers — currently at no cost.</p>
+    </div>
+  </section>
+  </div><!-- /shelf -->
+  </div><!-- /shelfwrap -->
+  <p class="shelfnote"><span lang="id">Geser ke samping untuk buku lain · </span><span lang="en">Swipe sideways for more books · </span><a href="buku/"><span lang="id">Semua buku →</span><span lang="en">All books →</span></a></p>
 
   <h2 class="sectitle" id="aplikasi"><span lang="id">Aplikasi kami</span><span lang="en">Our apps</span></h2>
   <div class="grid">
@@ -309,6 +355,20 @@ main().catch(() => {
   // Ticker adalah hiasan — kalau gagal, biarkan saja hilang, jangan ganggu halaman.
   document.getElementById('lomba-tick').hidden = true;
 });
+</script>
+<script>
+(function(){
+  var shelf=document.getElementById('shelf'); if(!shelf) return;
+  var slides=[].slice.call(shelf.children), prev=document.querySelector('.arrow.prev'), next=document.querySelector('.arrow.next'), cur=0;
+  function go(i){ i=Math.max(0,Math.min(slides.length-1,i)); shelf.scrollTo({left:slides[i].offsetLeft-shelf.offsetLeft,behavior:(document.visibilityState!=='visible'||matchMedia('(prefers-reduced-motion:reduce)').matches)?'instant':'smooth'}); }
+  function mark(i){ cur=i; prev.disabled=i===0; next.disabled=i===slides.length-1; }
+  prev.onclick=function(){go(cur-1)}; next.onclick=function(){go(cur+1)};
+  var tick; shelf.addEventListener('scroll',function(){ clearTimeout(tick); tick=setTimeout(function(){
+    var x=shelf.scrollLeft, best=0, bd=1e9;
+    slides.forEach(function(s,i){ var d=Math.abs(s.offsetLeft-shelf.offsetLeft-x); if(d<bd){bd=d;best=i} });
+    if(shelf.scrollLeft+shelf.clientWidth>=shelf.scrollWidth-4) best=slides.length-1;
+    mark(best); },60); });
+})();
 </script>
 </body>
 </html>
