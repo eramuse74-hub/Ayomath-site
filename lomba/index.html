@@ -73,10 +73,11 @@
       <span lang="en"><b>Live Score Board</b>While an event is running, follow the participants' rankings live on the Live page.</span></div>
     <div class="btns">
       <!-- Tombol utama mengarah ke event Skeddo (URL diisi dinamis dari
-           lomba_events.skeddo_url; cadangan: app.skeddo.com). Ikut serta
+           lomba_events.skeddo_url; cadangan: halaman grup AyoMath di
+           Skeddo, yang membuka aplikasinya kalau terpasang). Ikut serta
            selalu lewat event Skeddo — halaman latihan dan gamenya hanya
            terbuka dari link yang membawa ?dari=skeddo. -->
-      <a class="btn teal" id="sk-join" href="https://app.skeddo.com" target="_blank" rel="noopener">
+      <a class="btn teal" id="sk-join" href="https://app.skeddo.com/g/b8c44237-39f6-4493-aa6e-f16c536846ac/ayomath" target="_blank" rel="noopener">
         <span lang="id">🚀 Gabung melalui Skeddo</span>
         <span lang="en">🚀 Join via Skeddo</span></a>
       <a class="btn ghost" href="../ayomath/"><span lang="id">Tentang AyoMath</span><span lang="en">About AyoMath</span></a>
@@ -93,12 +94,11 @@
       sessions run inside their time window; practice is open throughout its
       own window (usually a week) and can be repeated.</p>
     <div class="tick" id="sched-tick" hidden><div class="track" id="sched-track"></div></div>
-    <p class="subtle" style="text-align:left" id="sched-empty" hidden
-       lang="id">Belum ada jadwal — nantikan pengumuman berikutnya di grup
-      Skeddo AyoMath.</p>
-    <p class="subtle" style="text-align:left" id="sched-empty-en" hidden
-       lang="en">No schedule yet — stay tuned for the next announcement in the
-      AyoMath Skeddo group.</p>
+    <!-- Event publik grup AyoMath, langsung dari Skeddo (../skeddo-events.js):
+         yang sedang berjalan dan yang akan datang, tiap kartu membuka event-nya.
+         Kalau kosong, blok ini sendiri yang bilang "belum ada" + link grupnya. -->
+    <div data-skeddo-events hidden
+         data-org="b8c44237-39f6-4493-aa6e-f16c536846ac" data-name="AyoMath"></div>
   </div>
 
   <footer>
@@ -119,7 +119,6 @@ const SUPA_URL = 'https://koadqcjejecqpnufkhyx.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtvYWRxY2plamVjcXBudWZraHl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzQ1NDEsImV4cCI6MjA5NTcxMDU0MX0.IQUnBXrGsz1fCRTvUb0f5vI8AKhmASoegvVs09wqbaI';
 const db = createClient(SUPA_URL, SUPA_KEY);
 
-const FALLBACK_SKEDDO = 'https://app.skeddo.com';
 
 const jam = (iso) => new Date(iso).toLocaleTimeString('id-ID',
   { hour: '2-digit', minute: '2-digit' });
@@ -169,11 +168,9 @@ async function main() {
     }
   }
 
-  if (!items.length) {
-    document.getElementById('sched-empty').hidden = false;
-    document.getElementById('sched-empty-en').hidden = false;
-    return;
-  }
+  // Tanpa batch: ticker tetap tersembunyi; blok event Skeddo di bawahnya
+  // yang bicara (termasuk kalimat "belum ada").
+  if (!items.length) return;
   // Isi dua kali supaya putaran tidak punya jeda kosong (pola strip sponsor).
   const track = document.getElementById('sched-track');
   for (let round = 0; round < 2; round++) {
@@ -188,10 +185,8 @@ async function main() {
   document.getElementById('sched-tick').hidden = false;
 }
 
-main().catch(() => {
-  document.getElementById('sched-empty').hidden = false;
-  document.getElementById('sched-empty-en').hidden = false;
-});
+main().catch(() => {});
 </script>
+<script src="../skeddo-events.js" defer></script>
 </body>
 </html>

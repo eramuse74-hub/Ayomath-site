@@ -93,6 +93,11 @@
   .req .msg{margin:14px 0 0;padding:12px 14px;border-radius:12px;font-weight:700;max-width:640px}
   .req .msg.ok{background:#E3F5E9;color:#1B7A42}
   .req .msg.err{background:#FDECEC;color:#9B2C2C}
+  .req .skd{background:#EAF4F6;border:1px solid rgba(18,71,90,.2);border-radius:16px;padding:18px 20px;margin:0 0 22px;max-width:640px}
+  .req .skd h3,.req h3.or{margin:0 0 6px;font-size:17px;font-weight:900}
+  .req .skd ul{margin:6px 0 14px}
+  .req .skd a.go{display:inline-block;text-decoration:none;font-weight:800;padding:12px 20px;border-radius:14px;background:#12475A;color:#fff}
+  .req h3.or{margin:0 0 12px}
   .req .fine{font-size:13px;color:var(--muted);margin:12px 0 0;max-width:640px}
   @media (max-width:760px){.req form{grid-template-columns:1fr}}
   .about{background:linear-gradient(135deg,#f0eefe,#e7fbf7);border-radius:20px;padding:24px;margin:24px 0}
@@ -251,12 +256,12 @@
       <p lang="en">Jabrik at 10. For primary-school readers and everyone else.</p>
       <span class="badge ok" lang="id">Sudah terbit</span><span class="badge ok" lang="en">Out now</span></div>
     <div class="card"><span class="n" lang="id">Buku 2</span><span class="n" lang="en">Book 2</span>
-      <h3>Yang Tidak Bisa Ditarik Kembali</h3>
+      <h3 lang="id">Judul menyusul</h3><h3 lang="en">Title to come</h3>
       <p lang="id">Jabrik remaja. Untuk pembaca remaja.</p>
       <p lang="en">Jabrik as a teenager. For young-adult readers.</p>
       <span class="badge soon" lang="id">Sedang disiapkan</span><span class="badge soon" lang="en">In preparation</span></div>
     <div class="card"><span class="n" lang="id">Buku 3</span><span class="n" lang="en">Book 3</span>
-      <h3>Dunia-Dunia yang Mungkin</h3>
+      <h3 lang="id">Judul menyusul</h3><h3 lang="en">Title to come</h3>
       <p lang="id">Jabrik dewasa. Untuk pembaca dewasa.</p>
       <p lang="en">Jabrik grown up. For adult readers.</p>
       <span class="badge soon" lang="id">Sedang disiapkan</span><span class="badge soon" lang="en">In preparation</span></div>
@@ -297,6 +302,29 @@
       <li>We email you the full book (EPUB, 24 chapters, in Indonesian). Currently at no cost.</li>
       <li>Sent by a person, so it can take a few days.</li>
     </ul>
+
+    <!-- Jalur cepat: grup Eramuse House di Skeddo. Buku lengkapnya ada di
+         "Shared folder" grup (hanya anggota), jadi bergabung = langsung dapat,
+         tanpa menunggu kami mengirim email. Formulir di bawah tetap ada. -->
+    <div class="skd">
+      <h3 lang="id">Tidak mau menunggu? Ambil di Skeddo</h3>
+      <h3 lang="en">Rather not wait? Get it on Skeddo</h3>
+      <ul lang="id">
+        <li>Gabung grup <b>Eramuse House</b> di Skeddo. Buku lengkapnya ada di <b>Shared folder</b> grup — langsung bisa diunduh.</li>
+        <li>Di grup yang sama, orang tua dan guru membicarakan bukunya: bagian mana yang ramai di rumah, pertanyaan mana yang bikin kelas berdebat.</li>
+        <li>Skeddo aplikasi terpisah dan perlu akun Anda sendiri. Untuk orang dewasa; gratis.</li>
+      </ul>
+      <ul lang="en">
+        <li>Join the <b>Eramuse House</b> group on Skeddo. The full book is in the group's <b>Shared folder</b> — download it straight away.</li>
+        <li>In the same group, parents and teachers talk about the books: which part landed at home, which question split the class.</li>
+        <li>Skeddo is a separate app and needs your own account. For adults; free.</li>
+      </ul>
+      <a class="go" href="https://app.skeddo.com/g/302d55d5-96ae-479b-aa3d-43d7ba082944/eramuse-house" target="_blank" rel="noopener">
+        <span lang="id">Dapatkan di Skeddo →</span><span lang="en">Get it on Skeddo →</span></a>
+    </div>
+
+    <h3 class="or" lang="id">Atau minta lewat email</h3>
+    <h3 class="or" lang="en">Or ask by email</h3>
     <form id="reqform" novalidate>
       <label><span lang="id">Nama Anda</span><span lang="en">Your name</span>
         <input type="text" name="name" autocomplete="name" maxlength="120" required></label>
@@ -322,6 +350,13 @@
        No data about children is asked for. Want to be removed? Write to
        <a href="mailto:eramusehouse@gmail.com">eramusehouse@gmail.com</a>. See the <a href="../privacy.html">Privacy Policy</a>.</p>
   </section>
+
+  <!-- Acara publik grup Eramuse House (ngobrol bareng penulis, kelas Jabrik
+       Sains…), langsung dari Skeddo — lihat ../skeddo-events.js. -->
+  <h2 class="sectitle" lang="id">Acara &amp; obrolan buku</h2>
+  <h2 class="sectitle" lang="en">Book events &amp; talk</h2>
+  <div data-skeddo-events hidden
+       data-org="302d55d5-96ae-479b-aa3d-43d7ba082944" data-name="Eramuse House"></div>
 
   <div class="about">
     <h2 lang="id">Eramuse House juga menerbitkan buku</h2>
@@ -412,5 +447,6 @@
   });
 })();
 </script>
+<script src="../skeddo-events.js" defer></script>
 </body>
 </html>
