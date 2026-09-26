@@ -39,6 +39,9 @@
   .tick:hover .track{animation-play-state:paused}
   @keyframes tick-move{to{transform:translateX(-100%)}}
   .tick .it b{color:var(--teal)}
+  .tick a.it{color:inherit;text-decoration:none}
+  .tick a.it:hover{text-decoration:underline}
+  .tick a.it .go{color:var(--teal)}
 
   .sectitle{font-size:14px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:36px 0 12px}
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
@@ -319,17 +322,72 @@ function tickItem(evName, b) {
   return `${evName} — ${b.label} · ${waktu} · ${status}`;
 }
 
+/** Acara publik grup AyoMath di Skeddo — sumber yang sama dengan halaman
+    lomba/ (skeddo-events.js). Ticker ini dulu hanya membaca tabel lomba lama
+    (kosong), jadi beranda bilang "belum ada jadwal" saat latihan lomba di
+    Skeddo sedang berjalan sampai 31 Oktober (2026-09-26). Aturan jendela
+    hidup Skeddo: tampil dari mulai sampai SELESAI. Gagal = kosong, bukan error. */
+const SKEDDO_URL = 'https://dsomtcrnslmhdgonpary.supabase.co';
+const SKEDDO_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRzb210Y3Juc2xtaGRnb25wYXJ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1NDI5MDgsImV4cCI6MjA5NjExODkwOH0.bEytV7vUVibDz6nx4DEQSr7ba_kmWD1Mn4lLKg5DPhs';
+const SKEDDO_ORG = 'b8c44237-39f6-4493-aa6e-f16c536846ac';
+const hari = (iso) => new Date(iso).toLocaleDateString('id-ID',
+  { day: 'numeric', month: 'short' });
+
+async function skeddoItems() {
+  try {
+    const now = new Date();
+    const grace = new Date(now.getTime() - 2 * 60 * 60 * 1000);
+    const qs = new URLSearchParams([
+      ['select', 'id,title,starts_at,ends_at,rsvp_required,fee'],
+      ['org_id', 'eq.' + SKEDDO_ORG],
+      ['status', 'eq.published'],
+      ['visibility', 'eq.public'],
+      ['or', '(ends_at.gte.' + now.toISOString() +
+             ',and(ends_at.is.null,starts_at.gte.' + grace.toISOString() + '))'],
+      ['order', 'starts_at.asc'],
+      ['limit', '6'],
+    ]);
+    const r = await fetch(SKEDDO_URL + '/rest/v1/events?' + qs, {
+      headers: { apikey: SKEDDO_KEY, Authorization: 'Bearer ' + SKEDDO_KEY },
+    });
+    if (!r.ok) return [];
+    const rows = await r.json();
+    // Tiap item membuka halaman event di Skeddo. Kata ajakannya ikut aturan
+    // Skeddo sendiri: "daftar" hanya kalau event itu memang minta RSVP (atau
+    // berbayar) — di sana peserta mendapat tiket/nomor untuk masuk (rencana
+    // lomba live: 150-200 siswa per batch). Latihan yang bebas masuk (RSVP
+    // off = langsung datang) cukup "lihat" (Eric 2026-09-26: "at the moment
+    // the lomba in skeddo does not require that").
+    return (Array.isArray(rows) ? rows : []).map((e) => {
+      const running = new Date(e.starts_at) <= now;
+      const waktu = running
+        ? (e.ends_at ? `sedang berlangsung · sampai ${hari(e.ends_at)}` : 'sedang berlangsung')
+        : `${tanggal(e.starts_at)}, ${jam(e.starts_at)} · segera`;
+      const slug = String(e.title || '').toLowerCase().normalize('NFKD')
+        .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60);
+      const takesRsvp = e.rsvp_required === true || (e.fee != null && e.fee > 0);
+      return {
+        text: `${e.title} · ${waktu} · ${takesRsvp ? 'daftar' : 'lihat'} di Skeddo`,
+        href: `https://app.skeddo.com/e/${e.id}${slug ? '/' + slug : ''}`,
+      };
+    });
+  } catch {
+    return [];
+  }
+}
+
 async function main() {
+  const items = await skeddoItems();
+
   const { data: events } = await db.from('lomba_events').select('*')
     .eq('status', 'published').order('created_at');
 
-  const items = [];
   for (const ev of events ?? []) {
     const { data: batches } = await db.from('lomba_batches_public').select('*')
       .eq('event_slug', ev.slug).order('starts_at');
     for (const b of batches ?? []) {
       const t = tickItem(ev.name, b);
-      if (t) items.push(t);
+      if (t) items.push({ text: t });
     }
   }
 
@@ -342,9 +400,15 @@ async function main() {
   const track = document.getElementById('lomba-tick-track');
   for (let round = 0; round < 2; round++) {
     for (const t of items) {
-      const s = document.createElement('span');
+      const s = document.createElement(t.href ? 'a' : 'span');
       s.className = 'it';
-      s.textContent = `🏆 ${t}`;
+      s.textContent = `🏆 ${t.text}`;
+      if (t.href) {
+        s.href = t.href; s.target = '_blank'; s.rel = 'noopener';
+        const go = document.createElement('span');
+        go.className = 'go'; go.textContent = ' →';
+        s.appendChild(go);
+      }
       track.appendChild(s);
     }
   }
