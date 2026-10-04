@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Papan Langsung — Lomba AyoMath</title>
 <meta name="description" content="Papan skor langsung lomba matematika AyoMath: soal yang sedang dikerjakan dan hasil peserta secara real-time.">
 <script>
@@ -124,8 +124,17 @@ if (new URLSearchParams(location.search).get('dari') !== 'skeddo')
   .dot.on{background:var(--sage)}
   /* Strip sponsor: menempel di dasar layar, tetap terlihat saat halaman
      digulir (permintaan 2026-09-03), berjalan pelan tanpa henti. */
-  .sp-strip{position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--surface);
-            border-top:1px solid var(--line);padding:9px 0;overflow:hidden;white-space:nowrap}
+  /* Kerangka aplikasi (2026-10-04): halaman = tinggi layar yang TERLIHAT
+     (100dvh ikut bilah alamat/bilah bawah browser HP), papan menggulir di
+     dalam .page, dan strip sponsor adalah baris biasa di dasar. Dulu strip
+     position:fixed — Samsung Internet / Chrome menutupinya dengan bilah
+     bawahnya saat halaman dibuka, baru tampak setelah digulir. */
+  html,body{height:100%}
+  body{display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden}
+  .page{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .sp-strip{position:relative;flex:none;z-index:5;background:var(--surface);
+            border-top:1px solid var(--line);padding:9px 0;overflow:hidden;white-space:nowrap;
+            padding-bottom:calc(9px + env(safe-area-inset-bottom))}
   .sp-strip .lbl{position:absolute;left:0;top:0;bottom:0;display:flex;align-items:center;
                  padding:0 14px 0 12px;font-size:11px;font-weight:800;color:var(--muted);
                  text-transform:uppercase;letter-spacing:.8px;background:var(--surface);z-index:1}
@@ -137,7 +146,6 @@ if (new URLSearchParams(location.search).get('dari') !== 'skeddo')
            color:var(--text);text-decoration:none}
   .sp-item img{height:36px;width:auto;max-width:150px;object-fit:contain;background:#fff;
                border-radius:8px;padding:4px;display:block}
-  body.has-strip{padding-bottom:66px}
   /* Gerbang Skeddo: tanpa ?dari=skeddo, seluruh papan diganti layar ini. */
   .sk-gate{display:none;text-align:center;padding:80px 24px}
   .sk-gate .logo{font-size:56px;line-height:1}
@@ -146,7 +154,7 @@ if (new URLSearchParams(location.search).get('dari') !== 'skeddo')
   html.sk-gated .wrap{display:none}
   html.sk-gated .sp-strip{display:none}
   html.sk-gated .sk-gate{display:block}
-  html.sk-gated body{background:var(--bg)}
+  html.sk-gated body{background:var(--bg);overflow:auto}
   .sk-gate a.btn{display:inline-block;text-decoration:none;font-weight:800;
                  padding:14px 26px;border-radius:14px;font-size:17px;
                  background:var(--teal);color:#10231f}
@@ -166,6 +174,7 @@ if (new URLSearchParams(location.search).get('dari') !== 'skeddo')
     di sana. Peserta bergabung lewat tombol <b>Join now</b>.</p>
   <a class="btn" id="sk-gate-btn" href="https://app.skeddo.com">Gabung melalui Skeddo</a>
 </div>
+<div class="page" id="page">
 <div class="wrap">
   <header>
     <div>
@@ -209,10 +218,6 @@ if (new URLSearchParams(location.search).get('dari') !== 'skeddo')
     <div class="sponsors" id="sponsors"></div>
   </div>
 </div>
-<div class="sp-strip" id="sp-strip" hidden aria-label="Sponsor">
-  <span class="lbl">Didukung oleh</span>
-  <div class="sp-track" id="sp-track"></div>
-</div>
 <div class="wrap" style="padding-top:0">
 
   <footer>
@@ -220,6 +225,11 @@ if (new URLSearchParams(location.search).get('dari') !== 'skeddo')
     <p>Peserta ditampilkan dengan nomor peserta, nama panggilan yang diisi
        sendiri saat masuk (boleh dikosongkan), dan asal sekolah.</p>
   </footer>
+</div>
+</div>
+<div class="sp-strip" id="sp-strip" hidden aria-label="Sponsor">
+  <span class="lbl">Didukung oleh</span>
+  <div class="sp-track" id="sp-track"></div>
 </div>
 
 <script type="module">
