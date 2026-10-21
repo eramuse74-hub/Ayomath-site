@@ -111,9 +111,6 @@
   /* Label CONTOH/LANGSUNG di langit arena, tidak menutupi judul event. */
   .arena .win .badge{top:19%;left:3%}
 
-  /* Competition strip */
-  .lomba{display:grid;grid-template-columns:auto 1fr auto;gap:20px;align-items:center}
-  .lomba .btns{margin:0;padding:0}
 
   .promise{background:linear-gradient(135deg,#f0eefe,#e7fbf7);border-radius:20px;padding:24px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
   .feat{display:flex;gap:12px;align-items:flex-start}
@@ -133,10 +130,8 @@
     .book h2{font-size:27px}
     .shelf>.book{flex-basis:88%}
     .arrow{display:none}
-    .lomba{grid-template-columns:1fr;gap:6px}
     .arena{grid-template-columns:1fr;gap:14px;padding:14px}
     .arena h2{font-size:22px}
-    .lomba .btns{padding-top:12px}
     .brand{font-size:15px}
   }
   @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
@@ -148,9 +143,9 @@
   <div class="wrap">
     <a class="brand" href="#top">Eramuse House</a>
     <div class="links">
+      <a href="#lomba" id="nav-lomba"><span lang="id">Lomba</span><span lang="en">Competition</span></a>
       <a href="#buku"><span lang="id">Buku</span><span lang="en">Books</span></a>
       <a href="#aplikasi"><span lang="id">Aplikasi</span><span lang="en">Apps</span></a>
-      <a href="#lomba"><span lang="id">Lomba</span><span lang="en">Competition</span></a>
       <a href="#tentang"><span lang="id">Tentang</span><span lang="en">About</span></a>
     </div>
     <span class="lang" role="group" aria-label="Bahasa / Language">
@@ -169,6 +164,13 @@
        for children and teachers in Indonesia — and science fiction books for children.</p>
   </header>
 
+  <!-- LOMBA — satu bagian (jadwal berjalan + arena + masuk/latihan). Di atas
+       selama ada jadwal lomba/latihan yang terbuka; kalau tidak ada, skrip
+       memindahkannya ke bawah Aplikasi supaya Buku yang tampil duluan
+       (Eric 2026-10-21: yang terbatas waktu di atas, yang abadi di bawah). -->
+  <div id="lomba-sec">
+  <h2 class="sectitle" id="lomba"><span lang="id">Lomba</span><span lang="en">Competition</span></h2>
+  <p class="who" id="lomba-tick-none" hidden><span lang="id">Belum ada jadwal — nantikan pengumuman berikutnya.</span><span lang="en">No schedule yet — stay tuned for the next announcement.</span></p>
   <div class="tick" id="lomba-tick" hidden><div class="track" id="lomba-tick-track"></div></div>
 
   <!-- Jendela arena: siaran langsung kalau ada yang berlomba, contoh kalau tidak. -->
@@ -177,14 +179,16 @@
       <span class="badge demo" id="arena-badge"><span lang="id">CONTOH</span><span lang="en">PREVIEW</span></span>
     </a>
     <div>
-      <p class="kicker" lang="id">🚀 Arena Lomba AyoMath</p>
-      <p class="kicker" lang="en">🚀 AyoMath Competition Arena</p>
+      <p class="kicker" lang="id">🏆 Lomba AyoMath · sekolah &amp; komunitas · Kelas 1–6</p>
+      <p class="kicker" lang="en">🏆 AyoMath Competition · schools &amp; communities · Grades 1–6</p>
       <h2 lang="id" id="arena-h-id">Tonton balapan roketnya</h2>
       <h2 lang="en" id="arena-h-en">Watch the rocket race</h2>
-      <p lang="id">Setiap peserta satu roket: makin banyak jawaban benar, makin tinggi terbangnya.
-         Peringkat sekolah dan upacara juara ditayangkan langsung.</p>
-      <p lang="en">One rocket per participant: the more right answers, the higher it flies.
-         School rankings and the winners' ceremony are shown live.</p>
+      <p lang="id">Lomba dan latihan matematika online. Setiap peserta satu roket: makin banyak
+         jawaban benar, makin tinggi terbangnya — peringkat sekolah dan upacara juara
+         ditayangkan langsung. Semua diadakan melalui <b>Skeddo</b>.</p>
+      <p lang="en">Online maths competitions and practice. One rocket per participant: the more
+         right answers, the higher it flies — school rankings and the winners' ceremony are
+         shown live. Everything runs through <b>Skeddo</b>.</p>
       <p class="fine" id="arena-note-id" lang="id">Belum ada yang berlomba saat ini — jendela ini memutar contoh tampilan.</p>
       <p class="fine" id="arena-note-en" lang="en">Nobody is racing right now — this window plays a preview.</p>
       <!-- Peserta sesi resmi: kode sesi dari kartu → game, yang menanyakan nomor + PIN.
@@ -203,6 +207,7 @@
       </div>
     </div>
   </section>
+  </div><!-- /lomba-sec -->
 
   <h2 class="sectitle" id="buku"><span lang="id">Buku</span><span lang="en">Books</span></h2>
   <div class="shelfwrap">
@@ -298,30 +303,6 @@
         <a class="btn green" href="jabrik-sains/app/"><span lang="id">🌐 Coba di Browser</span><span lang="en">🌐 Try in Browser</span></a>
         <a class="btn ghost-green" href="jabrik-sains/"><span lang="id">Selengkapnya</span><span lang="en">Learn more</span></a>
       </div>
-    </div>
-  </div>
-
-  <h2 class="sectitle" id="lomba"><span lang="id">Lomba</span><span lang="en">Competition</span></h2>
-  <p class="who" id="lomba-tick-none" hidden><span lang="id">Belum ada jadwal — nantikan pengumuman berikutnya.</span><span lang="en">No schedule yet — stay tuned for the next announcement.</span></p>
-  <div class="app lomba">
-    <div class="logo">🏆</div>
-    <div>
-      <h3 lang="id">Lomba AyoMath</h3>
-      <h3 lang="en">AyoMath Competition</h3>
-      <p class="who" lang="id">Untuk sekolah &amp; komunitas · Kelas 1–6</p>
-      <p class="who" lang="en">For schools &amp; communities · Grades 1–6</p>
-      <p lang="id">Lomba dan latihan matematika online: sesi resmi berjadwal, latihan
-         yang selalu terbuka, dan papan skor langsung. Semua diadakan melalui
-         <b>Skeddo</b> — lihat jadwalnya di halaman lomba, lalu gabung lewat
-         event Skeddo-nya.</p>
-      <p lang="en">Online maths competitions and practice: scheduled official
-         sessions, always-open practice, and a live score board. Everything runs
-         through <b>Skeddo</b> — see the schedule on the competition page, then
-         join via the Skeddo event.</p>
-    </div>
-    <div class="btns">
-      <a class="btn teal" href="lomba/"><span lang="id">🏆 Lihat Jadwal</span><span lang="en">🏆 Schedule</span></a>
-      <a class="btn ghost" href="#arena"><span lang="id">🚀 Tonton Arena</span><span lang="en">🚀 Watch the Arena</span></a>
     </div>
   </div>
 
@@ -460,6 +441,7 @@ async function main() {
   const tick = document.getElementById('lomba-tick');
   if (!items.length) {
     document.getElementById('lomba-tick-none').hidden = false;
+    lombaKeBawah();
     return;
   }
   // Isi dua kali supaya putaran tidak punya jeda kosong (pola strip sponsor).
@@ -480,6 +462,15 @@ async function main() {
   }
   track.style.setProperty('--dur', `${Math.max(24, items.length * 9)}s`);
   tick.hidden = false;
+}
+
+/** Tidak ada lomba/latihan yang terbuka → bagian Lomba turun ke bawah Aplikasi
+    (Buku jadi yang pertama), dan tautan Lomba di menu ikut pindah ke urutan 3. */
+function lombaKeBawah() {
+  const sec = document.getElementById('lomba-sec');
+  document.getElementById('tentang').before(sec);
+  const nav = document.getElementById('nav-lomba');
+  nav.parentElement.querySelector('a[href="#aplikasi"]').after(nav);
 }
 
 main().catch(() => {
