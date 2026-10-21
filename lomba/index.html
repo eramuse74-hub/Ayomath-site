@@ -249,8 +249,9 @@ function masukLomba(official, arenas) {
   for (const ev of arenas) {
     const a = document.createElement('a');
     a.className = 'btn ghost';
-    // Folder event = slug; arena.html adalah berkas bersama yang disalin per event.
-    a.href = `${encodeURIComponent(ev.slug)}/arena.html`;
+    // Satu arena bersama untuk semua event (?event=<slug>), sama dengan admin.html —
+    // event baru tidak punya folder sendiri, jadi <slug>/arena.html bisa 404.
+    a.href = `latihan/arena.html?event=${encodeURIComponent(ev.slug)}`;
     a.textContent = (en ? '🚀 Watch the arena — ' : '🚀 Tonton arena — ') + ev.name;
     list.appendChild(a);
   }

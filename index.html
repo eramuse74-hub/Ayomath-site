@@ -85,6 +85,32 @@
   .shelfnote{color:var(--muted);font-size:13px;margin:8px 2px 0}
   .shelfnote a{color:var(--teal);font-weight:700}
 
+  /* Jendela arena (teaser): arena desktop asli 1280×720 di iframe yang
+     diperkecil. Seluruh jendela adalah tautan ke arena penuh. */
+  .arena{background:radial-gradient(120% 140% at 85% 0%,#2B3F7A 0%,var(--night2) 40%,var(--night) 100%);color:#EEF1FA;
+         border-radius:24px;padding:18px;display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:22px;align-items:center;
+         box-shadow:0 6px 24px rgba(14,23,48,.25);margin-top:14px}
+  .arena .win{position:relative;display:block;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#0A1633;
+              box-shadow:0 0 0 1px rgba(255,255,255,.12)}
+  .arena .win iframe{position:absolute;left:0;top:0;width:1280px;height:720px;border:0;transform-origin:0 0;pointer-events:none}
+  .arena .win .badge{position:absolute;left:10px;top:10px;z-index:1;background:#B8324A;color:#fff;font-size:11px;font-weight:900;
+                     letter-spacing:.08em;padding:3px 9px;border-radius:999px}
+  .arena .win .badge.demo{background:rgba(10,22,51,.85);color:var(--gold);border:1px solid var(--gold)}
+  .arena .win:hover{box-shadow:0 0 0 2px var(--gold)}
+  .arena .kicker{color:var(--gold);font-weight:800;font-size:13px;letter-spacing:.12em;text-transform:uppercase;margin:0 0 6px}
+  .arena h2{font-size:26px;line-height:1.15;margin:0 0 8px;font-weight:900}
+  .arena p{margin:0 0 6px}
+  .arena .fine{font-size:13px;color:#B9C2DE}
+  .arena .btns{margin-top:0;padding-top:12px}
+  .arena .masuk{margin:12px 0 0;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:14px;padding:10px 12px}
+  .arena .masuk label{display:block;font-size:13px;color:#D6DDF0;margin-bottom:8px}
+  .arena .masuk .row{display:flex;gap:8px}
+  .arena .masuk input{flex:1;min-width:0;font:inherit;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:9px 12px;
+                      border-radius:10px;border:1px solid rgba(255,255,255,.3);background:#0A1633;color:#fff}
+  .arena .masuk button{font:inherit;font-weight:800;padding:9px 16px;border-radius:10px;border:0;background:var(--gold);color:#1d1603;cursor:pointer}
+  /* Label CONTOH/LANGSUNG di langit arena, tidak menutupi judul event. */
+  .arena .win .badge{top:19%;left:3%}
+
   /* Competition strip */
   .lomba{display:grid;grid-template-columns:auto 1fr auto;gap:20px;align-items:center}
   .lomba .btns{margin:0;padding:0}
@@ -108,6 +134,8 @@
     .shelf>.book{flex-basis:88%}
     .arrow{display:none}
     .lomba{grid-template-columns:1fr;gap:6px}
+    .arena{grid-template-columns:1fr;gap:14px;padding:14px}
+    .arena h2{font-size:22px}
     .lomba .btns{padding-top:12px}
     .brand{font-size:15px}
   }
@@ -142,6 +170,38 @@
   </header>
 
   <div class="tick" id="lomba-tick" hidden><div class="track" id="lomba-tick-track"></div></div>
+
+  <!-- Jendela arena: siaran langsung kalau ada yang berlomba, contoh kalau tidak. -->
+  <section class="arena" id="arena" aria-label="Arena lomba">
+    <a class="win" id="arena-win" href="lomba/latihan/arena.html" aria-label="Buka arena lomba">
+      <span class="badge demo" id="arena-badge"><span lang="id">CONTOH</span><span lang="en">PREVIEW</span></span>
+    </a>
+    <div>
+      <p class="kicker" lang="id">🚀 Arena Lomba AyoMath</p>
+      <p class="kicker" lang="en">🚀 AyoMath Competition Arena</p>
+      <h2 lang="id" id="arena-h-id">Tonton balapan roketnya</h2>
+      <h2 lang="en" id="arena-h-en">Watch the rocket race</h2>
+      <p lang="id">Setiap peserta satu roket: makin banyak jawaban benar, makin tinggi terbangnya.
+         Peringkat sekolah dan upacara juara ditayangkan langsung.</p>
+      <p lang="en">One rocket per participant: the more right answers, the higher it flies.
+         School rankings and the winners' ceremony are shown live.</p>
+      <p class="fine" id="arena-note-id" lang="id">Belum ada yang berlomba saat ini — jendela ini memutar contoh tampilan.</p>
+      <p class="fine" id="arena-note-en" lang="en">Nobody is racing right now — this window plays a preview.</p>
+      <!-- Peserta sesi resmi: kode sesi dari kartu → game, yang menanyakan nomor + PIN.
+           Sama dengan kotak "Masuk lomba" di lomba/; hanya tampil bila ada sesi resmi. -->
+      <form class="masuk" id="masuk-form" hidden>
+        <label for="masuk-kode"><span lang="id">🎫 Peserta lomba? Masukkan kode sesi dari kartu peserta — nomor &amp; PIN ditanya di layar berikutnya.</span><span lang="en">🎫 Competing? Enter the session code from your participant card — number &amp; PIN come on the next screen.</span></label>
+        <div class="row">
+          <input id="masuk-kode" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="KODE SESI" aria-label="Kode sesi">
+          <button type="submit"><span lang="id">Masuk</span><span lang="en">Enter</span></button>
+        </div>
+      </form>
+      <div class="btns">
+        <a class="btn gold" id="arena-go" href="lomba/latihan/arena.html"><span lang="id">🚀 Buka Arena</span><span lang="en">🚀 Open the Arena</span></a>
+        <a class="btn line" href="lomba/"><span lang="id">🏆 Jadwal Lomba</span><span lang="en">🏆 Schedule</span></a>
+      </div>
+    </div>
+  </section>
 
   <h2 class="sectitle" id="buku"><span lang="id">Buku</span><span lang="en">Books</span></h2>
   <div class="shelfwrap">
@@ -260,6 +320,7 @@
     </div>
     <div class="btns">
       <a class="btn teal" href="lomba/"><span lang="id">🏆 Lihat Jadwal</span><span lang="en">🏆 Schedule</span></a>
+      <a class="btn ghost" href="#arena"><span lang="id">🚀 Tonton Arena</span><span lang="en">🚀 Watch the Arena</span></a>
     </div>
   </div>
 
@@ -420,6 +481,80 @@ main().catch(() => {
   // Ticker adalah hiasan — kalau gagal, biarkan saja hilang, jangan ganggu halaman.
   document.getElementById('lomba-tick').hidden = true;
 });
+
+/** Jendela arena di beranda. Urutan pilihan:
+    1. sesi resmi yang sedang di ruang tunggu / berlangsung → arena event itu;
+    2. latihan dengan roket yang masih terbang (mulai < 30 menit lalu);
+    3. selain itu → demo arena (?demo=arena), diberi label CONTOH.
+    Iframe-nya arena desktop asli (1280×720) yang diperkecil; ?teaser=1
+    mematikan tombol dan suara di dalamnya. */
+async function arenaTeaser() {
+  const win = document.getElementById('arena-win');
+  const base = 'lomba/latihan/arena.html';
+  let src = `${base}?demo=arena&teaser=1`, href = base, live = false;
+  try {
+    const { data: evs } = await db.from('lomba_events').select('slug').eq('status', 'published');
+    const slugs = (evs ?? []).map(e => e.slug);
+    if (slugs.length) {
+      const t = Date.now();
+      const { data: bs } = await db.from('lomba_batches_public').select('*').in('event_slug', slugs);
+      const on = (bs ?? []).find(b => !b.is_practice &&
+        new Date(b.lobby_opens_at ?? b.starts_at).getTime() <= t && t < new Date(b.ends_at).getTime());
+      // Kotak kode sesi: hanya bila ada sesi resmi yang belum selesai.
+      const official = (bs ?? []).filter(b => !b.is_practice && t < new Date(b.ends_at).getTime())
+        .sort((a, c) => new Date(a.starts_at) - new Date(c.starts_at));
+      if (official.length) {
+        const form = document.getElementById('masuk-form');
+        const input = document.getElementById('masuk-kode');
+        if (official.length === 1 || on) input.value = (on ?? official[0]).code;
+        form.hidden = false;
+        form.onsubmit = (e) => {
+          e.preventDefault();
+          const kode = input.value.trim().toUpperCase();
+          if (!kode) { input.focus(); return; }
+          location.href = `https://play.ayomath.com/?lomba=${encodeURIComponent(kode)}`;
+        };
+      }
+      let slug = on?.event_slug;
+      if (!slug) {
+        const since = new Date(t - 30 * 60 * 1000).toISOString();
+        const { data: fly } = await db.from('lomba_progress').select('event_slug')
+          .in('event_slug', slugs).eq('done', false).gte('started_at', since).limit(1);
+        slug = fly?.[0]?.event_slug;
+      }
+      if (slug) {
+        live = true;
+        const q = `event=${encodeURIComponent(slug)}`;
+        src = `${base}?${q}&teaser=1`; href = `${base}?${q}`;
+      }
+    }
+  } catch { /* jaringan gagal → contoh */ }
+
+  win.href = href;
+  document.getElementById('arena-go').href = href;
+  const badge = document.getElementById('arena-badge');
+  if (live) {
+    badge.className = 'badge';
+    badge.querySelector('[lang="id"]').textContent = '● LANGSUNG';
+    badge.querySelector('[lang="en"]').textContent = '● LIVE';
+    document.getElementById('arena-note-id').textContent = 'Sedang berlangsung — klik jendelanya untuk menonton layar penuh.';
+    document.getElementById('arena-note-en').textContent = 'Happening now — click the window to watch full screen.';
+  }
+  const fr = document.createElement('iframe');
+  fr.title = live ? 'Arena lomba — langsung' : 'Arena lomba — contoh';
+  fr.tabIndex = -1;
+  fr.setAttribute('aria-hidden', 'true');
+  fr.setAttribute('scrolling', 'no');
+  fr.src = src;
+  const fit = () => { fr.style.transform = `scale(${win.clientWidth / 1280})`; };
+  new ResizeObserver(fit).observe(win);
+  fit();
+  win.appendChild(fr);
+}
+// Muat iframe hanya saat jendelanya hampir terlihat.
+new IntersectionObserver((ents, io) => {
+  if (ents.some(e => e.isIntersecting)) { io.disconnect(); arenaTeaser(); }
+}, { rootMargin: '200px' }).observe(document.getElementById('arena'));
 </script>
 <script>
 (function(){

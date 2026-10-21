@@ -177,8 +177,15 @@
   footer{flex:none;display:flex;align-items:center;gap:16px;padding:0 28px;height:72px;
          background:var(--panel);border-top:1px solid var(--line)}
   footer .sp-lbl{font-size:12px;color:var(--muted);letter-spacing:1px;white-space:nowrap}
-  .sp-row{display:flex;gap:12px;align-items:center;overflow:hidden;flex:1;min-width:0}
-  .sp{height:44px;max-width:150px;border-radius:10px;background:#fff;padding:6px 10px;display:flex;align-items:center;
+  /* Strip sponsor berjalan (marquee): daftar diulang sampai lebih lebar dari
+     strip, lalu dua salinan digeser -50% tanpa jeda. Hover = berhenti. */
+  .sp-row{position:relative;overflow:hidden;flex:1;min-width:0;align-self:stretch;display:flex;align-items:center;
+          -webkit-mask-image:linear-gradient(90deg,transparent,#000 20px,#000 calc(100% - 20px),transparent);
+                  mask-image:linear-gradient(90deg,transparent,#000 20px,#000 calc(100% - 20px),transparent)}
+  .sp-track{display:flex;align-items:center;width:max-content;animation:sp-roll var(--sp-dur,30s) linear infinite}
+  .sp-row:hover .sp-track{animation-play-state:paused}
+  @keyframes sp-roll{to{transform:translateX(-50%)}}
+  .sp{height:44px;max-width:150px;min-width:72px;margin-right:14px;border-radius:10px;background:#fff;padding:6px 10px;display:flex;align-items:center;
       justify-content:center;flex:none;text-decoration:none}
   .sp img{display:block;max-height:100%;max-width:130px;object-fit:contain}
   .sp span{font-size:12px;font-weight:700;color:#333}
@@ -290,10 +297,32 @@
   body.phone .race,body.phone .lobi-left{display:none}
   body.phone .pads{grid-template-columns:1fr}
   body.phone .pra .big{font-size:72px}
-  body.phone footer{height:auto;padding:10px 14px;flex-wrap:wrap}
-  body.phone footer .org{display:none}
+  /* Strip sponsor HP: menempel di bawah layar, selalu kelihatan apa pun
+     ukuran HP-nya (badan halaman diberi ruang setinggi strip lewat JS).
+     Penyelenggara, Putar ulang dan ajakan Skeddo pindah ke #ph-end. */
+  body.phone footer{position:fixed;left:0;right:0;bottom:0;z-index:15;height:auto;gap:8px;
+                    padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));box-shadow:0 -8px 20px rgba(0,0,0,.4)}
+  body.phone footer .sp-lbl{font-size:9px;line-height:1.15;white-space:normal;width:50px;flex:none;letter-spacing:.5px}
+  body.phone .sp{height:40px;max-width:130px;min-width:60px;margin-right:10px;padding:5px 8px}
+  body.phone .sp img{max-width:112px}
+  body.phone .sp.utama{height:46px;max-width:160px}
+  @media (max-height:560px){body.phone .sp,body.phone .sp.utama{height:32px}}
+  /* HP: petunjuk suara di atas strip sponsor, bukan menutupi kepala. */
+  body.phone .snd-hint{top:auto;right:12px;left:12px;bottom:calc(var(--foot-h,0px) + 12px);text-align:center}
+  body.phone .snd-hint::before{display:none}
+  /* HP: judul upacara di atas, tab kelas di bawahnya. */
+  body.phone .hasil .hd{flex-direction:column;gap:10px;padding:16px 14px 0}
+  body.phone .hasil .hd .t{font-size:28px}
+  .ph-end{display:none}
+  body.phone .ph-end{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:10px;padding:4px 14px 16px}
+  .ph-end .org{flex-basis:100%;text-align:center;font-size:12px;color:var(--muted);line-height:1.5}
+  .ph-end .org b{color:var(--text)}
+  .ph-end a.cta{height:40px;padding:0 16px;border-radius:12px;background:var(--gold);color:var(--night);display:flex;
+                align-items:center;font-weight:800;font-size:14px;text-decoration:none;white-space:nowrap}
+  /* ?teaser=1: jendela kecil di beranda - tanpa tombol, tanpa suara. */
+  body.teaser .tools,body.teaser #cta,body.teaser #replay{display:none !important}
   body.phone .hasil{min-height:640px}
-  body.phone .hasil .body{flex-direction:column;top:84px;gap:14px;padding:8px 14px 14px;position:relative;height:auto}
+  body.phone .hasil .body{flex-direction:column;top:0;gap:14px;padding:8px 14px 14px;position:relative;height:auto}
   body.phone .podium{padding-bottom:30px;gap:8px;min-height:300px}
   body.phone .pod{width:30%}body.phone .pod .who .nm{font-size:20px}
   body.phone .rest{width:auto}
@@ -330,7 +359,8 @@
   @keyframes rowin{from{opacity:0;transform:translateX(60px)}to{opacity:1;transform:none}}
   @keyframes land{from{transform:translateY(-420px)}to{transform:none}}
   @keyframes fall{0%{transform:translateY(0) rotate(0)}100%{transform:translateY(100vh) rotate(540deg)}}
-  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none !important;transition:none !important}}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none !important;transition:none !important}
+    .sp-row{overflow-x:auto;-webkit-mask-image:none;mask-image:none}.sp-track .dup{display:none}}
 </style>
 <script data-goatcounter="https://esumar.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>
@@ -421,8 +451,9 @@
     <div id="confetti" aria-hidden="true" class="hidden"></div>
   </section>
 </main>
+<div class="ph-end" id="ph-end"></div>
 
-<footer>
+<footer id="foot">
   <span class="sp-lbl" id="sp-lbl">DIDUKUNG OLEH</span>
   <div class="sp-row" id="sp-row"></div>
   <div class="org" id="org"></div>
@@ -452,8 +483,21 @@ const db = createClient(SUPA_URL, SUPA_KEY);
 
 const $ = (id) => document.getElementById(id);
 const Q = new URLSearchParams(location.search);
-const PHONE = Q.get('embed') === '1' || innerWidth < 760;
+const TEASER = Q.get('teaser') === '1'; // jendela kecil di beranda (iframe berskala)
+const PHONE = !TEASER && (Q.get('embed') === '1' || innerWidth < 760);
 if (PHONE) document.body.classList.add('phone');
+if (TEASER) document.body.classList.add('teaser');
+if (PHONE) {
+  // Strip sponsor menempel di bawah; yang lain dari kaki ikut alur halaman.
+  $('ph-end').append($('org'), $('replay'), $('cta'));
+  $('foot').classList.add('hidden'); // muncul begitu ada sponsor
+  const pad = () => {
+    const h = $('foot').offsetHeight;
+    document.body.style.paddingBottom = `${h}px`;
+    document.documentElement.style.setProperty('--foot-h', `${h}px`);
+  };
+  new ResizeObserver(pad).observe($('foot'));
+}
 
 /** Semua teks dari server lewat textContent — nama sekolah diketik manusia. */
 function el(tag, text, cls, attrs) {
@@ -522,7 +566,9 @@ function colorOf(school) {
 // 24 roket, 6 sekolah, seperti mockup. Lobi 40 dtk → balapan 100 dtk → hasil
 // 60 dtk → ulang. Tidak menyentuh server sama sekali.
 const DEMO = Q.get('demo') ? (() => {
-  const SCH = ['SDN 1 Praya', 'SDN 3 Praya', 'SDN 2 Jonggat', 'SDN 1 Kopang', 'SDN 4 Pujut', 'MI Nurul Huda'];
+  // Di beranda (teaser) memakai nama netral: ini contoh, bukan hasil sekolah sungguhan.
+  const SCH = TEASER ? ['Sekolah A', 'Sekolah B', 'Sekolah C', 'Sekolah D', 'Sekolah E', 'Sekolah F']
+    : ['SDN 1 Praya', 'SDN 3 Praya', 'SDN 2 Jonggat', 'SDN 1 Kopang', 'SDN 4 Pujut', 'MI Nurul Huda'];
   const d = { racers: [], t0: 0, phase: 0 };
   d.reset = () => {
     // ?demo=arena / ?demo=hasil melompat ke keadaan itu (putaran pertama).
@@ -600,7 +646,7 @@ $('snd').onclick = () => {
 };
 drawSnd();
 addEventListener('pointerdown', () => { AUD.arm(); $('snd-hint')?.remove(); }, { once: true });
-if (AUD.level > 0) {
+if (AUD.level > 0 && !TEASER) {
   const h = el('div', `${SND_ICON[AUD.level]} Klik untuk menyalakan suara (${SND_TXT[AUD.level]})`, 'snd-hint');
   h.id = 'snd-hint'; h.onclick = () => { AUD.arm(); h.remove(); AUD.play('tick'); };
   document.body.appendChild(h);
@@ -627,7 +673,9 @@ function applyFlag(flag) {
 // ── Event + batch ────────────────────────────────────────────────────────────
 async function loadEvent() {
   if (DEMO) {
-    S.ev = { name: 'IOA Math Competition', series: 'IOA Math Competition', edition: 'Lombok Bangkit', host: 'Dinas Pendidikan [KABUPATEN]', organizer: 'IOA', theme: { accent: '#F2C14E', flag: 'ID' } };
+    S.ev = TEASER
+      ? { name: 'Lomba AyoMath', series: 'Lomba AyoMath', edition: 'Contoh tampilan arena', host: 'sekolah peserta', organizer: 'AyoMath', theme: { accent: '#F2C14E', flag: 'ID' } }
+      : { name: 'IOA Math Competition', series: 'IOA Math Competition', edition: 'Lombok Bangkit', host: 'Dinas Pendidikan [KABUPATEN]', organizer: 'IOA', theme: { accent: '#F2C14E', flag: 'ID' } };
     $('t1').textContent = S.ev.series; $('t2').textContent = S.ev.edition;
     applyFlag('ID');
     const org = $('org'); org.replaceChildren();
@@ -647,7 +695,7 @@ async function loadEvent() {
     const acc = ev.theme?.accent;
     if (typeof acc === 'string' && /^#[0-9a-f]{6}$/i.test(acc)) document.documentElement.style.setProperty('--accent', acc);
     applyFlag(ev.theme?.flag);
-    if (ev.skeddo_url) $('cta').href = ev.skeddo_url;
+    if (ev.skeddo_url && $('cta')) $('cta').href = ev.skeddo_url;
     const org = $('org'); org.replaceChildren();
     org.append('Penyelenggara ', el('b', ev.organizer), ' · Tuan rumah ', el('b', ev.host), document.createElement('br'),
       'Platform AyoMath · nama peserta tidak ditampilkan');
@@ -1320,18 +1368,40 @@ async function loadSponsorList() {
       .map(s => ({ nama: String(s.nama ?? ''), src: `sponsors/${s.berkas}`, tautan: s.tautan && /^https:\/\//i.test(s.tautan) ? s.tautan : null, utama: s.tingkat === 'utama' }));
   } catch { return []; }
 }
+let SP_LIST = [];
 async function sponsors() {
-  const list = await loadSponsorList();
-  const row = $('sp-row'); row.replaceChildren();
-  if (!list.length) { $('sp-lbl').classList.add('hidden'); return; }
-  for (const sp of list) {
-    const a = el(sp.tautan ? 'a' : 'div', null, 'sp' + (sp.utama ? ' utama' : ''));
-    if (sp.tautan) { a.href = sp.tautan; a.target = '_blank'; a.rel = 'noopener noreferrer'; }
-    if (sp.src) { const img = el('img', null, null, { src: sp.src, alt: sp.nama, loading: 'lazy' }); img.onerror = () => a.replaceChildren(el('span', sp.nama)); a.appendChild(img); }
-    else a.appendChild(el('span', sp.nama));
-    row.appendChild(a);
-  }
+  SP_LIST = await loadSponsorList();
+  if (!SP_LIST.length) { $('sp-lbl').classList.add('hidden'); $('sp-row').replaceChildren(); return; }
+  $('foot').classList.remove('hidden');
+  buildMarquee();
 }
+/** Satu "set" = daftar sponsor diulang k kali sampai lebih lebar dari strip;
+    jalur berisi dua set (yang kedua aria-hidden) dan bergeser -50% terus. */
+function buildMarquee() {
+  const row = $('sp-row'), list = SP_LIST;
+  if (!list.length) return;
+  const per = PHONE ? 70 : 86; // lebar terkecil satu logo + jarak (px): perkiraan aman
+  const k = Math.min(12, Math.max(1, Math.ceil((row.clientWidth || innerWidth) / (list.length * per))));
+  if (row.dataset.k === String(k)) return;
+  row.dataset.k = String(k);
+  const track = el('div', null, 'sp-track');
+  for (let copy = 0; copy < 2; copy++) {
+    for (let r = 0; r < k; r++) for (const sp of list) {
+      const dup = copy > 0 || r > 0;
+      const a = el(sp.tautan ? 'a' : 'div', null, 'sp' + (sp.utama ? ' utama' : '') + (dup ? ' dup' : ''));
+      if (sp.tautan) { a.href = sp.tautan; a.target = '_blank'; a.rel = 'noopener noreferrer'; }
+      if (dup) { a.setAttribute('aria-hidden', 'true'); if (sp.tautan) a.tabIndex = -1; }
+      if (sp.src) { const img = el('img', null, null, { src: sp.src, alt: dup ? '' : sp.nama }); img.onerror = () => a.replaceChildren(el('span', sp.nama)); a.appendChild(img); }
+      else a.appendChild(el('span', sp.nama));
+      track.appendChild(a);
+    }
+  }
+  // Sekitar 2,6 dtk per logo: cukup lambat untuk dibaca di HP.
+  track.style.setProperty('--sp-dur', `${Math.max(14, k * list.length * 2.6)}s`);
+  row.replaceChildren(track);
+}
+let spResize = null;
+addEventListener('resize', () => { clearTimeout(spResize); spResize = setTimeout(buildMarquee, 300); });
 
 // ── Jam server ───────────────────────────────────────────────────────────────
 async function syncClock() {
