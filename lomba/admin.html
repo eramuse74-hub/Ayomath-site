@@ -374,12 +374,22 @@ function eventCard(ev) {
   const fSeries = field(meta, 'Seri (baris 1)', el('input', null, null, { value: ev.series ?? '', placeholder: 'IOA Math Competition' }));
   const fEdition = field(meta, 'Edisi (baris 2, nama daerah)', el('input', null, null, { value: ev.edition ?? '', placeholder: 'Lombok Bangkit' }));
   const fAccent = field(meta, 'Warna aksen edisi', el('input', null, null, { type: 'color', value: /^#[0-9a-f]{6}$/i.test(theme.accent ?? '') ? theme.accent : '#f2c14e' }));
+  // Bendera di kepala arena + upacara (docs/LOMBA_SHOW.md). Bawaan Indonesia;
+  // event lain boleh memakai gambar bendera sendiri (URL https, mis. unggahan
+  // ke bucket sponsor) atau tanpa bendera.
+  const flagNow = theme.flag === undefined ? 'ID' : theme.flag;
+  const fFlag = field(meta, 'Bendera (arena & upacara)', select([
+    ['ID', 'Indonesia (merah putih)'], ['', 'tanpa bendera'], ['url', 'gambar sendiri (URL di bawah)']],
+    flagNow === 'ID' ? 'ID' : flagNow ? 'url' : ''));
+  const fFlagUrl = field(meta, 'URL gambar bendera (https)', el('input', null, null, { type: 'url', value: /^https:/i.test(flagNow) ? flagNow : '', placeholder: 'https://…/bendera.png' }));
   card.appendChild(meta);
   const metaRow = el('div', null, 'row');
   const metaMsg = el('span', null, 'msg');
   metaRow.append(btn('Simpan seri / edisi', 'ghost', async () => {
     try {
-      const t = Object.assign({}, theme, { name: fEdition.value.trim() || null, accent: fAccent.value });
+      const flag = fFlag.value === 'url' ? fFlagUrl.value.trim() : fFlag.value;
+      if (fFlag.value === 'url' && !/^https:\/\//i.test(flag)) throw new Error('URL bendera harus https.');
+      const t = Object.assign({}, theme, { name: fEdition.value.trim() || null, accent: fAccent.value, flag });
       await rpc('lomba_admin_set_event_meta', { p_event: ev.id, p_series: fSeries.value, p_edition: fEdition.value, p_theme: t });
       say(metaMsg, `Disimpan ${stamp()}`, true);
       await loadAll();

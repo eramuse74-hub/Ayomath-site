@@ -81,6 +81,18 @@
   .tools button[aria-pressed=true]{background:var(--gold);color:var(--night);border-color:var(--gold)}
   .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--muted);vertical-align:middle}
   .dot.on{background:#9CCC65}
+  /* Bendera (tema event: 'ID' bawaan, URL gambar, atau kosong). */
+  .flag{display:inline-block;width:34px;height:23px;border-radius:3px;overflow:hidden;flex:none;
+        box-shadow:0 0 0 1px rgba(255,255,255,.28);vertical-align:middle}
+  .flag.id{background:linear-gradient(180deg,#E31D1C 0 50%,#FFFFFF 50% 100%)}
+  .flag img{display:block;width:100%;height:100%;object-fit:cover}
+  .flagband{position:absolute;left:0;right:0;bottom:0;height:12px;z-index:1;
+            background:linear-gradient(180deg,#E31D1C 0 50%,#FFFFFF 50% 100%)}
+  .tools button.lv1{background:var(--surface2);border-color:var(--gold)}
+  .tools button.lv2{background:var(--gold);color:var(--night);border-color:var(--gold)}
+  .snd-hint{position:fixed;right:24px;top:84px;z-index:30;background:var(--gold);color:var(--night);font-weight:800;
+            font-size:14px;padding:10px 14px;border-radius:12px;box-shadow:0 6px 24px rgba(0,0,0,.4);cursor:pointer}
+  .snd-hint::before{content:'';position:absolute;right:18px;top:-8px;border:8px solid transparent;border-top:0;border-bottom-color:var(--gold)}
 
   /* ── Badan ── */
   main{flex:1;min-height:0;display:flex;gap:22px;padding:18px 24px 14px}
@@ -326,6 +338,7 @@
 <header>
   <svg class="logo" viewBox="0 0 32 52" aria-hidden="true"><path d="M11 40 Q16 54 21 40Z" fill="#FF7A3D"/><path d="M8 30 L3 41 L10 38Z" fill="#B8324A"/><path d="M24 30 L29 41 L22 38Z" fill="#B8324A"/><path d="M16 2 C24 10 24 26 22 40 L10 40 C8 26 8 10 16 2Z" fill="#F5F1E6"/><path d="M16 2 C19.5 5.5 21.3 9.5 22 13 L10 13 C10.7 9.5 12.5 5.5 16 2Z" fill="#F2C14E"/><circle cx="16" cy="21" r="4" fill="#0A1633" stroke="#F2C14E" stroke-width="2"/></svg>
   <div class="title"><div class="l1" id="t1">Lomba AyoMath</div><div class="l2" id="t2"></div></div>
+  <span class="flag id hidden" id="flag" role="img" aria-label="Bendera"></span>
   <div class="sess">
     <div class="row"><span class="live off" id="live"><i></i><span id="live-txt">MEMUAT</span></span><span class="lbl" id="sess-lbl">…</span></div>
     <div class="rule" id="sess-rule"><span class="dot" id="rt-dot"></span> </div>
@@ -335,7 +348,7 @@
     <div class="stat gold"><b class="num" id="st-land">–</b><span>mendarat</span></div>
     <div class="clock" id="clock"><b class="num" id="clock-big">--:--</b><span id="clock-lbl">SISA WAKTU</span></div>
     <div class="tools">
-      <button id="snd" aria-pressed="false" aria-label="Suara" title="Suara momen (mati)">🔇</button>
+      <button id="snd" aria-label="Suara: mati" title="Suara: mati — klik untuk efek, klik lagi untuk pengumuman">🔇</button>
     </div>
   </div>
 </header>
@@ -397,8 +410,9 @@
   <section class="hasil hidden" id="hasil" aria-label="Upacara hasil">
     <div class="sun" id="sun"></div>
     <svg class="ridge" viewBox="0 0 1440 200" preserveAspectRatio="none" aria-hidden="true"><path d="M0 200 L0 150 L260 128 L470 80 L590 30 L640 40 L680 24 L730 54 L880 100 L1100 132 L1440 142 L1440 200Z" fill="#241A3E"/><path d="M0 200 L0 182 L1440 174 L1440 200Z" fill="#162650"/></svg>
-    <div class="hd"><div><div class="t" id="h-title">Hasil</div><div class="s" id="h-sub"></div></div>
+    <div class="hd"><div style="display:flex;align-items:center;gap:14px"><span class="flag id hidden" id="flag2" role="img" aria-label="Bendera"></span><div><div class="t" id="h-title">Hasil</div><div class="s" id="h-sub"></div></div></div>
       <div class="tabs" id="h-tabs"></div></div>
+    <div class="flagband hidden" id="flagband"></div>
     <div class="body" id="h-body">
       <div class="podium" id="podium"></div>
       <div class="rest" id="rest"></div>
@@ -420,6 +434,7 @@
 
 <script type="module">
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+import { createArenaAudio } from './arena-sfx.js';
 
 // ── Yang perlu diubah untuk event baru ───────────────────────────────────────
 const CFG = {
@@ -556,38 +571,63 @@ const DEMO = Q.get('demo') ? (() => {
   return d;
 })() : null;
 
-// ── Suara (momen) — WebAudio, mati sampai dinyalakan ────────────────────────
-let actx = null;
-function chime(kind) {
-  if (!S.sound) return;
-  try {
-    actx ??= new (window.AudioContext || window.webkitAudioContext)();
-    const t = actx.currentTime;
-    const notes = kind === 'lead' ? [660, 880] : kind === 'done' ? [523, 659, 784] : kind === 'go' ? [392, 523, 659, 784] : [440];
-    notes.forEach((f, i) => {
-      const o = actx.createOscillator(), g = actx.createGain();
-      o.type = 'triangle'; o.frequency.value = f;
-      g.gain.setValueAtTime(0.0001, t + i * 0.12);
-      g.gain.exponentialRampToValueAtTime(0.18, t + i * 0.12 + 0.02);
-      g.gain.exponentialRampToValueAtTime(0.0001, t + i * 0.12 + 0.35);
-      o.connect(g).connect(actx.destination);
-      o.start(t + i * 0.12); o.stop(t + i * 0.12 + 0.4);
-    });
-  } catch { /* tanpa suara */ }
+// ── Suara: efek + pengumuman (arena-sfx.js) ──────────────────────────────────
+// Tiga tingkat: 🔇 mati · 🔔 efek · 🗣️ efek + pengumuman bersuara (bahasa
+// Indonesia, suara browser). Browser menolak bunyi tanpa sentuhan pengguna,
+// jadi tingkat tersimpan baru hidup setelah klik pertama di mana pun; kalau
+// tingkatnya > 0, sebuah petunjuk kecil meminta klik itu.
+const AUD = createArenaAudio();
+const SND_ICON = ['🔇', '🔔', '🗣️'];
+const SND_TXT = ['mati', 'efek', 'efek + pengumuman'];
+function drawSnd() {
+  const b = $('snd'), lv = AUD.level;
+  b.textContent = SND_ICON[lv];
+  b.className = lv ? `lv${lv}` : '';
+  b.title = `Suara: ${SND_TXT[lv]} — klik untuk mengubah`;
+  b.setAttribute('aria-label', `Suara: ${SND_TXT[lv]}`);
 }
 $('snd').onclick = () => {
-  S.sound = !S.sound;
-  $('snd').setAttribute('aria-pressed', String(S.sound));
-  $('snd').textContent = S.sound ? '🔔' : '🔇';
-  $('snd').title = S.sound ? 'Suara momen (nyala)' : 'Suara momen (mati)';
-  if (S.sound) chime('tick');
+  AUD.arm();
+  let next = (AUD.level + 1) % 3;
+  if (next === 2 && !AUD.voiceAvailable) next = 0;
+  AUD.setLevel(next);
+  drawSnd();
+  $('snd-hint')?.remove();
+  if (next >= 1) AUD.play('tick');
+  if (next === 2) AUD.say('Pengumuman dinyalakan.', { priority: true });
 };
+drawSnd();
+addEventListener('pointerdown', () => { AUD.arm(); $('snd-hint')?.remove(); }, { once: true });
+if (AUD.level > 0) {
+  const h = el('div', `${SND_ICON[AUD.level]} Klik untuk menyalakan suara (${SND_TXT[AUD.level]})`, 'snd-hint');
+  h.id = 'snd-hint'; h.onclick = () => { AUD.arm(); h.remove(); AUD.play('tick'); };
+  document.body.appendChild(h);
+}
+// Nama lama dipakai di beberapa tempat: pemetaan ke efek bernama.
+function chime(kind) {
+  AUD.play(kind === 'go' ? 'liftoff' : kind === 'done' ? 'landing' : kind === 'up' ? 'lead' : kind);
+}
+
+// ── Bendera ──────────────────────────────────────────────────────────────────
+// theme.flag: tidak ada kunci → Indonesia; 'ID' → merah putih; '' → tanpa;
+// URL https → gambar. Dipakai di kepala arena, kepala upacara, pita podium.
+function applyFlag(flag) {
+  const f = flag === undefined || flag === null ? 'ID' : String(flag);
+  for (const id of ['flag', 'flag2']) {
+    const e = $(id); e.replaceChildren(); e.className = 'flag';
+    if (f === 'ID') e.classList.add('id');
+    else if (/^https:\/\//i.test(f)) e.appendChild(el('img', null, null, { src: f, alt: '' }));
+    else e.classList.add('hidden');
+  }
+  $('flagband').classList.toggle('hidden', f !== 'ID');
+}
 
 // ── Event + batch ────────────────────────────────────────────────────────────
 async function loadEvent() {
   if (DEMO) {
-    S.ev = { name: 'IOA Math Competition', series: 'IOA Math Competition', edition: 'Lombok Bangkit', host: 'Dinas Pendidikan [KABUPATEN]', organizer: 'IOA', theme: { accent: '#F2C14E' } };
+    S.ev = { name: 'IOA Math Competition', series: 'IOA Math Competition', edition: 'Lombok Bangkit', host: 'Dinas Pendidikan [KABUPATEN]', organizer: 'IOA', theme: { accent: '#F2C14E', flag: 'ID' } };
     $('t1').textContent = S.ev.series; $('t2').textContent = S.ev.edition;
+    applyFlag('ID');
     const org = $('org'); org.replaceChildren();
     org.append('Penyelenggara ', el('b', S.ev.organizer), ' · Tuan rumah ', el('b', S.ev.host), document.createElement('br'), 'Platform AyoMath · nama peserta tidak ditampilkan · DEMO');
     S.batches = [DEMO.batch()];
@@ -604,6 +644,7 @@ async function loadEvent() {
     document.title = `${[series, edition].filter(Boolean).join(' · ') || ev.name} — Arena`;
     const acc = ev.theme?.accent;
     if (typeof acc === 'string' && /^#[0-9a-f]{6}$/i.test(acc)) document.documentElement.style.setProperty('--accent', acc);
+    applyFlag(ev.theme?.flag);
     if (ev.skeddo_url) $('cta').href = ev.skeddo_url;
     const org = $('org'); org.replaceChildren();
     org.append('Penyelenggara ', el('b', ev.organizer), ' · Tuan rumah ', el('b', ev.host), document.createElement('br'),
@@ -716,19 +757,33 @@ function tick() {
     const ri = Math.floor(t / 6000) % rules.length;
     if (org.dataset.rule !== String(ri)) { org.dataset.rule = String(ri); org.replaceChildren(el('b', rules[ri])); org.style.whiteSpace = 'normal'; org.style.maxWidth = '320px'; }
     const left = start - t;
+    // Pengumuman + efek menjelang peluncuran: 1 menit, 10 detik, lalu
+    // detik-detik terakhir berdetak.
+    const secLeft = Math.ceil(left / 1000);
+    if (S.lastLobbySec !== secLeft) {
+      S.lastLobbySec = secLeft;
+      if (secLeft === 60) { AUD.play('minute'); AUD.say('Satu menit lagi menuju peluncuran. Semua roket bersiap di landasan.'); }
+      else if (secLeft === 30) AUD.say('Tiga puluh detik.');
+      else if (secLeft === 10) { AUD.play('tock'); AUD.say('Sepuluh detik.', { priority: true }); }
+      else if (secLeft > 3 && secLeft < 10) AUD.play('tock');
+    }
     if (left <= 3500 && S.launchT == null) S.launchT = t;
     if (S.launchT != null) {
       const n = Math.ceil((start - t) / 1000);
       $('launch').classList.remove('hidden');
       const nn = n <= 0 ? 'LUNCUR!' : String(n);
-      if ($('launch-n').textContent !== nn) { $('launch-n').textContent = nn; $('launch-n').style.animation = 'none'; void $('launch-n').offsetWidth; $('launch-n').style.animation = ''; chime(n <= 0 ? 'go' : 'tick'); }
+      if ($('launch-n').textContent !== nn) {
+        $('launch-n').textContent = nn; $('launch-n').style.animation = 'none'; void $('launch-n').offsetWidth; $('launch-n').style.animation = '';
+        chime(n <= 0 ? 'go' : 'tick');
+        AUD.say(n <= 0 ? 'Luncur! Semua roket lepas landas!' : ['', 'satu', 'dua', 'tiga'][n] ?? String(n), { priority: true, rate: 1.1 });
+      }
     }
   } else if (mode === 'arena') {
     if (S.launchT != null && t - start > 2500) { $('launch').classList.add('hidden'); S.launchT = -1; }
     $('clock-lbl').textContent = b.is_practice ? 'LATIHAN DIBUKA' : 'SISA WAKTU';
     $('clock-big').textContent = b.is_practice ? jamBesar(end - t) : mmss(end - t);
     clock.classList.toggle('low', !b.is_practice && end - t < 120000);
-    if (!b.is_practice && end - t <= 60000 && !S.said.min1) { S.said.min1 = true; say('1 menit lagi!', 'start'); }
+    if (!b.is_practice && end - t <= 60000 && !S.said.min1) { S.said.min1 = true; AUD.play('minute'); say('1 menit lagi!', 'start'); }
   } else {
     $('clock-lbl').textContent = 'SESI'; $('clock-big').textContent = 'selesai'; clock.classList.remove('low');
   }
@@ -825,7 +880,9 @@ function say(text, kind) {
   if (S.moments[0]?.text === text) return;
   S.moments.unshift({ text, kind, at: Date.now() });
   S.moments = S.moments.slice(0, 7);
-  if (kind === 'lead' || kind === 'done' || kind === 'go') chime(kind);
+  if (kind === 'lead' || kind === 'done' || kind === 'go' || kind === 'school' || kind === 'up') chime(kind);
+  // Pengumuman: setiap momen kecuali "naik ke landasan" (terlalu sering).
+  if (!/naik ke landasan/.test(text)) AUD.say(text.replace(/!$/, '.'));
   drawMoments();
 }
 
@@ -948,7 +1005,7 @@ function drawLanes(rows, full) {
     n.rk.classList.toggle('lead', top && i === 0);
     n.rk.classList.toggle('done', !!r.done);
     n.finLbl.textContent = r.done ? (r.time_ms != null ? `mendarat ${mmss(r.time_ms)}` : 'mendarat') : '';
-    if (r.fx) { n.rk.classList.remove('boost', 'miss'); void n.rk.offsetWidth; n.rk.classList.add(r.fx); setTimeout(() => n.rk.classList.remove(r.fx), 700); }
+    if (r.fx) { n.rk.classList.remove('boost', 'miss'); void n.rk.offsetWidth; n.rk.classList.add(r.fx); setTimeout(() => n.rk.classList.remove(r.fx), 700); AUD.play(r.fx); }
   });
   for (const [k, n] of laneNodes) if (!seen.has(k)) { n.lane.remove(); laneNodes.delete(k); }
 }
@@ -1159,9 +1216,12 @@ function drawCeremony() {
   const fresh = c.lastKey !== seenKey; c.lastKey = seenKey;
   const isNew = (threshold) => fresh && st === threshold;
   const rest = $('rest'); rest.replaceChildren(el('h2', 'Peringkat 4–10'));
+  const sebut = (r) => `Peserta ${r.nomor}${r.sekolah ? ', ' + r.sekolah : ''}`;
+  if (fresh && st === 0 && c.kelasList.length) AUD.say(`Hasil kelas ${k}.`, { priority: true });
   for (let i = 3; i <= 9 && i < R.length; i++) {
     if (st < 10 - i) continue;
     const r = R[i];
+    if (isNew(10 - i)) { AUD.play('pop'); AUD.say(`Peringkat ${i + 1}: ${sebut(r)}.`); }
     const d = el('div', null, 'rr' + (isNew(10 - i) ? '' : ' old'));
     const w = el('div', null, 'w'); w.append(el('b', `Peserta ${r.nomor}`), el('span', r.sekolah || '—'));
     const sc = el('div', null, 'sc'); sc.append(el('b', `${r.score ?? 0} benar`), el('span', r.time_ms != null ? mmss(r.time_ms) : '—'));
@@ -1170,7 +1230,14 @@ function drawCeremony() {
   }
   const podium = $('podium'); podium.replaceChildren();
   if (st === 8) podium.appendChild(el('div', 'Dan tiga besar…', 'susp'));
+  if (isNew(8)) { AUD.play('drumroll'); AUD.say('Dan tiga besar…', { priority: true, rate: 0.9 }); }
   const show = { 2: st >= 9, 1: st >= 10, 0: st >= 11 };
+  for (const [idx, step, nama] of [[2, 9, 'ketiga'], [1, 10, 'kedua'], [0, 11, 'pertama']]) {
+    if (isNew(step) && R[idx]) {
+      AUD.play(idx === 0 ? 'fanfare' : 'cheer');
+      AUD.say(`Juara ${nama}: ${sebut(R[idx])}, ${R[idx].score ?? 0} benar.`, { priority: true, rate: 0.95 });
+    }
+  }
   for (const i of [1, 0, 2]) {
     const r = R[i];
     const pod = el('div', null, `pod p${i + 1}`);
@@ -1187,7 +1254,6 @@ function drawCeremony() {
     pod.appendChild(blk);
     podium.appendChild(pod);
   }
-  if (st >= 11 && !c.celebrated) { c.celebrated = true; chime('go'); }
   if (st < 9) c.celebrated = false;
   $('sun').classList.toggle('up', st >= 11);
   const cf = $('confetti'); cf.classList.toggle('hidden', st < 11);
@@ -1199,6 +1265,7 @@ function drawCeremony() {
   if (st >= 13) {
     const sc = schoolTableFromResults(rows);
     if (sc.length && sc[0].pts > 0) {
+      if (isNew(13)) { AUD.play('cheer'); AUD.say(`Juara sekolah: ${sc[0].name}, ${sc[0].pts} poin.`); }
       const j = el('div', null, 'juara' + (isNew(13) ? '' : ' old'));
       j.append(el('div', 'JUARA SEKOLAH', 'k'), el('div', sc[0].name, 'nm'),
         el('div', `${sc[0].pts} poin dari ${CFG.bestN} roket terbaik` + sc.slice(1, 3).map(s => ` · ${s.name} ${s.pts}`).join(''), 'd'));
