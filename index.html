@@ -198,6 +198,7 @@
       </form>
       <div class="btns">
         <a class="btn gold" id="arena-go" href="lomba/latihan/arena.html"><span lang="id">🚀 Buka Arena</span><span lang="en">🚀 Open the Arena</span></a>
+        <a class="btn teal" id="latihan-go" href="https://app.skeddo.com/g/b8c44237-39f6-4493-aa6e-f16c536846ac/ayomath" target="_blank" rel="noopener"><span lang="id">🧮 Yuk Latihan</span><span lang="en">🧮 Try the Practice</span></a>
         <a class="btn line" href="lomba/"><span lang="id">🏆 Jadwal Lomba</span><span lang="en">🏆 Schedule</span></a>
       </div>
     </div>
@@ -428,6 +429,7 @@ async function skeddoItems() {
         .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60);
       const takesRsvp = e.rsvp_required === true || (e.fee != null && e.fee > 0);
       return {
+        title: String(e.title || ''),
         text: `${e.title} · ${waktu} · ${takesRsvp ? 'daftar' : 'lihat'} di Skeddo`,
         href: `https://app.skeddo.com/e/${e.id}${slug ? '/' + slug : ''}`,
       };
@@ -437,8 +439,11 @@ async function skeddoItems() {
   }
 }
 
+// Satu permintaan ke Skeddo, dipakai ticker dan tombol "Yuk Latihan".
+const skeddoP = skeddoItems();
+
 async function main() {
-  const items = await skeddoItems();
+  const items = [...await skeddoP];
 
   const { data: events } = await db.from('lomba_events').select('*')
     .eq('status', 'published').order('created_at');
@@ -532,6 +537,7 @@ async function arenaTeaser() {
 
   win.href = href;
   document.getElementById('arena-go').href = href;
+  latihanLink();
   const badge = document.getElementById('arena-badge');
   if (live) {
     badge.className = 'badge';
@@ -551,6 +557,20 @@ async function arenaTeaser() {
   fit();
   win.appendChild(fr);
 }
+/** "Yuk Latihan" → event latihan di Skeddo. Urutan: tautan Skeddo yang disimpan
+    panitia untuk event latihan (lomba_events.skeddo_url, diisi di admin.html);
+    lalu acara publik grup AyoMath di Skeddo yang judulnya memuat "latihan";
+    kalau tidak ada, tetap halaman grup AyoMath (href bawaan di HTML). */
+async function latihanLink() {
+  const a = document.getElementById('latihan-go');
+  try {
+    const { data } = await db.from('lomba_events').select('skeddo_url').eq('slug', 'latihan').maybeSingle();
+    if (data?.skeddo_url && /^https:\/\//i.test(data.skeddo_url)) { a.href = data.skeddo_url; return; }
+  } catch { /* lanjut ke Skeddo */ }
+  const ev = (await skeddoP).find(e => /latihan/i.test(e.title));
+  if (ev?.href) a.href = ev.href;
+}
+
 // Muat iframe hanya saat jendelanya hampir terlihat.
 new IntersectionObserver((ents, io) => {
   if (ents.some(e => e.isIntersecting)) { io.disconnect(); arenaTeaser(); }
