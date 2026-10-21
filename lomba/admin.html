@@ -325,8 +325,9 @@ function eventCard(ev) {
 
   const links = el('div', null, 'row');
   const a1 = el('a', 'halaman', null, { href: `${ev.slug}/index.html`, target: '_blank', rel: 'noopener' });
-  const a2 = el('a', 'papan langsung', null, { href: `${ev.slug}/live.html`, target: '_blank', rel: 'noopener' });
-  links.append(a1, document.createTextNode(' · '), a2);
+  const a2 = el('a', 'arena', null, { href: `latihan/arena.html?event=${encodeURIComponent(ev.slug)}`, target: '_blank', rel: 'noopener' });
+  const a3 = el('a', 'papan panitia', null, { href: `${ev.slug}/live.html?dari=skeddo&papan=panitia`, target: '_blank', rel: 'noopener' });
+  links.append(a1, document.createTextNode(' · '), a2, document.createTextNode(' · '), a3);
   head.appendChild(links);
   card.appendChild(head);
 
@@ -426,8 +427,11 @@ function skeddoLinksSection(ev, batches) {
   const box = el('div', null, 'batch');
   box.appendChild(el('p', 'Tautan untuk Skeddo — salin, tempel di form event ' +
     '(meeting link per batch, stream link satu per event):', 'ptitle'));
-  box.appendChild(skLinkRow('Live stream (kolom "Live stream link")',
-    `${location.origin}/lomba/${ev.slug}/live.html?dari=skeddo`));
+  // Arena (balapan roket, lobi, upacara). Berkas arena bersama + ?event=
+  // bekerja untuk setiap event, juga yang foldernya belum dibuat; embed=1
+  // memaksa tampilan potret untuk lembar pemutar Skeddo.
+  box.appendChild(skLinkRow('Live stream (kolom "Live stream link") — arena',
+    `${location.origin}/lomba/latihan/arena.html?event=${encodeURIComponent(ev.slug)}&embed=1`));
   for (const b of batches) {
     const label = `Meeting ${b.code} (kolom "Online meeting link")`
       + (b.access === 'skeddo' ? (b.link_key ? ' · terkunci' : ' · belum dikunci — siapa pun dengan tautan bisa masuk') : b.access === 'tiket' ? ' · tiket: nomor + PIN' : '');
