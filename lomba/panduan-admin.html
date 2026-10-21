@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Panduan Admin Lomba — AyoMath</title>
+<!--
+  Panduan langkah demi langkah untuk staf lomba (admin.html). Sumber teksnya:
+  dokumen "Panduan Admin Lomba AyoMath" (claude.ai doc, 2026-10-21). Kalau
+  alur di admin.html berubah, perbarui keduanya. Halaman statis, tanpa data.
+-->
+<style>
+  :root{--bg:#161029;--surface:#241c45;--surface2:#2f2757;--text:#F1ECFF;
+        --muted:#a99cc9;--teal:#4ECEC9;--gold:#F0BE4D;--sage:#5FD39A;
+        --coral:#F47E86;--line:rgba(255,255,255,.10)}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+       background:var(--bg);color:var(--text);line-height:1.55}
+  .wrap{max-width:880px;margin:0 auto;padding:18px 16px 40px}
+  header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:8px 0 14px}
+  h1{font-size:24px;margin:0;font-weight:900}
+  .sub{color:var(--muted);font-size:13px;margin:2px 0 0}
+  a{color:var(--teal)}
+  a.btn{display:inline-block;text-decoration:none;font-weight:800;font-size:14px;padding:9px 14px;border-radius:10px;
+        background:var(--teal);color:#10231f}
+  a.btn.ghost{background:transparent;color:var(--muted);border:1px solid var(--line)}
+  nav.toc{background:var(--surface);border-radius:16px;padding:14px 18px;margin-bottom:16px}
+  nav.toc ol{margin:6px 0 0;padding-left:20px;columns:2;column-gap:28px}
+  nav.toc li{margin:3px 0;break-inside:avoid}
+  @media (max-width:640px){nav.toc ol{columns:1}}
+  section{background:var(--surface);border-radius:18px;padding:16px 20px;margin-bottom:16px}
+  h2{font-size:19px;margin:0 0 10px;font-weight:900;scroll-margin-top:12px}
+  h2 .when{display:inline-block;background:var(--gold);color:#2b2000;font-size:12px;font-weight:900;
+           padding:2px 9px;border-radius:999px;margin-right:8px;vertical-align:middle}
+  p{margin:8px 0}
+  ol,ul{margin:8px 0;padding-left:22px}
+  li{margin:5px 0}
+  li ul{margin:4px 0}
+  b{color:#fff}
+  code{background:var(--surface2);border-radius:6px;padding:1px 6px;font-size:13px;
+       font-family:ui-monospace,Menlo,Consolas,monospace}
+  pre{background:var(--surface2);border-radius:10px;padding:10px 14px;overflow:auto;font-size:13px;margin:8px 0}
+  .tbl{overflow-x:auto;margin:10px 0}
+  table{width:100%;border-collapse:collapse;font-size:14px;min-width:520px}
+  th,td{text-align:left;padding:8px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted)}
+  ul.check{list-style:none;padding-left:4px}
+  ul.check li{display:flex;gap:10px;align-items:flex-start}
+  ul.check input{margin-top:4px;width:18px;height:18px;flex:none;accent-color:var(--sage)}
+  .note{background:rgba(240,190,77,.12);border-left:3px solid var(--gold);border-radius:8px;padding:8px 12px;margin:10px 0}
+  footer{text-align:center;color:var(--muted);font-size:12px;padding:16px 10px}
+  @media print{
+    body{background:#fff;color:#111}
+    section,nav.toc{background:#fff;border:1px solid #ccc;break-inside:avoid-page}
+    b{color:#111} a.btn,header .row{display:none} th{color:#555}
+    code,pre{background:#f2f2f2}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Panduan Admin Lomba AyoMath</h1>
+      <p class="sub">Langkah demi langkah untuk staf · diperbarui 21 Oktober 2026</p>
+    </div>
+    <div class="row" style="display:flex;gap:8px;flex-wrap:wrap">
+      <a class="btn" href="admin.html">← Halaman admin</a>
+      <a class="btn ghost" href="#" onclick="window.print();return false">Cetak</a>
+    </div>
+  </header>
+
+  <nav class="toc" aria-label="Daftar isi">
+    <b>Isi</b>
+    <ol>
+      <li><a href="#ringkasan">Ringkasan</a></li>
+      <li><a href="#event">H-7: Menyiapkan event</a></li>
+      <li><a href="#sesi">H-7: Menyiapkan sesi (batch)</a></li>
+      <li><a href="#peserta">H-3: Daftar peserta, PIN, dan kartu</a></li>
+      <li><a href="#sebelum">Hari H: sebelum sesi mulai</a></li>
+      <li><a href="#berjalan">Hari H: saat sesi berjalan</a></li>
+      <li><a href="#setelah">Setelah sesi</a></li>
+      <li><a href="#latihan">Latihan lewat Skeddo</a></li>
+      <li><a href="#masalah">Masalah umum</a></li>
+    </ol>
+  </nav>
+
+  <section>
+    <h2 id="ringkasan">Ringkasan</h2>
+    <p>Semua pekerjaan admin dilakukan di satu halaman: <b><a href="admin.html">www.ayomath.com/lomba/admin.html</a></b>. Peserta tidak perlu akun; mereka masuk dengan <b>nomor peserta + PIN</b> yang tercetak di kartu dari admin.</p>
+    <div class="tbl"><table>
+      <tr><th>Siapa</th><th>Tugasnya</th></tr>
+      <tr><td>Admin AyoMath / panitia</td><td>Membuat event dan sesi, mengunggah daftar peserta, mencetak kartu, membuka/menutup sesi, mengunduh hasil</td></tr>
+      <tr><td>IOA</td><td>Mengumpulkan daftar peserta (nama, sekolah, kelas), menyimpan pasangan nama ↔ nomor, membagikan kartu ke sekolah</td></tr>
+      <tr><td>Sekolah / guru</td><td>Membagikan kartu ke tiap anak, menemani anak di aula</td></tr>
+      <tr><td>Anak</td><td>Mengetik kode sesi, nomor, dan PIN dari kartu</td></tr>
+    </table></div>
+    <p>Nama anak <b>tidak pernah</b> masuk ke sistem. Sistem hanya menyimpan nomor, kelas, sekolah, nilai, dan waktu. Daftar nama dipegang IOA di luar sistem.</p>
+  </section>
+
+  <section>
+    <h2 id="event"><span class="when">H-7</span>Menyiapkan event</h2>
+    <ol>
+      <li>Buka <b><a href="admin.html">www.ayomath.com/lomba/admin.html</a></b>, ketik email staf, klik <b>Kirim kode</b>, lalu masukkan kode 6 angka dari email (cek folder spam).
+        <ul><li>Email belum terdaftar? Minta staf yang sudah ada menambahkannya di bagian <b>Staf</b>.</li></ul></li>
+      <li>Klik <b>+ Event baru</b> dan isi:
+        <ul>
+          <li><b>Slug</b>: nama folder pendek, huruf kecil dan tanda hubung, mis. <code>ioa-lombok-bangkit</code>.</li>
+          <li><b>Nama event</b>, <b>Penyelenggara (host)</b> mis. Dinas Pendidikan Kab. Lombok Tengah, <b>Pelaksana</b> mis. IOA.</li>
+          <li>Klik <b>Simpan sebagai draft</b>.</li>
+        </ul></li>
+      <li>Di kartu event, isi <b>Seri</b> (baris 1, mis. <i>IOA Math Competition</i>) dan <b>Edisi</b> (baris 2, mis. <i>Lombok Bangkit</i>), pilih <b>Warna aksen</b>, pilih <b>Bendera</b> (Indonesia / tanpa bendera / gambar sendiri lewat URL https), lalu <b>Simpan seri / edisi</b>.</li>
+      <li>Tempel <b>tautan event Skeddo</b> (https://app.skeddo.com/…) lalu <b>Simpan tautan</b>.</li>
+      <li>Tambahkan <b>sponsor</b> di bagian Sponsor: nama, logo (png/jpg/svg/webp, maks 500 KB), tautan, tingkat <i>utama</i> atau <i>pendukung</i>.</li>
+      <li>Saat semua siap, klik <b>Published</b>. Selama masih <i>Draft</i>, halaman publik dan game tidak menampilkan event ini.</li>
+      <li>Minta tim AyoMath membuat <b>folder halaman event</b> (<code>/lomba/&lt;slug&gt;/</code>, berisi halaman depan dan arena). Ini satu kali per event.
+        <ul><li>Sebelum folder itu ada (mis. untuk uji coba), arena tetap bisa dibuka di <code>www.ayomath.com/lomba/latihan/arena.html?event=&lt;slug&gt;</code>.</li></ul></li>
+    </ol>
+  </section>
+
+  <section>
+    <h2 id="sesi"><span class="when">H-7</span>Menyiapkan sesi (batch)</h2>
+    <p>Satu sesi = satu kelompok anak yang mengerjakan soal bersamaan, mis. <i>Batch 2 · Kelas 3–4</i>. Soal disiapkan tim AyoMath; admin mengatur jadwal dan aturannya.</p>
+    <ol>
+      <li>Buat sesi baru dengan <b>Salin batch</b> dari sesi yang sudah ada (tombol <b>Ubah</b> → isi kode baru, mis. <code>LMT26-B2</code> → <b>Salin batch</b>). Kode ini yang diketik anak, jadi buat pendek dan jelas.</li>
+      <li>Klik <b>Ubah</b> pada sesi baru dan isi:</li>
+    </ol>
+    <div class="tbl"><table>
+      <tr><th>Kolom</th><th>Isi untuk lomba resmi</th></tr>
+      <tr><td>Label</td><td>Mis. <i>Batch 2 · Kelas 3–4</i></td></tr>
+      <tr><td>Kelas min / max</td><td>Rentang kelas sesi ini</td></tr>
+      <tr><td>Mulai / Selesai (WIB)</td><td>Jam soal dibuka serentak, dan batas akhir sesi</td></tr>
+      <tr><td>Ruang tunggu</td><td>300 detik (anak bisa masuk 5 menit sebelum mulai)</td></tr>
+      <tr><td>Kursi</td><td>Jumlah komputer di aula; kalau penuh, soal dibuka 10 detik kemudian. Kosongkan untuk menunggu jam mulai</td></tr>
+      <tr><td>Detik per soal</td><td>60 (20 soal = 20 menit)</td></tr>
+      <tr><td>Papan langsung</td><td><b>progress</b> bila layar arena terlihat oleh anak di aula; <b>full</b> bila hanya untuk penonton; <b>hidden</b> bila panitia ingin tanpa tampilan sampai hasil</td></tr>
+      <tr><td>Peringkat</td><td>accuracy (nilai, lalu waktu)</td></tr>
+      <tr><td>Pintu masuk</td><td><b>tiket</b> (nomor + PIN dari kartu)</td></tr>
+      <tr><td>Batch latihan</td><td><b>Tidak</b> dicentang</td></tr>
+    </table></div>
+    <ol start="3">
+      <li>Klik <b>Simpan</b> dan pastikan muncul tulisan "Disimpan" berwarna hijau.</li>
+      <li>Pintu <b>tiket</b> baru bisa disimpan setelah daftar peserta diisi (langkah berikutnya).</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2 id="peserta"><span class="when">H-3</span>Daftar peserta, PIN, dan kartu</h2>
+    <ol>
+      <li>Minta IOA mengirim daftar peserta per sesi: nama, sekolah, kelas.</li>
+      <li>Beri setiap anak <b>nomor peserta</b> (001, 002, …). Simpan pasangan nama ↔ nomor di spreadsheet IOA, <b>bukan</b> di sistem.</li>
+      <li>Di admin, klik <b>Daftar peserta</b> pada sesi itu dan tempel satu baris per anak (nomor, sekolah, kelas):</li>
+    </ol>
+    <pre>001, SDN 3 Praya, 3
+002, SDN 3 Praya, 4
+003, SDN 1 Kopang, 3</pre>
+    <ol start="4">
+      <li>Klik <b>Simpan daftar</b> (klik dua kali untuk konfirmasi). Sistem membuat <b>PIN 4 angka</b> untuk setiap nomor dan menampilkannya di tabel.
+        <ul>
+          <li>Kelas wajib diisi; baris tanpa kelas diberi tanda merah dan anak itu akan ditolak.</li>
+          <li>Mengunggah ulang daftar (mis. memperbaiki nama sekolah) <b>tidak mengubah PIN</b> nomor yang sudah ada. Nomor yang dihapus dari daftar ikut hilang.</li>
+        </ul></li>
+      <li>Sekarang buka <b>Ubah</b> pada sesi, pilih Pintu masuk <b>tiket</b>, lalu <b>Simpan</b>.</li>
+      <li>Klik <b>Kartu (cetak / PDF)</b>. Tab baru terbuka dengan kartu A4, 10 per halaman, berisi seri/edisi, kode sesi, nomor, PIN, kelas, sekolah, dan alamat game. <b>Cetak dari laptop</b>, bukan HP.</li>
+      <li>Klik <b>CSV</b> dan kirim berkasnya ke IOA, supaya mereka bisa mencocokkan nomor dengan nama di daftar mereka.</li>
+      <li>Gunting kartu, masukkan ke <b>amplop per sekolah</b>, tulis nama sekolah di amplop, dan serahkan ke guru pendamping.</li>
+    </ol>
+    <p class="note">Yang perlu diberitahukan ke sekolah: <i>anak cukup membawa kartunya; di aula mereka mengetik nomor dan PIN dari kartu itu. Kartu jangan ditukar atau dibagikan.</i></p>
+  </section>
+
+  <section>
+    <h2 id="sebelum"><span class="when">Hari H</span>Sebelum sesi mulai (60 menit sebelumnya)</h2>
+    <ul class="check">
+      <li><input type="checkbox" aria-label="selesai"><span>Masuk ke admin.html di laptop panitia; pastikan event berstatus <b>Published</b> dan jam sesi benar.</span></li>
+      <li><input type="checkbox" aria-label="selesai"><span>Buka arena di laptop proyektor: <b>www.ayomath.com/lomba/&lt;slug&gt;/arena.html</b> (tambahkan <code>?batch=&lt;KODE&gt;</code> bila dua sesi berjalan bersamaan). Di laptop tampil lanskap; di HP otomatis potret.</span></li>
+      <li><input type="checkbox" aria-label="selesai"><span>Klik tombol suara di pojok kanan atas arena: sekali untuk <b>efek</b>, dua kali untuk <b>efek + pengumuman suara</b>. Coba dengar dulu; gunakan Chrome.</span></li>
+      <li><input type="checkbox" aria-label="selesai"><span>Di setiap komputer aula, buka <b>play.ayomath.com/?lomba=&lt;KODE&gt;</b> sebelum anak duduk. Atau anak membuka www.ayomath.com/lomba → kotak <b>Masuk lomba</b> → ketik kode sesi.</span></li>
+      <li><input type="checkbox" aria-label="selesai"><span>Guru membagikan kartu ke tiap anak; cocokkan nomor di kartu dengan daftar IOA.</span></li>
+      <li><input type="checkbox" aria-label="selesai"><span>Siapkan beberapa kartu kosong dan pena untuk mencatat PIN pengganti.</span></li>
+      <li><input type="checkbox" aria-label="selesai"><span>Bagikan tautan arena ke orang tua/guru, atau minta mereka menekan <b>Watch</b> di event Skeddo.</span></li>
+    </ul>
+    <p>Ruang tunggu terbuka otomatis 5 menit sebelum jam mulai. Anak yang masuk lebih awal melihat roketnya di landasan, jam hitung mundur, dan kursi teman yang terisi.</p>
+  </section>
+
+  <section>
+    <h2 id="berjalan"><span class="when">Hari H</span>Saat sesi berjalan</h2>
+    <p>Semua tombol ada di kartu sesi di admin.html. Tombol berwarna kuning/merah perlu <b>diklik dua kali</b> (konfirmasi).</p>
+    <div class="tbl"><table>
+      <tr><th>Situasi</th><th>Yang diklik</th><th>Hasilnya</th></tr>
+      <tr><td>Semua anak sudah duduk lebih cepat</td><td><b>Mulai sekarang (+10 dtk)</b></td><td>Hitung mundur 3-2-1 di semua layar, soal terbuka 10 detik lagi</td></tr>
+      <tr><td>Aula terlambat siap</td><td><b>Buka sekarang (+5 mnt)</b></td><td>Jam mulai digeser 5 menit dari sekarang; lama sesi tetap</td></tr>
+      <tr><td>Komputer anak mati / pindah komputer</td><td><b>Peserta</b> → <b>Lepas</b> pada nomornya</td><td>Anak mengetik nomor + PIN lagi di komputer lain; jawaban dan jamnya tetap</td></tr>
+      <tr><td>Anak salah PIN 5 kali (terkunci 10 menit)</td><td><b>Daftar peserta</b> → <b>Buka kunci</b></td><td>Anak bisa langsung mencoba lagi</td></tr>
+      <tr><td>Kartu hilang</td><td><b>Daftar peserta</b> → <b>Ganti PIN</b></td><td>PIN baru tampil di pesan hijau; tulis di kartu cadangan</td></tr>
+      <tr><td>Anak datang terlambat</td><td>Tidak perlu apa-apa</td><td>Anak masuk biasa; waktunya dihitung sejak ia mulai, tetapi tetap berhenti di jam selesai sesi</td></tr>
+      <tr><td>Ingin melihat siapa sudah masuk</td><td><b>Peserta</b></td><td>Daftar nomor, jumlah terjawab, status terhubung</td></tr>
+    </table></div>
+    <p>Selama sesi, anak <b>tidak pernah</b> melihat benar/salah atau peringkat. Roketnya naik satu langkah setiap menjawab.</p>
+  </section>
+
+  <section>
+    <h2 id="setelah">Setelah sesi</h2>
+    <ol>
+      <li>Saat jam selesai tiba, sesi tertutup sendiri. Bila ingin menutup lebih awal, klik <b>Tutup batch</b> (dua kali): anak yang belum selesai dinilai dari jawaban yang sudah tersimpan.</li>
+      <li>Arena berpindah otomatis ke <b>upacara hasil</b>: peringkat 10 sampai 4 muncul satu per satu, lalu juara 3, 2, 1 di podium, lalu juara sekolah, lalu tabel lengkap. Tombol <b>Putar ulang</b> mengulang upacara; tab <b>Kelas 3 / Kelas 4 / Semua</b> berpindah kelas.</li>
+      <li>Klik <b>Unduh hasil (CSV)</b> pada sesi itu. Berkas berisi kelas, peringkat, nomor, sekolah, nilai, poin, dan waktu. Kirim ke IOA untuk dicocokkan dengan nama dan untuk sertifikat.</li>
+      <li>Simpan berkas hasil dan CSV peserta di folder event. Jangan menghapus peserta sesi resmi; sistem memang tidak mengizinkannya.</li>
+      <li>Untuk sesi berikutnya ulangi langkah sesi dan daftar peserta. Arena akan memilih sendiri sesi yang sedang berjalan.</li>
+      <li>Setelah seluruh event selesai, ubah status event menjadi <b>Closed</b>. Hasil tetap bisa dilihat.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2 id="latihan">Latihan lewat Skeddo</h2>
+    <p>Sesi latihan (mis. LATIHAN-1) memakai pintu <b>skeddo</b>: anak masuk dari tombol Join di event Skeddo, tanpa PIN, dan boleh mengulang sepanjang jendela latihan.</p>
+    <ol>
+      <li>Bagian <b>Tautan untuk Skeddo</b> di kartu event berisi tautan siap salin: satu <b>Live stream</b> (arena untuk penonton) dan satu <b>Meeting</b> per sesi (untuk tombol Join). Tempel di form event Skeddo.</li>
+      <li>Selama latihan <b>belum dikunci</b>, siapa pun yang punya tautan bisa ikut. Ini cukup untuk latihan terbuka.</li>
+      <li>Untuk membatasi latihan hanya bagi peserta event Skeddo, klik <b>Kunci link</b> (dua kali). Tautan Meeting berubah dan kini membawa <code>&amp;k=…</code>.
+        <ul><li><b>Wajib</b>: tempel tautan Meeting yang baru ke event Skeddo. Tautan lama berhenti bekerja.</li></ul></li>
+      <li><b>Kunci ulang</b> membuat kunci baru (mis. bila tautan tersebar). <b>Buka kunci</b> kembali ke latihan terbuka.</li>
+      <li>Saat sesi resmi event yang sama sedang berjalan, latihan tertutup sendiri dan terbuka lagi setelahnya.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2 id="masalah">Masalah umum</h2>
+    <div class="tbl"><table>
+      <tr><th>Pesan di layar anak</th><th>Penyebab</th><th>Yang dilakukan</th></tr>
+      <tr><td>"PIN salah. Periksa kartu pesertamu."</td><td>Salah ketik PIN</td><td>Periksa kartu; setelah 5 kali, nomor terkunci 10 menit</td></tr>
+      <tr><td>"PIN salah 5 kali. Nomor ini dikunci…"</td><td>5 kali salah PIN</td><td>Admin: Daftar peserta → <b>Buka kunci</b></td></tr>
+      <tr><td>"Nomor peserta tidak terdaftar di sesi ini."</td><td>Nomor salah, atau anak di sesi lain</td><td>Cocokkan kode sesi dan nomor di kartu dengan daftar</td></tr>
+      <tr><td>"Nomor ini sudah dipakai di komputer lain."</td><td>Nomor sudah aktif di perangkat lain</td><td>Admin: Peserta → <b>Lepas</b>, lalu anak masuk lagi</td></tr>
+      <tr><td>"Kelas belum diisi di daftar peserta."</td><td>Baris roster tanpa kelas</td><td>Tambahkan kelas di baris itu, Simpan daftar</td></tr>
+      <tr><td>"Belum waktunya — atau waktunya sudah lewat."</td><td>Di luar jam ruang tunggu / sesi</td><td>Cek jam Mulai/Selesai; gunakan <b>Buka sekarang</b> bila perlu</td></tr>
+      <tr><td>"Link ini tidak berlaku lagi."</td><td>Latihan sudah dikunci ulang</td><td>Tempel tautan Meeting terbaru di event Skeddo</td></tr>
+      <tr><td>"Ada gangguan koneksi."</td><td>Internet aula</td><td>Periksa Wi-Fi; jawaban yang sudah terkirim aman, muat ulang halaman</td></tr>
+    </table></div>
+    <p><b>Masalah di sisi panitia:</b></p>
+    <ul>
+      <li><b>Kode masuk admin tidak datang</b>: cek spam; tunggu 1 menit lalu kirim ulang.</li>
+      <li><b>Arena tidak bersuara</b>: klik sekali di mana saja pada halaman (browser butuh klik sebelum ada suara), lalu tombol suara.</li>
+      <li><b>Arena menampilkan sesi yang salah</b>: tambahkan <code>?batch=&lt;KODE&gt;</code> di akhir alamat arena.</li>
+      <li><b>Kartu terpotong saat dicetak</b>: cetak dari laptop dengan ukuran A4, skala 100%.</li>
+    </ul>
+  </section>
+
+  <footer>Platform <b>AyoMath</b> · halaman staf, tidak diindeks · <a href="admin.html">Halaman admin</a></footer>
+</div>
+</body>
+</html>

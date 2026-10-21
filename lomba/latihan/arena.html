@@ -438,7 +438,9 @@ import { createArenaAudio } from './arena-sfx.js';
 
 // ── Yang perlu diubah untuk event baru ───────────────────────────────────────
 const CFG = {
-  event: 'latihan',   // lomba_events.slug
+  // lomba_events.slug. ?event=<slug> menimpanya, supaya event uji coba (atau
+  // event yang foldernya belum dibuat) bisa memakai arena ini apa adanya.
+  event: new URLSearchParams(location.search).get('event')?.trim() || 'latihan',
   bestN: 3,           // tabel sekolah: jumlah roket terbaik yang dijumlahkan
   pollMs: 3000,       // jajak lomba_progress / lomba_lobby_public
 };
