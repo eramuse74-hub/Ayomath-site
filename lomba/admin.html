@@ -24,6 +24,12 @@
 
   Satu halaman untuk semua event (bukan per slug). Tidak ada yang perlu
   diubah untuk event baru.
+
+  AKSES (2026-10-21, docs/LOMBA_ACCESS.md): tiap batch punya pintu masuk —
+  open (uji staf), skeddo (latihan: tautan Join Skeddo membawa &k=kunci),
+  tiket (resmi: nomor + PIN 4 angka dari daftar peserta). Daftar peserta
+  memuat kelas + PIN; tombol "Kartu" mencetak kartu A4 tanpa nama, "CSV"
+  untuk digabung IOA dengan daftar namanya. PIN hanya terbaca lewat RPC staf.
   ============================================================================
 -->
 <style>
@@ -358,6 +364,28 @@ function eventCard(ev) {
     } catch (e) { say(skMsg, errText(e), false); }
   }), skMsg);
   card.appendChild(skRow);
+
+  // Seri + edisi (docs/LOMBA_SHOW.md §6): "IOA Math Competition" / "Lombok
+  // Bangkit" tampil dua baris sama besar di aplikasi, kartu, dan arena.
+  // Warna aksen = warna baris edisi. Kosong = halaman memakai nama event.
+  const meta = el('div', null, 'grid3');
+  meta.style.marginTop = '8px';
+  const theme = ev.theme ?? {};
+  const fSeries = field(meta, 'Seri (baris 1)', el('input', null, null, { value: ev.series ?? '', placeholder: 'IOA Math Competition' }));
+  const fEdition = field(meta, 'Edisi (baris 2, nama daerah)', el('input', null, null, { value: ev.edition ?? '', placeholder: 'Lombok Bangkit' }));
+  const fAccent = field(meta, 'Warna aksen edisi', el('input', null, null, { type: 'color', value: /^#[0-9a-f]{6}$/i.test(theme.accent ?? '') ? theme.accent : '#f2c14e' }));
+  card.appendChild(meta);
+  const metaRow = el('div', null, 'row');
+  const metaMsg = el('span', null, 'msg');
+  metaRow.append(btn('Simpan seri / edisi', 'ghost', async () => {
+    try {
+      const t = Object.assign({}, theme, { name: fEdition.value.trim() || null, accent: fAccent.value });
+      await rpc('lomba_admin_set_event_meta', { p_event: ev.id, p_series: fSeries.value, p_edition: fEdition.value, p_theme: t });
+      say(metaMsg, `Disimpan ${stamp()}`, true);
+      await loadAll();
+    } catch (e) { say(metaMsg, errText(e), false); }
+  }), metaMsg);
+  card.appendChild(metaRow);
   card.appendChild(msg);
 
   const mine = S.batches.filter(b => b.event_id === ev.id);
@@ -373,6 +401,16 @@ function eventCard(ev) {
 // di kolom "Online meeting link" dan "Live stream link" saat membuat event.
 // ?dari=skeddo sudah termasuk, supaya tombol Join/Watch di Skeddo langsung
 // lolos gerbang.
+//
+// AKSES: batch `skeddo` yang sudah dikunci membawa &k=<kunci> — server menolak
+// Mulai tanpa kunci itu (bad_access). "Kunci link" membuat kunci baru: tautan
+// lama di event Skeddo berhenti bekerja, tempel yang baru. Batch `tiket` tidak
+// memakai kunci di tautan — anak mengetik nomor + PIN dari kartunya.
+function joinLink(b) {
+  const base = `https://play.ayomath.com/?lomba=${encodeURIComponent(b.code)}&dari=skeddo`;
+  return b.access === 'skeddo' && b.link_key ? `${base}&k=${encodeURIComponent(b.link_key)}` : base;
+}
+
 function skeddoLinksSection(ev, batches) {
   const box = el('div', null, 'batch');
   box.appendChild(el('p', 'Tautan untuk Skeddo — salin, tempel di form event ' +
@@ -380,8 +418,28 @@ function skeddoLinksSection(ev, batches) {
   box.appendChild(skLinkRow('Live stream (kolom "Live stream link")',
     `${location.origin}/lomba/${ev.slug}/live.html?dari=skeddo`));
   for (const b of batches) {
-    box.appendChild(skLinkRow(`Meeting ${b.code} (kolom "Online meeting link")`,
-      `https://play.ayomath.com/?lomba=${encodeURIComponent(b.code)}&dari=skeddo`));
+    const label = `Meeting ${b.code} (kolom "Online meeting link")`
+      + (b.access === 'skeddo' ? (b.link_key ? ' · terkunci' : ' · belum dikunci — siapa pun dengan tautan bisa masuk') : b.access === 'tiket' ? ' · tiket: nomor + PIN' : '');
+    const row = skLinkRow(label, joinLink(b));
+    if (b.access === 'skeddo') {
+      const msg = el('span', null, 'msg');
+      row.appendChild(armed(b.link_key ? 'Kunci ulang' : 'Kunci link', 'gold', async () => {
+        try {
+          await rpc('lomba_admin_rotate_link_key', { p_batch: b.id, p_clear: false });
+          say(msg, `Kunci baru dibuat — tempel tautan yang baru di event Skeddo, ${stamp()}`, true);
+          await loadAll();
+        } catch (e) { say(msg, errText(e), false); }
+      }));
+      if (b.link_key) row.appendChild(armed('Buka kunci', 'ghost', async () => {
+        try {
+          await rpc('lomba_admin_rotate_link_key', { p_batch: b.id, p_clear: true });
+          say(msg, `Kunci dihapus — tautan tanpa &k= diterima lagi, ${stamp()}`, true);
+          await loadAll();
+        } catch (e) { say(msg, errText(e), false); }
+      }));
+      row.appendChild(msg);
+    }
+    box.appendChild(row);
   }
   if (!batches.length) box.appendChild(el('p', 'Belum ada batch — meeting link muncul begitu batch dibuat.', 'sub'));
   return box;
@@ -529,9 +587,13 @@ function batchCard(b) {
     ? `Latihan: ${fmtWib(b.starts_at)} → ${fmtWib(b.ends_at)} WIB (jendela latihan, boleh diulang) · kelas ${b.kelas_min}–${b.kelas_max}`
     : `${fmtWib(b.starts_at)} → ${fmtWib(b.ends_at)} WIB · kelas ${b.kelas_min}–${b.kelas_max} · ruang tunggu ${b.lobby_sec}s sebelum mulai · kursi ${b.capacity ?? 'tak dibatasi'}`;
   left.appendChild(el('div', when, 'when'));
+  const akses = b.access === 'tiket' ? 'tiket (nomor + PIN)'
+    : b.access === 'skeddo' ? (b.link_key ? 'skeddo (link terkunci)' : 'skeddo (belum dikunci)')
+    : 'open (uji staf)';
   left.appendChild(el('div',
     `Soal untuk kelas ${(b.kelas_list ?? []).join(', ') || '—'} · peserta ${b.entries} (selesai ${b.done})`
-    + ` · daftar peserta ${b.roster ? b.roster + ' nomor (tertutup)' : 'terbuka — nama + nomor otomatis'} · papan: ${b.live_board}`, 'when'));
+    + ` · daftar peserta ${b.roster ? b.roster + ' nomor (tertutup)' : 'terbuka — nama + nomor otomatis'} · papan: ${b.live_board}`
+    + ` · akses: ${akses}`, 'when'));
   head.appendChild(left);
   card.appendChild(head);
 
@@ -612,6 +674,11 @@ function fillEditor(editor, b, msg) {
   const fDur = field(g, 'Batas per peserta (detik, kosong = dari soal)', el('input', null, null, { type: 'number', min: 60, max: 7200, value: b.duration_sec ?? '' }));
   const fSpq = field(g, 'Detik per soal', el('input', null, null, { type: 'number', min: 10, max: 600, value: b.sec_per_question }));
   const fBoard = field(g, 'Papan langsung', select([['full', 'full — skor & peringkat tampil'], ['progress', 'progress — bar saja, tanpa ✓/✗'], ['hidden', 'hidden — disembunyikan']], b.live_board));
+  // AKSES (docs/LOMBA_ACCESS.md §3). tiket butuh daftar peserta dengan kelas.
+  const fAccess = field(g, 'Pintu masuk', select([
+    ['open', 'open — tanpa kunci (uji staf saja)'],
+    ['skeddo', 'skeddo — lewat tautan Join Skeddo (+ kunci bila dikunci)'],
+    ['tiket', 'tiket — nomor + PIN dari kartu, kelas dari daftar peserta']], b.access ?? 'open'));
   const fRank = field(g, 'Peringkat', select([['accuracy', 'accuracy — nilai, lalu waktu'], ['speed', 'speed — sempurna tercepat dulu']], b.rank_by));
   const fWrong = field(g, 'Penalti salah (× bobot)', el('input', null, null, { type: 'number', step: '0.25', min: 0, max: 5, value: b.wrong_penalty }));
   const fBlank = field(g, 'Kredit kosong (× bobot)', el('input', null, null, { type: 'number', step: '0.25', min: 0, max: 5, value: b.blank_credit }));
@@ -631,7 +698,12 @@ function fillEditor(editor, b, msg) {
       capacity: fCap.value === '' ? null : +fCap.value,
       sec_per_question: +fSpq.value, live_board: fBoard.value, rank_by: fRank.value,
       wrong_penalty: +fWrong.value, blank_credit: +fBlank.value, is_practice: cb.checked,
+      access: fAccess.value,
     };
+    if (fAccess.value === 'tiket' && !b.roster) {
+      say(msg, 'Pintu tiket butuh daftar peserta (nomor, sekolah, kelas) — isi dulu lewat "Daftar peserta".', false);
+      return;
+    }
     try {
       await rpc('lomba_admin_set_batch', { p_batch: b.id, p_patch: patch });
       say(msg, `Disimpan ${stamp()}`, true);
@@ -696,30 +768,156 @@ async function fillEntries(box, b, msg) {
   if (!b.is_practice) box.appendChild(el('p', 'Batch resmi: peserta dilepas, tidak pernah dihapus (LOMBA.md §10).', 'sub'));
 }
 
+// ── Daftar peserta (AKSES: kelas + PIN) ─────────────────────────────────────
+// Baris teks: "nomor, sekolah, kelas" (kelas boleh kosong). Simpan = UPSERT:
+// nomor yang sudah ada mempertahankan PIN-nya, jadi kartu yang sudah dicetak
+// tetap sah; nomor yang hilang dari daftar dihapus; nomor baru dapat PIN dari
+// server. Tabel di bawahnya memuat PIN (hanya staf yang bisa melihat ini).
+
+function parseRosterLine(l) {
+  const parts = l.split(/[,;\t]/).map(s => s.trim());
+  const nomor = parts.shift() ?? '';
+  let kelas = null;
+  if (parts.length >= 2 && /^[1-6]$/.test(parts[parts.length - 1])) kelas = +parts.pop();
+  else if (parts.length === 1 && /^[1-6]$/.test(parts[0])) { kelas = +parts[0]; parts.length = 0; }
+  return { nomor, sekolah: parts.join(', ').trim(), kelas };
+}
+
+function eventOf(b) { return S.events.find(e => e.id === b.event_id); }
+
+function eventLines(ev) {
+  const lines = [];
+  if (ev?.series) lines.push(ev.series);
+  if (ev?.edition) lines.push(ev.edition);
+  if (!lines.length) lines.push(ev?.name ?? 'Lomba AyoMath');
+  return lines;
+}
+
+function rosterCsv(b, rows) {
+  const ev = eventOf(b);
+  const cols = ['event', 'batch', 'label', 'nomor', 'kelas', 'sekolah', 'pin', 'link'];
+  const esc = (v) => { const s = v == null ? '' : String(v); return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
+  const link = `https://play.ayomath.com/?lomba=${encodeURIComponent(b.code)}`;
+  const evName = eventLines(ev).join(' — ');
+  return [cols.join(',')].concat(rows.map(r => [evName, b.code, b.label, r.nomor, r.kelas ?? '', r.sekolah, r.pin ?? '', link].map(esc).join(','))).join('\n');
+}
+
+// Kartu A4, 10 per halaman (2 × 5), tanpa nama. Dibuka di tab baru lalu
+// dialog cetak muncul sendiri; "Simpan sebagai PDF" ada di dialog itu.
+function printCards(b, rows) {
+  const ev = eventOf(b);
+  const lines = eventLines(ev);
+  const accent = /^#[0-9a-f]{6}$/i.test(ev?.theme?.accent ?? '') ? ev.theme.accent : '#f2c14e';
+  const link = `play.ayomath.com/?lomba=${encodeURIComponent(b.code)}`;
+  const h = (s) => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const card = (r) => `<div class="card">
+    <div class="ev"><div>${h(lines[0])}</div>${lines[1] ? `<div class="ed">${h(lines[1])}</div>` : ''}</div>
+    <div class="lbl">${h(b.label)} · kode <b>${h(b.code)}</b></div>
+    <div class="big"><div><small>Nomor peserta</small><b>${h(r.nomor)}</b></div><div><small>PIN</small><b>${h(r.pin ?? '—')}</b></div></div>
+    <div class="meta">${r.kelas ? `Kelas ${h(r.kelas)}` : ''}${r.kelas && r.sekolah ? ' · ' : ''}${h(r.sekolah)}</div>
+    <div class="link">${h(link)}</div>
+    <div class="note">Simpan kartu ini. Ketik nomor dan PIN saat Mulai. Jangan berikan PIN ke orang lain.</div>
+  </div>`;
+  const html = `<!doctype html><html lang="id"><head><meta charset="utf-8"><title>Kartu peserta ${h(b.code)}</title>
+<style>
+@page{size:A4;margin:10mm}
+body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#0A1633}
+.sheet{display:grid;grid-template-columns:1fr 1fr;gap:6mm;page-break-after:always}
+.sheet:last-child{page-break-after:auto}
+.card{border:1.5px solid #0A1633;border-radius:4mm;padding:5mm 6mm;height:50mm;box-sizing:border-box;display:flex;flex-direction:column;justify-content:space-between;break-inside:avoid}
+.ev{font-weight:800;font-size:12pt;line-height:1.15}
+.ev .ed{color:${accent};filter:saturate(1.2) brightness(.8)}
+.lbl{font-size:9pt;color:#444}
+.big{display:flex;gap:10mm}
+.big small{display:block;font-size:8pt;text-transform:uppercase;letter-spacing:.5px;color:#555}
+.big b{font-size:22pt;letter-spacing:2px;font-variant-numeric:tabular-nums}
+.meta{font-size:10pt;font-weight:700}
+.link{font-size:9pt;font-family:ui-monospace,Menlo,Consolas,monospace}
+.note{font-size:7.5pt;color:#555;line-height:1.2}
+@media screen{body{background:#eee;padding:10mm}.sheet{background:#fff;padding:10mm;margin:0 auto 10mm;width:190mm;box-sizing:content-box}}
+</style></head><body>`;
+  const sheets = [];
+  for (let i = 0; i < rows.length; i += 10) sheets.push(`<div class="sheet">${rows.slice(i, i + 10).map(card).join('')}</div>`);
+  const w = window.open('', '_blank');
+  if (!w) throw new Error('Pop-up diblokir — izinkan pop-up untuk halaman ini, lalu coba lagi.');
+  w.document.write(html + sheets.join('') + '<script>window.onload=()=>setTimeout(()=>window.print(),300)<\/script></body></html>');
+  w.document.close();
+}
+
 async function fillRoster(box, b, msg) {
   box.replaceChildren(el('p', 'Memuat…', 'sub'));
   let rows;
   try { rows = await rpc('lomba_admin_roster', { p_batch: b.id }); }
   catch (e) { box.replaceChildren(el('p', errText(e), 'msg err')); return; }
+  rows = rows ?? [];
   box.replaceChildren();
-  box.appendChild(el('label', 'Satu baris per peserta: nomor, sekolah. Kosongkan semua = batch terbuka: peserta mengisi nama (boleh kosong) dan nomor diberikan otomatis.'));
+  box.appendChild(el('label', 'Satu baris per peserta: nomor, sekolah, kelas (kelas wajib untuk pintu tiket). '
+    + 'Nomor yang sudah ada mempertahankan PIN-nya; nomor yang tidak ada di daftar dihapus. '
+    + 'Kosongkan semua = batch terbuka: peserta mengisi nama (boleh kosong) dan nomor diberikan otomatis.'));
   const ta = el('textarea');
-  ta.value = (rows ?? []).map(r => `${r.nomor}, ${r.sekolah}`).join('\n');
-  ta.placeholder = '017, SDN 3 Praya\n018, SDN 4 Praya';
+  ta.value = rows.map(r => `${r.nomor}, ${r.sekolah}${r.kelas ? ', ' + r.kelas : ''}`).join('\n');
+  ta.placeholder = '017, SDN 3 Praya, 3\n018, SDN 4 Praya, 4';
   box.appendChild(ta);
   const row = el('div', null, 'row'); row.style.marginTop = '8px';
-  row.appendChild(armed('Simpan daftar (mengganti seluruhnya)', '', async () => {
-    const list = ta.value.split('\n').map(l => l.trim()).filter(Boolean).map(l => {
-      const m = l.match(/^([^,;\t]+)[,;\t]?\s*(.*)$/);
-      return { nomor: (m?.[1] ?? '').trim(), sekolah: (m?.[2] ?? '').trim() };
-    });
+  row.appendChild(armed('Simpan daftar', '', async () => {
+    const list = ta.value.split('\n').map(l => l.trim()).filter(Boolean).map(parseRosterLine);
     try {
       const n = await rpc('lomba_admin_roster_replace', { p_batch: b.id, p_rows: list });
-      say(msg, `${n} nomor tersimpan, ${stamp()}`, true);
+      say(msg, `${n} nomor di daftar, ${stamp()}`, true);
       await loadAll();
     } catch (e) { say(msg, errText(e), false); }
   }));
+  if (rows.length) {
+    row.appendChild(btn('Kartu (cetak / PDF)', 'gold', () => {
+      try { printCards(b, rows); } catch (e) { say(msg, errText(e), false); }
+    }));
+    row.appendChild(btn('CSV', 'ghost', () => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([rosterCsv(b, rows)], { type: 'text/csv' }));
+      a.download = `peserta-${b.code}.csv`;
+      a.click();
+    }));
+  }
   box.appendChild(row);
+
+  if (!rows.length) return;
+  const missingKelas = rows.filter(r => r.kelas == null).length;
+  if (missingKelas && b.access === 'tiket') {
+    box.appendChild(el('p', `${missingKelas} nomor belum punya kelas — di pintu tiket anak itu akan ditolak (roster_no_kelas). Tambahkan kelas di baris itu.`, 'msg err'));
+  }
+  const t = el('table');
+  const th = el('tr');
+  for (const hd of ['Nomor', 'Kelas', 'Sekolah', 'PIN', 'Status', '']) th.appendChild(el('th', hd));
+  t.appendChild(th);
+  const now = Date.now();
+  for (const r of rows) {
+    const tr = el('tr');
+    tr.appendChild(el('td', r.nomor, 'mono'));
+    tr.appendChild(el('td', r.kelas ?? '—'));
+    tr.appendChild(el('td', r.sekolah || '—'));
+    tr.appendChild(el('td', r.pin ?? '—', 'mono'));
+    const locked = r.locked_until && new Date(r.locked_until).getTime() > now;
+    const status = locked ? `terkunci sampai ${fmtWib(r.locked_until)}` : (r.fails ? `${r.fails}× PIN salah` : '') + (r.joined ? (r.fails ? ' · ' : '') + 'sudah masuk' : '');
+    tr.appendChild(el('td', status || '—'));
+    const acts = el('td', null, 'row');
+    if (locked) acts.appendChild(armed('Buka kunci', 'gold', async () => {
+      try {
+        await rpc('lomba_admin_release_entry', { p_batch: b.id, p_nomor: r.nomor });
+        say(msg, `Nomor ${r.nomor} dibuka, ${stamp()}`, true);
+        await fillRoster(box, b, msg);
+      } catch (e) { say(msg, errText(e), false); }
+    }));
+    acts.appendChild(armed('Ganti PIN', 'ghost', async () => {
+      try {
+        const pin = await rpc('lomba_admin_roster_pin_reset', { p_batch: b.id, p_nomor: r.nomor });
+        say(msg, `PIN baru nomor ${r.nomor}: ${pin} — cetak ulang kartunya, ${stamp()}`, true);
+        await fillRoster(box, b, msg);
+      } catch (e) { say(msg, errText(e), false); }
+    }));
+    tr.appendChild(acts);
+    t.appendChild(tr);
+  }
+  box.appendChild(t);
 }
 
 // ── Staf ─────────────────────────────────────────────────────────────────────

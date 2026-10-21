@@ -167,7 +167,8 @@ if (new URLSearchParams(location.search).get('dari') !== 'skeddo')
   </div>
 
   <footer>
-    <p><a id="live-link" href="live.html?dari=skeddo">📺 Papan skor langsung</a></p>
+    <p><a id="arena-link" href="arena.html">🚀 Arena langsung — balapan roket</a> ·
+       <a id="live-link" href="live.html?dari=skeddo">papan panitia</a></p>
     <p>Diselenggarakan di atas platform <b>AyoMath</b> ·
        <a href="https://www.ayomath.com/ayomath/">Tentang AyoMath</a> ·
        <a href="https://www.ayomath.com/privacy.html">Kebijakan Privasi</a></p>
@@ -317,7 +318,13 @@ async function main() {
       // menekan refresh di tengah lomba. &dari=skeddo membawa tanda gerbang
       // Skeddo — pengunjung halaman ini sudah lewat gerbang, jangan suruh
       // mereka lewat lagi di game-nya.
-      a.href = `${CFG.play}/?lomba=${encodeURIComponent(b.code)}&dari=skeddo`;
+      // AKSES (docs/LOMBA_ACCESS.md): bila tautan ke halaman ini membawa
+      // &k=<kunci batch> (dari event Skeddo), teruskan ke game — batch latihan
+      // yang sudah dikunci menolak Mulai tanpa kunci itu. Kunci tidak pernah
+      // ditulis di halaman ini sendiri.
+      const k = new URLSearchParams(location.search).get('k');
+      a.href = `${CFG.play}/?lomba=${encodeURIComponent(b.code)}&dari=skeddo`
+        + (k ? `&k=${encodeURIComponent(k)}` : '');
       a.textContent = open.length > 1 ? `▶ MULAI — ${b.code}` : '▶ MULAI';
       mulai.appendChild(a);
     }

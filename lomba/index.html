@@ -41,6 +41,17 @@
   .tick:hover .track{animation-play-state:paused}
   @keyframes tick-move{to{transform:translateX(-100%)}}
   .tick .it b{color:var(--teal)}
+  /* "Masuk lomba" (docs/LOMBA_ACCESS.md §4): kode batch → game. */
+  .masuk{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:12px}
+  .masuk input{flex:1;min-width:160px;font:inherit;font-weight:800;font-size:18px;letter-spacing:2px;
+               text-transform:uppercase;padding:11px 14px;border-radius:14px;border:2px solid rgba(45,42,69,.18)}
+  .masuk input:focus{outline:none;border-color:var(--teal)}
+  .masuk button{font:inherit;font-weight:800;font-size:16px;padding:12px 20px;border-radius:14px;border:0;
+                background:var(--violet);color:#fff;cursor:pointer}
+  .masuk button:disabled{opacity:.5;cursor:default}
+  .arena-list{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+  .arena-list a{font-size:14px}
+  .hint{color:var(--muted);font-size:14px;margin:6px 0 0}
 </style>
 <script data-goatcounter="https://esumar.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>
@@ -69,9 +80,9 @@
     <div class="feat"><span class="ic">📅</span>
       <span lang="id"><b>Jadwal Event</b>Lihat jadwal lomba berikutnya: tanggal, kelas yang diikuti, jumlah soal, dan waktu pengerjaan.</span>
       <span lang="en"><b>Event Schedule</b>See upcoming competitions: date, participating grades, number of questions, and time limits.</span></div>
-    <div class="feat"><span class="ic">📡</span>
-      <span lang="id"><b>Papan Skor Langsung</b>Saat event berlangsung, pantau peringkat peserta secara langsung di halaman Live.</span>
-      <span lang="en"><b>Live Score Board</b>While an event is running, follow the participants' rankings live on the Live page.</span></div>
+    <div class="feat"><span class="ic">🚀</span>
+      <span lang="id"><b>Arena Langsung</b>Saat sesi berlangsung, orang tua dan guru menonton balapan roket peserta, peringkat sekolah, dan upacara hasil — di HP (potret) maupun laptop atau proyektor (lanskap).</span>
+      <span lang="en"><b>Live Arena</b>While a session runs, parents and teachers watch the participants' rocket race, the school table, and the results ceremony — on a phone (portrait) or a laptop / projector (landscape).</span></div>
     <div class="btns">
       <!-- Tombol utama mengarah ke event Skeddo (URL diisi dinamis dari
            lomba_events.skeddo_url; cadangan: halaman grup AyoMath di
@@ -83,6 +94,24 @@
         <span lang="en">🚀 Join via Skeddo</span></a>
       <a class="btn ghost" href="../ayomath/"><span lang="id">Tentang AyoMath</span><span lang="en">About AyoMath</span></a>
     </div>
+  </div>
+
+  <!-- Masuk lomba (docs/LOMBA_ACCESS.md §4): peserta sesi RESMI memasukkan
+       kode batch dari kartunya; nomor dan PIN ditanyakan di dalam game.
+       Latihan tetap lewat Skeddo (tombol di atas) — kuncinya ada di tautan
+       Skeddo, tidak pernah di halaman ini. Kode terisi sendiri saat satu
+       sesi resmi sedang berjalan atau akan dimulai. -->
+  <div class="card" id="masuk-card" hidden>
+    <h2 lang="id" style="margin:0 0 2px;font-size:22px">🎫 Masuk lomba</h2>
+    <h2 lang="en" style="margin:0 0 2px;font-size:22px">🎫 Enter the competition</h2>
+    <p class="subtle" style="text-align:left;margin:0" lang="id">Untuk peserta sesi resmi: masukkan <b>kode sesi</b> dari kartu peserta. Nomor dan PIN diminta di layar berikutnya.</p>
+    <p class="subtle" style="text-align:left;margin:0" lang="en">For official-session participants: enter the <b>session code</b> from the participant card. Number and PIN are asked on the next screen.</p>
+    <form class="masuk" id="masuk-form">
+      <input id="masuk-kode" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="KODE SESI" aria-label="Kode sesi">
+      <button type="submit" id="masuk-go"><span lang="id">Masuk</span><span lang="en">Enter</span></button>
+    </form>
+    <p class="hint" id="masuk-hint"></p>
+    <div class="arena-list" id="arena-list"></div>
   </div>
 
   <div class="card">
@@ -160,14 +189,21 @@ async function main() {
   if (firstUrl) document.getElementById('sk-join').href = firstUrl;
 
   const items = [];
+  const official = [];   // sesi resmi yang belum selesai → kotak "Masuk lomba"
+  const arenas = [];     // satu tautan arena per event yang punya sesi aktif
+  const now = new Date();
   for (const ev of events ?? []) {
     const { data: batches } = await db.from('lomba_batches_public').select('*')
       .eq('event_slug', ev.slug).order('starts_at');
+    let active = false;
     for (const b of batches ?? []) {
       const t = tickItem(ev.name, b);
-      if (t) items.push(t);
+      if (t) { items.push(t); active = true; }
+      if (!b.is_practice && new Date(b.ends_at) > now) official.push({ ev, b });
     }
+    if (active) arenas.push(ev);
   }
+  masukLomba(official, arenas);
 
   // Tanpa batch: ticker tetap tersembunyi; blok event Skeddo di bawahnya
   // yang bicara (termasuk kalimat "belum ada").
@@ -184,6 +220,48 @@ async function main() {
   }
   track.style.setProperty('--dur', `${Math.max(24, items.length * 9)}s`);
   document.getElementById('sched-tick').hidden = false;
+}
+
+/** Kotak "Masuk lomba" + tautan arena. Kode terisi sendiri bila tepat satu
+    sesi resmi sedang berjalan (atau yang terdekat akan datang); lebih dari
+    satu → petunjuknya menyebut kode-kodenya. Game-nya yang memeriksa kode,
+    nomor dan PIN — halaman ini hanya mengantar. */
+function masukLomba(official, arenas) {
+  const card = document.getElementById('masuk-card');
+  const input = document.getElementById('masuk-kode');
+  const hint = document.getElementById('masuk-hint');
+  const list = document.getElementById('arena-list');
+  const en = document.documentElement.dataset.lang === 'en';
+  const now = new Date();
+  const live = official.filter(o => new Date(o.b.starts_at) <= now);
+  const soon = official.filter(o => new Date(o.b.starts_at) > now);
+  const pick = live[0] ?? soon[0];
+  if (pick && official.length === 1) input.value = pick.b.code;
+  if (official.length > 1) {
+    hint.textContent = (en ? 'Sessions: ' : 'Sesi: ') + official.map(o => `${o.b.code} (${o.b.label})`).join(' · ');
+  } else if (pick) {
+    hint.textContent = live.length
+      ? (en ? `${pick.b.label} is running now.` : `${pick.b.label} sedang berlangsung.`)
+      : (en ? `${pick.b.label} opens ${tanggal(pick.b.starts_at)}, ${jam(pick.b.starts_at)}.`
+            : `${pick.b.label} dibuka ${tanggal(pick.b.starts_at)}, ${jam(pick.b.starts_at)}.`);
+  }
+  list.replaceChildren();
+  for (const ev of arenas) {
+    const a = document.createElement('a');
+    a.className = 'btn ghost';
+    // Folder event = slug; arena.html adalah berkas bersama yang disalin per event.
+    a.href = `${encodeURIComponent(ev.slug)}/arena.html`;
+    a.textContent = (en ? '🚀 Watch the arena — ' : '🚀 Tonton arena — ') + ev.name;
+    list.appendChild(a);
+  }
+  // Tampil bila ada sesi resmi untuk dimasuki ATAU arena untuk ditonton.
+  card.hidden = !official.length && !arenas.length;
+  document.getElementById('masuk-form').onsubmit = (e) => {
+    e.preventDefault();
+    const kode = input.value.trim().toUpperCase();
+    if (!kode) { input.focus(); return; }
+    location.href = `https://play.ayomath.com/?lomba=${encodeURIComponent(kode)}`;
+  };
 }
 
 main().catch(() => {});
