@@ -9,11 +9,13 @@
 /* Papan lama → ARENA baru (2026-10-21, docs/LOMBA_SHOW.md). Tombol Watch di
    event Skeddo yang sudah ada masih menunjuk ke halaman ini; tanpa
    pengalihan, penonton melihat desain lama. Semua parameter dibawa (mis.
-   ?batch=), kecuali dari=skeddo yang tidak dibutuhkan arena. Papan panitia
-   (soal yang sedang dikerjakan) tetap bisa dibuka dengan &papan=panitia. */
+   ?batch=); dari=skeddo menjadi embed=1 (tata letak HP, tanpa tombol
+   "Ikuti di Skeddo"). Papan panitia (soal yang sedang dikerjakan) tetap
+   bisa dibuka dengan &papan=panitia. */
 (function () {
   var q = new URLSearchParams(location.search);
   if (q.get('papan') === 'panitia') return;
+  if (q.get('dari') === 'skeddo') q.set('embed', '1');
   q.delete('dari');
   var s = q.toString();
   location.replace('arena.html' + (s ? '?' + s : '') + location.hash);
@@ -172,7 +174,7 @@ if (new URLSearchParams(location.search).get('dari') !== 'skeddo')
   <h1>Papan Langsung di Skeddo</h1>
   <p>Papan skor AyoMath ditonton dari event Skeddo — tekan tombol <b>Watch</b>
     di sana. Peserta bergabung lewat tombol <b>Join now</b>.</p>
-  <a class="btn" id="sk-gate-btn" href="https://app.skeddo.com">Gabung melalui Skeddo</a>
+  <a class="btn" id="sk-gate-btn" href="https://app.skeddo.com/g/b8c44237-39f6-4493-aa6e-f16c536846ac/ayomath">Gabung melalui Skeddo</a>
 </div>
 <div class="wrap">
   <header>

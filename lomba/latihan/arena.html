@@ -345,7 +345,8 @@
   .hr .c{width:30px;text-align:right;font-weight:800;font-size:14px}
   .phtabs{display:none;gap:4px}
   body.phone .phtabs{display:flex}
-  .phtabs button{flex:1;height:42px;border-radius:10px;border:1px solid var(--line2);background:transparent;color:var(--text);font-weight:700;font-size:14px}
+  .phtabs button{flex:1;min-width:0;height:42px;border-radius:10px;border:1px solid var(--line2);background:transparent;color:var(--text);font-weight:700;font-size:13px;white-space:nowrap;padding:0 6px}
+  @media (max-width:350px){.phtabs button{font-size:11.5px;padding:0 4px}}
   .phtabs button[aria-selected=true]{background:var(--gold);color:var(--night);border-color:var(--gold)}
 
   @keyframes flick{from{transform:scaleY(.85)}to{transform:scaleY(1.12)}}
@@ -422,8 +423,8 @@
   </section>
   <aside id="aside" class="hidden">
     <div class="phtabs" role="tablist" aria-label="Tampilan">
-      <button id="pt-peserta" aria-selected="true">Peserta</button>
-      <button id="pt-sekolah" aria-selected="false">Sekolah</button>
+      <button id="pt-peserta" aria-selected="true">🚀 Roket peserta</button>
+      <button id="pt-sekolah" aria-selected="false">🏫 Peringkat sekolah</button>
     </div>
     <div class="card" id="card-mo">
       <h2>Momen <span class="tabs" id="view-tabs"><button id="vt-race" aria-selected="true">Balapan</button><button id="vt-table" aria-selected="false">Tabel</button></span></h2>
@@ -458,7 +459,7 @@
   <div class="sp-row" id="sp-row"></div>
   <div class="org" id="org"></div>
   <button class="tabs" id="replay" style="display:none;height:40px;padding:0 14px;border-radius:12px;border:1px solid var(--line2);background:transparent;color:var(--text);font-weight:700">Putar ulang</button>
-  <a class="cta" id="cta" href="https://app.skeddo.com" target="_blank" rel="noopener">Ikuti AyoMath di Skeddo</a>
+  <a class="cta" id="cta" href="https://app.skeddo.com/g/b8c44237-39f6-4493-aa6e-f16c536846ac/ayomath" target="_blank" rel="noopener">Ikuti AyoMath di Skeddo</a>
 </footer>
 
 <div class="launch hidden" id="launch"><div class="n" id="launch-n">3</div><p>Semua roket lepas landas!</p></div>
@@ -487,9 +488,14 @@ const TEASER = Q.get('teaser') === '1'; // jendela kecil di beranda (iframe bers
 const PHONE = !TEASER && (Q.get('embed') === '1' || innerWidth < 760);
 if (PHONE) document.body.classList.add('phone');
 if (TEASER) document.body.classList.add('teaser');
+// Dibuka dari tombol Watch Skeddo: penonton sudah di Skeddo, jadi ajakan
+// "Ikuti AyoMath di Skeddo" tidak berguna (di tab dalam aplikasi Skeddo,
+// app.skeddo.com hanya menampilkan logo). Halaman lain tetap menampilkannya.
+const FROM_SKEDDO = Q.get('embed') === '1' || Q.get('dari') === 'skeddo';
+if (FROM_SKEDDO) $('cta').remove();
 if (PHONE) {
   // Strip sponsor menempel di bawah; yang lain dari kaki ikut alur halaman.
-  $('ph-end').append($('org'), $('replay'), $('cta'));
+  $('ph-end').append(...['org', 'replay', 'cta'].map($).filter(Boolean));
   $('foot').classList.add('hidden'); // muncul begitu ada sponsor
   const pad = () => {
     const h = $('foot').offsetHeight;
