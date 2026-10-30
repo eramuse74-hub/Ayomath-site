@@ -55,6 +55,17 @@
         font-family:inherit}
   input[type=checkbox]{width:auto;margin-right:8px;vertical-align:middle}
   textarea{min-height:110px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
+  .step{border-left:3px solid var(--surface2);padding:4px 0 10px 12px;margin:10px 0 0}
+  .step-h{display:flex;align-items:center;gap:8px;font-size:14px}
+  .step-n{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--gold, #f2c14e);color:#1a1530;font-weight:800;font-size:12px;flex:none}
+  .step .sub{margin:4px 0 6px}
+  .step ul{margin:4px 0 8px;padding-left:18px}
+  .step table{margin-top:6px}
+  .roster-fmt{display:flex;flex-wrap:wrap;align-items:stretch;gap:6px;margin-top:6px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:14px}
+  .roster-fmt>div{border:1.5px solid var(--gold);border-radius:8px;padding:6px 12px;display:flex;flex-direction:column;gap:2px;min-width:90px}
+  .roster-fmt>div+div{position:relative}
+  .roster-fmt>div+div::before{content:',';position:absolute;left:-6px;bottom:4px;color:var(--gold);font-weight:800}
+  .roster-fmt b{font-size:11px;color:var(--muted);font-weight:700}
   button{background:var(--teal);color:#10231f;border:0;border-radius:10px;
          padding:9px 14px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit}
   button.ghost{background:transparent;color:var(--muted);border:1px solid var(--line)}
@@ -730,6 +741,13 @@ function batchCard(b) {
   card.appendChild(actions);
   card.appendChild(msg);
   card.append(editor, peserta, roster);
+  // After "Simpan daftar" the page reloads; reopen the list so the new PINs
+  // (step 3) are the first thing staff see.
+  if (S.reopen?.batch === b.id && S.reopen.panel === 'roster') {
+    S.reopen = null;
+    roster.classList.remove('hidden');
+    fillRoster(roster, b, msg);
+  }
   return card;
 }
 
@@ -944,45 +962,94 @@ async function fillRoster(box, b, msg) {
   try { rows = await rpc('lomba_admin_roster', { p_batch: b.id }); }
   catch (e) { box.replaceChildren(el('p', errText(e), 'msg err')); return; }
   rows = rows ?? [];
+  // Numbered flow (Eric 2026-10-30: "the flow should be clear (1) then (2),
+  // then (3)"). Names never enter the system: the link nomor ↔ child lives
+  // in IOA's spreadsheet (step 4) and on the envelope per school (step 5).
   box.replaceChildren(panelHead('📋 Daftar & kartu PIN — siapa yang boleh ikut',
-    'Diisi sebelum hari-H: nomor, sekolah, kelas. Server memberi PIN; dari sini cetak kartu, Ganti PIN, atau Buka kunci.'));
-  box.appendChild(el('label', 'Satu baris per peserta: nomor, sekolah, kelas (kelas wajib untuk pintu tiket). '
-    + 'Nomor yang sudah ada mempertahankan PIN-nya; nomor yang tidak ada di daftar dihapus. '
-    + 'Kosongkan semua = batch terbuka: peserta mengisi nama (boleh kosong) dan nomor diberikan otomatis.'));
+    'Dikerjakan sebelum hari-H, ikuti langkah 1 → 5.'));
+  const step = (n, title, note) => {
+    const d = el('div', null, 'step');
+    const h = el('div', null, 'step-h');
+    h.appendChild(el('span', String(n), 'step-n'));
+    h.appendChild(el('b', title));
+    d.appendChild(h);
+    if (note) d.appendChild(el('p', note, 'sub'));
+    box.appendChild(d);
+    return d;
+  };
+
+  // 1 — paste the list
+  const s1 = step(1, 'Tempel daftar dari IOA — satu baris per anak, dipisah koma');
+  const fmt = el('div', null, 'roster-fmt');
+  for (const [h, ex] of [['(nomor peserta)', '017'], ['(sekolah)', 'SDN 3 Praya'], ['(kelas)', '3']]) {
+    const c = el('div'); c.appendChild(el('b', h)); c.appendChild(el('span', ex)); fmt.appendChild(c);
+  }
+  s1.appendChild(fmt);
+  const notes = el('ul', null, 'sub');
+  for (const n of [
+    'Contoh: 017, SDN 3 Praya, 3 → nomor 017, sekolah SDN 3 Praya, kelas 3.',
+    'Kelas 1–6 (wajib untuk pintu tiket) menentukan soal kelas berapa yang didapat anak.',
+    'Nama anak TIDAK diketik di sini. PIN juga tidak — server yang membuat.',
+  ]) notes.appendChild(el('li', n));
+  s1.appendChild(notes);
   const ta = el('textarea');
   ta.value = rows.map(r => `${r.nomor}, ${r.sekolah}${r.kelas ? ', ' + r.kelas : ''}`).join('\n');
-  ta.placeholder = '017, SDN 3 Praya, 3\n018, SDN 4 Praya, 4';
-  box.appendChild(ta);
-  const row = el('div', null, 'row'); row.style.marginTop = '8px';
-  row.appendChild(armed('Simpan daftar', '', async () => {
-    const list = ta.value.split('\n').map(l => l.trim()).filter(Boolean).map(parseRosterLine);
+  ta.placeholder = '017, SDN 3 Praya, 3\n018, SDN 4 Praya, 4\n019, MI Nurul Huda, 3';
+  s1.appendChild(ta);
+
+  // 2 — save
+  const s2 = step(2, 'Simpan daftar',
+    'Klik dua kali (konfirmasi). Nomor yang sudah ada tetap memakai PIN lamanya; nomor yang dihapus dari kotak ikut terhapus. Kotak kosong = batch terbuka (tanpa PIN).');
+  const row2 = el('div', null, 'row');
+  row2.appendChild(armed('Simpan daftar', '', async () => {
+    // A pasted heading line ("nomor peserta, sekolah, kelas") is skipped.
+    const list = ta.value.split('\n').map(l => l.trim()).filter(Boolean)
+      .filter(l => !/^\(?\s*nomor/i.test(l)).map(parseRosterLine);
     try {
       const n = await rpc('lomba_admin_roster_replace', { p_batch: b.id, p_rows: list });
-      say(msg, `${n} nomor di daftar, ${stamp()}`, true);
+      say(msg, `${n} nomor di daftar — PIN ada di langkah 3, ${stamp()}`, true);
+      S.reopen = { batch: b.id, panel: 'roster' };   // land back on the PINs
       await loadAll();
     } catch (e) { say(msg, errText(e), false); }
   }));
+  s2.appendChild(row2);
+
+  // 3 — the PINs
+  const s3 = step(3, 'PIN dibuat otomatis — lihat kolom "PIN" di tabel',
+    rows.length ? 'Satu PIN per nomor (per anak). Kartu hilang → Ganti PIN. Salah PIN 5× → Buka kunci.'
+                : 'Tabel muncul di sini setelah langkah 2.');
+
+  // 4 — link to the child (offline)
+  const s4 = step(4, 'Hubungkan nomor dengan nama anak — di luar sistem',
+    'Unduh CSV (nomor, kelas, sekolah, PIN) dan kirim ke IOA. IOA mencocokkan nomor ↔ nama anak di spreadsheet mereka. Nama tidak pernah masuk sistem ini.');
+  // 5 — cards
+  const s5 = step(5, 'Cetak kartu dan bagikan',
+    'Cetak dari laptop, gunting, masukkan amplop per sekolah. Guru pendamping membagikan kartu ke setiap anak sesuai daftar nama dari IOA.');
   if (rows.length) {
-    row.appendChild(btn('Kartu (cetak / PDF)', 'gold', () => {
-      try { printCards(b, rows); } catch (e) { say(msg, errText(e), false); }
-    }));
-    row.appendChild(btn('CSV', 'ghost', () => {
+    const r4 = el('div', null, 'row');
+    r4.appendChild(btn('Unduh CSV', 'ghost', () => {
       const a = document.createElement('a');
       a.href = URL.createObjectURL(new Blob([rosterCsv(b, rows)], { type: 'text/csv' }));
       a.download = `peserta-${b.code}.csv`;
       a.click();
     }));
+    s4.appendChild(r4);
+    const r5 = el('div', null, 'row');
+    r5.appendChild(btn('Kartu (cetak / PDF)', 'gold', () => {
+      try { printCards(b, rows); } catch (e) { say(msg, errText(e), false); }
+    }));
+    s5.appendChild(r5);
   }
-  box.appendChild(row);
 
   if (!rows.length) return;
+  const box3 = s3;
   const missingKelas = rows.filter(r => r.kelas == null).length;
   if (missingKelas && b.access === 'tiket') {
-    box.appendChild(el('p', `${missingKelas} nomor belum punya kelas — di pintu tiket anak itu akan ditolak (roster_no_kelas). Tambahkan kelas di baris itu.`, 'msg err'));
+    box3.appendChild(el('p', `${missingKelas} nomor belum punya kelas — di pintu tiket anak itu akan ditolak (roster_no_kelas). Tambahkan kelas di baris itu.`, 'msg err'));
   }
   const t = el('table');
   const th = el('tr');
-  for (const hd of ['Nomor', 'Kelas', 'Sekolah', 'PIN', 'Status', '']) th.appendChild(el('th', hd));
+  for (const hd of ['Nomor peserta', 'Kelas', 'Sekolah', 'PIN (otomatis)', 'Status', '']) th.appendChild(el('th', hd));
   t.appendChild(th);
   const now = Date.now();
   for (const r of rows) {
@@ -1012,7 +1079,7 @@ async function fillRoster(box, b, msg) {
     tr.appendChild(acts);
     t.appendChild(tr);
   }
-  box.appendChild(t);
+  box3.appendChild(t);
 }
 
 // ── Staf ─────────────────────────────────────────────────────────────────────
