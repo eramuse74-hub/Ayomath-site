@@ -424,15 +424,17 @@ function eventCard(ev) {
   // Tautan event Skeddo (lomba_admin.sql §1b): tombol "Gabung melalui Skeddo"
   // di semua halaman publik mengarah ke URL ini. Kosong = tombol jatuh ke
   // app.skeddo.com sebagai cadangan. Hanya https yang diterima server.
+  card.appendChild(el('p', 'Alamat event ini di Skeddo — dari tombol Share di Skeddo. ' +
+    'BUKAN tautan main: ini tujuan tombol "Gabung melalui Skeddo" di ayomath.com.', 'sub'));
   const skRow = el('div', null, 'row');
-  skRow.style.marginTop = '8px';
+  skRow.style.marginTop = '4px';
   const skIn = document.createElement('input');
   skIn.type = 'url';
-  skIn.placeholder = 'https://app.skeddo.com/e/… (tautan event Skeddo)';
+  skIn.placeholder = 'https://app.skeddo.com/e/… (Share di Skeddo → salin)';
   skIn.value = ev.skeddo_url ?? '';
   skIn.style.maxWidth = '420px';
   const skMsg = el('span', null, 'msg');
-  skRow.append(skIn, btn('Simpan tautan', 'ghost', async () => {
+  skRow.append(skIn, btn('Simpan alamat Skeddo', 'ghost', async () => {
     try {
       await rpc('lomba_admin_set_event_url', { p_event: ev.id, p_url: skIn.value || null });
       say(skMsg, `Disimpan ${stamp()}`, true);
@@ -499,15 +501,11 @@ function joinLink(b) {
 
 function skeddoLinksSection(ev, batches) {
   const box = el('div', null, 'batch');
-  box.appendChild(el('p', 'Tautan untuk Skeddo — salin, tempel di form event ' +
-    '(meeting link per batch, stream link satu per event):', 'ptitle'));
-  // Arena (balapan roket, lobi, upacara). Berkas arena bersama + ?event=
-  // bekerja untuk setiap event, juga yang foldernya belum dibuat; embed=1
-  // memaksa tampilan potret untuk lembar pemutar Skeddo.
-  box.appendChild(skLinkRow('Live stream (kolom "Live stream link") — arena',
-    `${location.origin}/lomba/latihan/arena.html?event=${encodeURIComponent(ev.slug)}&embed=1`));
+  box.appendChild(el('p', 'Tempel ke form event Skeddo — dua kolom:', 'ptitle'));
+  box.appendChild(el('p', 'Kalau peserta melihat "Kode lomba tidak ditemukan", kode di ' +
+    'tautan JOIN di Skeddo tidak cocok dengan batch di sini — salin ulang tautan 1.', 'sub'));
   for (const b of batches) {
-    const label = `Meeting ${b.code} (kolom "Online meeting link")`
+    const label = `1. Tombol JOIN NOW (main) → kolom "Online meeting link" · kode ${b.code}`
       + (b.access === 'skeddo' ? (b.link_key ? ' · terkunci' : ' · belum dikunci — siapa pun dengan tautan bisa masuk') : b.access === 'tiket' ? ' · tiket: nomor + PIN' : '');
     const row = skLinkRow(label, joinLink(b));
     if (b.access === 'skeddo') {
@@ -530,7 +528,12 @@ function skeddoLinksSection(ev, batches) {
     }
     box.appendChild(row);
   }
-  if (!batches.length) box.appendChild(el('p', 'Belum ada batch — meeting link muncul begitu batch dibuat.', 'sub'));
+  if (!batches.length) box.appendChild(el('p', 'Belum ada batch — tautan JOIN muncul begitu batch dibuat.', 'sub'));
+  // Arena (balapan roket, lobi, upacara). Berkas arena bersama + ?event=
+  // bekerja untuk setiap event, juga yang foldernya belum dibuat; embed=1
+  // memaksa tampilan potret untuk lembar pemutar Skeddo.
+  box.appendChild(skLinkRow('2. Tombol WATCH (nonton arena) → kolom "Live stream link"',
+    `${location.origin}/lomba/latihan/arena.html?event=${encodeURIComponent(ev.slug)}&embed=1`));
   return box;
 }
 
