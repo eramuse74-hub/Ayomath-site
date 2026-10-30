@@ -149,10 +149,15 @@
 
   <section>
     <h2 id="peserta"><span class="when">H-3</span>Daftar peserta, PIN, dan kartu</h2>
+    <p>Dua tombol di setiap sesi, dua tugas berbeda:</p>
+    <ul>
+      <li><b>📋 Daftar &amp; kartu PIN</b> — <b>sebelum</b> hari-H: siapa yang <b>boleh</b> ikut (nomor, sekolah, kelas, PIN), cetak kartu, Ganti PIN, Buka kunci.</li>
+      <li><b>👀 Pantau peserta</b> — <b>saat</b> lomba: siapa yang <b>sudah masuk</b>, berapa terjawab, nilai, waktu, dan tombol Lepas.</li>
+    </ul>
     <ol>
       <li>Minta IOA mengirim daftar peserta per sesi: nama, sekolah, kelas.</li>
       <li>Beri setiap anak <b>nomor peserta</b> (001, 002, …). Simpan pasangan nama ↔ nomor di spreadsheet IOA, <b>bukan</b> di sistem.</li>
-      <li>Di admin, klik <b>Daftar peserta</b> pada sesi itu dan tempel satu baris per anak (nomor, sekolah, kelas):</li>
+      <li>Di admin, klik <b>📋 Daftar &amp; kartu PIN</b> pada sesi itu dan tempel satu baris per anak (nomor, sekolah, kelas):</li>
     </ol>
     <pre>001, SDN 3 Praya, 3
 002, SDN 3 Praya, 4
@@ -192,11 +197,11 @@
       <tr><th>Situasi</th><th>Yang diklik</th><th>Hasilnya</th></tr>
       <tr><td>Semua anak sudah duduk lebih cepat</td><td><b>Mulai sekarang (+10 dtk)</b></td><td>Hitung mundur 3-2-1 di semua layar, soal terbuka 10 detik lagi</td></tr>
       <tr><td>Aula terlambat siap</td><td><b>Buka sekarang (+5 mnt)</b></td><td>Jam mulai digeser 5 menit dari sekarang; lama sesi tetap</td></tr>
-      <tr><td>Komputer anak mati / pindah komputer</td><td><b>Peserta</b> → <b>Lepas</b> pada nomornya</td><td>Anak mengetik nomor + PIN lagi di komputer lain; jawaban dan jamnya tetap</td></tr>
-      <tr><td>Anak salah PIN 5 kali (terkunci 10 menit)</td><td><b>Daftar peserta</b> → <b>Buka kunci</b></td><td>Anak bisa langsung mencoba lagi</td></tr>
-      <tr><td>Kartu hilang</td><td><b>Daftar peserta</b> → <b>Ganti PIN</b></td><td>PIN baru tampil di pesan hijau; tulis di kartu cadangan</td></tr>
+      <tr><td>Komputer anak mati / pindah komputer</td><td><b>👀 Pantau peserta</b> → <b>Lepas</b> pada nomornya</td><td>Anak mengetik nomor + PIN lagi di komputer lain; jawaban dan jamnya tetap</td></tr>
+      <tr><td>Anak salah PIN 5 kali (terkunci 10 menit)</td><td><b>📋 Daftar &amp; kartu PIN</b> → <b>Buka kunci</b></td><td>Anak bisa langsung mencoba lagi</td></tr>
+      <tr><td>Kartu hilang</td><td><b>📋 Daftar &amp; kartu PIN</b> → <b>Ganti PIN</b></td><td>PIN baru tampil di pesan hijau; tulis di kartu cadangan</td></tr>
       <tr><td>Anak datang terlambat</td><td>Tidak perlu apa-apa</td><td>Anak masuk biasa; waktunya dihitung sejak ia mulai, tetapi tetap berhenti di jam selesai sesi</td></tr>
-      <tr><td>Ingin melihat siapa sudah masuk</td><td><b>Peserta</b></td><td>Daftar nomor, jumlah terjawab, status terhubung</td></tr>
+      <tr><td>Ingin melihat siapa sudah masuk</td><td><b>👀 Pantau peserta</b></td><td>Daftar nomor, jumlah terjawab, status terhubung</td></tr>
     </table></div>
     <p>Selama sesi, anak <b>tidak pernah</b> melihat benar/salah atau peringkat. Roketnya naik satu langkah setiap menjawab.</p>
   </section>
@@ -231,7 +236,7 @@
     <div class="tbl"><table>
       <tr><th>Pesan di layar anak</th><th>Penyebab</th><th>Yang dilakukan</th></tr>
       <tr><td>"PIN salah. Periksa kartu pesertamu."</td><td>Salah ketik PIN</td><td>Periksa kartu; setelah 5 kali, nomor terkunci 10 menit</td></tr>
-      <tr><td>"PIN salah 5 kali. Nomor ini dikunci…"</td><td>5 kali salah PIN</td><td>Admin: Daftar peserta → <b>Buka kunci</b></td></tr>
+      <tr><td>"PIN salah 5 kali. Nomor ini dikunci…"</td><td>5 kali salah PIN</td><td>Admin: <b>📋 Daftar &amp; kartu PIN</b> → <b>Buka kunci</b></td></tr>
       <tr><td>"Nomor peserta tidak terdaftar di sesi ini."</td><td>Nomor salah, atau anak di sesi lain</td><td>Cocokkan kode sesi dan nomor di kartu dengan daftar</td></tr>
       <tr><td>"Nomor ini sudah dipakai di komputer lain."</td><td>Nomor sudah aktif di perangkat lain</td><td>Admin: Peserta → <b>Lepas</b>, lalu anak masuk lagi</td></tr>
       <tr><td>"Kelas belum diisi di daftar peserta."</td><td>Baris roster tanpa kelas</td><td>Tambahkan kelas di baris itu, Simpan daftar</td></tr>

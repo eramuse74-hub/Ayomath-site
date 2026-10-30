@@ -669,8 +669,9 @@ function batchCard(b) {
     : b.access === 'skeddo' ? (b.link_key ? 'skeddo (link terkunci)' : 'skeddo (belum dikunci)')
     : 'open (uji staf)';
   left.appendChild(el('div',
-    `Soal untuk kelas ${(b.kelas_list ?? []).join(', ') || '—'} · peserta ${b.entries} (selesai ${b.done})`
-    + ` · daftar peserta ${b.roster ? b.roster + ' nomor (tertutup)' : 'terbuka — nama + nomor otomatis'} · papan: ${b.live_board}`
+    `Soal untuk kelas ${(b.kelas_list ?? []).join(', ') || '—'}`
+    + ` · terdaftar: ${b.roster ? b.roster + ' nomor (tertutup)' : 'terbuka — nama + nomor otomatis'}`
+    + ` · sudah masuk: ${b.entries} (selesai ${b.done}) · papan: ${b.live_board}`
     + ` · akses: ${akses}`, 'when'));
   head.appendChild(left);
   card.appendChild(head);
@@ -682,9 +683,14 @@ function batchCard(b) {
   const peserta = el('div', null, 'editor hidden');
   const roster = el('div', null, 'editor hidden');
 
-  actions.appendChild(btn('Ubah', 'ghost', () => { editor.classList.toggle('hidden'); if (!editor.childElementCount) fillEditor(editor, b, msg); }));
-  actions.appendChild(btn('Peserta', 'ghost', async () => { peserta.classList.toggle('hidden'); if (!peserta.classList.contains('hidden')) await fillEntries(peserta, b, msg); }));
-  actions.appendChild(btn('Daftar peserta', 'ghost', async () => { roster.classList.toggle('hidden'); if (!roster.classList.contains('hidden')) await fillRoster(roster, b, msg); }));
+  // One panel at a time: "Daftar & kartu PIN" (before the day — who may join)
+  // and "Pantau peserta" (on the day — who has joined) looked alike when both
+  // were open under each other (Eric, 2026-10-30).
+  const panels = [editor, roster, peserta];
+  const showOnly = (p) => { const open = p.classList.contains('hidden'); for (const x of panels) x.classList.add('hidden'); if (open) p.classList.remove('hidden'); return open; };
+  actions.appendChild(btn('Ubah', 'ghost', () => { if (showOnly(editor) && !editor.childElementCount) fillEditor(editor, b, msg); }));
+  actions.appendChild(btn('📋 Daftar & kartu PIN', 'ghost', async () => { if (showOnly(roster)) await fillRoster(roster, b, msg); }));
+  actions.appendChild(btn(`👀 Pantau peserta (${b.entries})`, 'ghost', async () => { if (showOnly(peserta)) await fillEntries(peserta, b, msg); }));
   actions.appendChild(armed('Buka sekarang (+5 mnt)', 'gold', async () => {
     try {
       const r = await rpc('lomba_admin_open_now', { p_batch: b.id, p_delay_sec: 300 });
@@ -779,7 +785,7 @@ function fillEditor(editor, b, msg) {
       access: fAccess.value,
     };
     if (fAccess.value === 'tiket' && !b.roster) {
-      say(msg, 'Pintu tiket butuh daftar peserta (nomor, sekolah, kelas) — isi dulu lewat "Daftar peserta".', false);
+      say(msg, 'Pintu tiket butuh daftar peserta (nomor, sekolah, kelas) — isi dulu lewat "📋 Daftar & kartu PIN".', false);
       return;
     }
     try {
@@ -807,8 +813,11 @@ async function fillEntries(box, b, msg) {
   let rows;
   try { rows = await rpc('lomba_admin_entries', { p_batch: b.id }); }
   catch (e) { box.replaceChildren(el('p', errText(e), 'msg err')); return; }
-  box.replaceChildren();
-  if (!rows?.length) { box.appendChild(el('p', 'Belum ada peserta.', 'sub')); return; }
+  box.replaceChildren(panelHead('👀 Pantau peserta — yang sudah masuk',
+    'Dipakai saat lomba berjalan: siapa sudah masuk, berapa terjawab, nilai, waktu. Tombol Lepas untuk anak yang pindah komputer.'));
+  const reload = btn('Muat ulang daftar ini', 'ghost', () => fillEntries(box, b, msg));
+  box.appendChild(reload);
+  if (!rows?.length) { box.appendChild(el('p', 'Belum ada yang masuk.', 'sub')); return; }
   const t = el('table');
   const th = el('tr');
   for (const h of ['Peserta', 'Nama', 'Kelas', 'Sekolah', 'Mulai', 'Dijawab', 'Nilai', 'Waktu', 'Perangkat', '']) th.appendChild(el('th', h));
@@ -862,6 +871,13 @@ function parseRosterLine(l) {
 }
 
 function eventOf(b) { return S.events.find(e => e.id === b.event_id); }
+
+function panelHead(title, note) {
+  const d = el('div');
+  d.appendChild(el('p', title, 'ptitle'));
+  d.appendChild(el('p', note, 'sub'));
+  return d;
+}
 
 function eventLines(ev) {
   const lines = [];
@@ -928,7 +944,8 @@ async function fillRoster(box, b, msg) {
   try { rows = await rpc('lomba_admin_roster', { p_batch: b.id }); }
   catch (e) { box.replaceChildren(el('p', errText(e), 'msg err')); return; }
   rows = rows ?? [];
-  box.replaceChildren();
+  box.replaceChildren(panelHead('📋 Daftar & kartu PIN — siapa yang boleh ikut',
+    'Diisi sebelum hari-H: nomor, sekolah, kelas. Server memberi PIN; dari sini cetak kartu, Ganti PIN, atau Buka kunci.'));
   box.appendChild(el('label', 'Satu baris per peserta: nomor, sekolah, kelas (kelas wajib untuk pintu tiket). '
     + 'Nomor yang sudah ada mempertahankan PIN-nya; nomor yang tidak ada di daftar dihapus. '
     + 'Kosongkan semua = batch terbuka: peserta mengisi nama (boleh kosong) dan nomor diberikan otomatis.'));
