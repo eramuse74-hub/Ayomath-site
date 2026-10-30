@@ -681,7 +681,7 @@ async function loadEvent() {
   if (DEMO) {
     S.ev = TEASER
       ? { name: 'Lomba AyoMath', series: 'Lomba AyoMath', edition: 'Contoh tampilan arena', host: 'sekolah peserta', organizer: 'AyoMath', theme: { accent: '#F2C14E', flag: 'ID' } }
-      : { name: 'IOA Math Competition', series: 'IOA Math Competition', edition: 'Lombok Bangkit', host: 'Dinas Pendidikan [KABUPATEN]', organizer: 'IOA', theme: { accent: '#F2C14E', flag: 'ID' } };
+      : { name: 'IOA Math Competition', series: 'IOA Math Competition', edition: 'Lombok Bangkit', host: 'Dinas Pendidikan', organizer: 'IOA', theme: { accent: '#F2C14E', flag: 'ID' } };
     $('t1').textContent = S.ev.series; $('t2').textContent = S.ev.edition;
     applyFlag('ID');
     const org = $('org'); org.replaceChildren();

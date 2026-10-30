@@ -110,11 +110,24 @@
   <!-- ── Masuk ─────────────────────────────────────────────────────────── -->
   <div class="panel" id="login">
     <h2>Masuk</h2>
-    <p class="sub">Kode 6 angka dikirim ke email staf. Tidak ada kata sandi.</p>
+    <p class="sub">Kode 6 angka dikirim ke email staf — atau masuk dengan kata sandi bila sudah diatur.</p>
+    <div id="step-pass" class="hidden">
+      <label for="p-email">Email staf</label>
+      <input id="p-email" type="email" autocomplete="username" placeholder="nama@contoh.com">
+      <label for="p-pass" style="margin-top:8px">Kata sandi</label>
+      <input id="p-pass" type="password" autocomplete="current-password">
+      <div class="row" style="margin-top:10px">
+        <button id="pass-login">Masuk</button>
+        <button class="ghost" id="to-code">Pakai kode email</button>
+      </div>
+    </div>
     <div id="step-email">
       <label for="email">Email staf</label>
       <input id="email" type="email" autocomplete="email" placeholder="nama@contoh.com">
-      <div class="row" style="margin-top:10px"><button id="send-code">Kirim kode</button></div>
+      <div class="row" style="margin-top:10px">
+        <button id="send-code">Kirim kode</button>
+        <button class="ghost" id="to-pass">Pakai kata sandi</button>
+      </div>
     </div>
     <div id="step-code" class="hidden">
       <label for="code">Kode dari email</label>
@@ -129,6 +142,21 @@
 
   <!-- ── Aplikasi ──────────────────────────────────────────────────────── -->
   <div id="app" class="hidden">
+    <!-- Kata sandi: jalur masuk cadangan untuk hari-H (email kode dibatasi
+         ±2 email/jam oleh pengirim bawaan Supabase). -->
+    <div class="panel" id="pw-panel">
+      <p class="ptitle"><span>Kata sandi staf</span>
+        <button class="ghost" id="pw-toggle">Atur kata sandi</button></p>
+      <p class="sub" id="pw-hint">Atur sekali, lalu hari-H bisa masuk tanpa menunggu kode email.</p>
+      <div id="pw-editor" class="editor hidden">
+        <label for="pw-new">Kata sandi baru (min. 10 karakter)</label>
+        <input id="pw-new" type="password" autocomplete="new-password">
+        <label for="pw-new2" style="margin-top:8px">Ulangi</label>
+        <input id="pw-new2" type="password" autocomplete="new-password">
+        <div class="row" style="margin-top:10px"><button id="pw-save">Simpan kata sandi</button></div>
+        <div class="msg" id="pw-msg"></div>
+      </div>
+    </div>
     <div class="panel">
       <p class="ptitle"><span>Event</span>
         <button class="ghost" id="toggle-new-event">+ Event baru</button></p>
@@ -252,6 +280,41 @@ $('verify-code').onclick = async () => {
   $('verify-code').disabled = false;
   if (error) return say($('login-msg'), errText(error), false);
   await boot();
+};
+// Kata sandi — cadangan bila email kode lambat / kena batas kirim.
+const showStep = (id) => {
+  for (const s of ['step-pass', 'step-email', 'step-code']) $(s).classList.toggle('hidden', s !== id);
+  say($('login-msg'), '', true);
+};
+$('to-pass').onclick = () => { $('p-email').value = $('email').value; showStep('step-pass'); $('p-pass').focus(); };
+$('to-code').onclick = () => { $('email').value = $('p-email').value; showStep('step-email'); };
+$('pass-login').onclick = async () => {
+  const email = $('p-email').value.trim().toLowerCase();
+  const password = $('p-pass').value;
+  if (!email || !password) return say($('login-msg'), 'Isi email dan kata sandi.', false);
+  $('pass-login').disabled = true;
+  const { error } = await db.auth.signInWithPassword({ email, password });
+  $('pass-login').disabled = false;
+  if (error) {
+    return say($('login-msg'), /invalid/i.test(error.message)
+      ? 'Email atau kata sandi salah — atau kata sandi belum diatur. Masuk dengan kode email, lalu "Atur kata sandi".'
+      : errText(error), false);
+  }
+  $('p-pass').value = '';
+  await boot();
+};
+$('p-pass').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('pass-login').click(); });
+$('pw-toggle').onclick = () => $('pw-editor').classList.toggle('hidden');
+$('pw-save').onclick = async () => {
+  const a = $('pw-new').value, b = $('pw-new2').value;
+  if (a.length < 10) return say($('pw-msg'), 'Minimal 10 karakter.', false);
+  if (a !== b) return say($('pw-msg'), 'Kedua isian tidak sama.', false);
+  $('pw-save').disabled = true;
+  const { error } = await db.auth.updateUser({ password: a });
+  $('pw-save').disabled = false;
+  if (error) return say($('pw-msg'), errText(error), false);
+  $('pw-new').value = $('pw-new2').value = '';
+  say($('pw-msg'), `Tersimpan ${stamp()}. Coba sekali: Keluar, lalu masuk dengan "Pakai kata sandi".`, true);
 };
 $('code').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('verify-code').click(); });
 $('email').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('send-code').click(); });

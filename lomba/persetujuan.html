@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Surat Persetujuan Orang Tua — Lomba</title>
+<!--
+  Parent/guardian consent form for a Lomba event. Printed on A4 and handed to
+  parents by the school or organiser; the signed paper stays with the
+  organiser/school and is never sent to AyoMath. Notes: docs/LOMBA_PAPERWORK.md.
+  Facts here must match website/privacy.html (Mode Lomba).
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=DM+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#1d1838;--muted:#5f587d;--line:#bdb6d6;--accent:#B8324A;--gold:#F2C14E;--paper:#fff;--bg:#eceaf3}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:'DM Sans',system-ui,sans-serif;font-size:13.5px;line-height:1.45}
+  .bar{max-width:210mm;margin:16px auto 0;padding:0 16px;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+  .bar p{margin:0;color:var(--muted);font-size:13px}
+  .bar button{font:inherit;font-weight:700;border:0;border-radius:10px;padding:9px 16px;background:var(--accent);color:#fff;cursor:pointer}
+  .sheet{max-width:210mm;margin:12px auto 24px;background:var(--paper);padding:14mm 15mm;box-shadow:0 4px 24px rgba(30,20,60,.12)}
+  header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;border-bottom:3px solid var(--accent);padding-bottom:6px;margin-bottom:8px}
+  h1{font-family:'Baloo 2',sans-serif;font-weight:800;font-size:22px;line-height:1.1;margin:0}
+  .sub{color:var(--muted);font-size:12px;margin:2px 0 0}
+  .tag{font-size:11px;font-weight:700;color:var(--accent);border:1.5px solid var(--accent);border-radius:999px;padding:2px 9px;white-space:nowrap}
+  h2{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:15px;margin:9px 0 2px;color:var(--accent)}
+  ul{margin:0;padding-left:18px}
+  li{margin:1px 0}
+  .fields{display:grid;grid-template-columns:1fr 1fr;gap:6px 18px;margin:4px 0 2px}
+  .f{display:flex;align-items:flex-end;gap:6px;min-width:0}
+  .f span{white-space:nowrap;font-weight:600}
+  .f i{flex:1;border-bottom:1px solid var(--line);height:18px;min-width:40px}
+  .wide{grid-column:1 / -1}
+  .note{color:var(--muted);font-size:11.5px;margin:2px 0 0}
+  .tick{display:flex;gap:9px;align-items:flex-start;margin:6px 0}
+  .box{flex:0 0 15px;height:15px;border:1.6px solid var(--ink);border-radius:3px;margin-top:2px}
+  .sign{display:grid;grid-template-columns:1.3fr 1fr;gap:6px 18px;margin-top:8px}
+  .sig{grid-row:span 2;border:1px dashed var(--line);border-radius:8px;min-height:62px;padding:4px 8px;color:var(--muted);font-size:11.5px}
+  footer{margin-top:9px;border-top:1px solid var(--line);padding-top:5px;color:var(--muted);font-size:11px}
+  @page{size:A4;margin:0}
+  @media print{
+    body{background:#fff;font-size:12.5px}
+    .bar{display:none}
+    .sheet{margin:0;max-width:none;box-shadow:none;padding:12mm 14mm}
+  }
+  @media (max-width:560px){
+    .sheet{padding:18px 16px}
+    .fields,.sign{grid-template-columns:1fr}
+    .sig{grid-row:auto}
+  }
+</style>
+</head>
+<body>
+<div class="bar">
+  <p>Untuk panitia / sekolah: isi nama acara, lalu cetak A4 dan bagikan ke orang tua.</p>
+  <button type="button" onclick="window.print()">Cetak</button>
+</div>
+
+<main class="sheet">
+  <header>
+    <div>
+      <h1>Surat Persetujuan Orang Tua / Wali</h1>
+      <p class="sub">Keikutsertaan anak dalam lomba matematika daring</p>
+    </div>
+    <span class="tag">Disimpan panitia</span>
+  </header>
+
+  <div class="fields">
+    <div class="f wide"><span>Nama lomba:</span><i></i></div>
+    <div class="f"><span>Tanggal:</span><i></i></div>
+    <div class="f"><span>Kabupaten / tempat:</span><i></i></div>
+    <div class="f"><span>Penyelenggara:</span><i></i></div>
+    <div class="f"><span>Kontak panitia:</span><i></i></div>
+  </div>
+
+  <h2>Yang akan dilakukan anak Bapak/Ibu</h2>
+  <ul>
+    <li>Mengerjakan <b>satu paket soal matematika</b> secara daring, <b>15–20 menit</b> (15 soal untuk kelas 1–2, 20 soal untuk kelas 3–6).</li>
+    <li>Di komputer yang disediakan panitia, di ruang lomba, <b>dengan pengawas</b>. Kertas coret-coretan boleh dipakai.</li>
+    <li>Anak masuk dengan <b>nomor peserta dan PIN</b> dari kartu peserta. Kartu itu <b>tidak memuat nama</b>.</li>
+  </ul>
+
+  <h2>Data yang disimpan dan siapa yang melihatnya</h2>
+  <ul>
+    <li><b>Disimpan di server lomba (platform AyoMath):</b> nomor peserta, sekolah, kelas, jawaban, waktu tiap jawaban, nilai, dan total waktu.</li>
+    <li><b>Nama anak tidak disimpan oleh AyoMath.</b> Daftar yang menghubungkan nomor dengan nama anak hanya dipegang panitia dan sekolah.</li>
+    <li><b>Papan arena</b> (layar di ruangan dan tautan untuk penonton) menampilkan nomor dan sekolah, misalnya "Peserta 017 · SDN 1 …", beserta kemajuan dan nilai selama dan sesudah lomba. Jawaban dan PIN tidak pernah tampil.</li>
+    <li><b>Daftar hasil</b> (nomor, sekolah, kelas, nilai, waktu) diserahkan kepada panitia dan sekolah.</li>
+    <li>Data tidak dibagikan kepada sponsor dan tidak dipakai untuk iklan.</li>
+    <li><b>Penyimpanan:</b> hasil disimpan sebagai catatan resmi lomba. Bapak/Ibu dapat meminta penghapusan melalui panitia atau <b>ayomath.games@gmail.com</b>.</li>
+  </ul>
+
+  <h2>Persetujuan (beri tanda ✓)</h2>
+  <div class="tick"><span class="box"></span><div><b>Saya mengizinkan anak saya mengikuti lomba ini</b> dan menyetujui pengolahan data seperti dijelaskan di atas. <span class="note">(wajib untuk ikut lomba)</span></div></div>
+  <div class="tick"><span class="box"></span><div>Saya mengizinkan <b>panitia</b> mengambil dan memakai <b>foto/video kegiatan</b> yang memperlihatkan anak saya. <span class="note">(pilihan; boleh tidak dicentang. Foto/video menjadi tanggung jawab panitia, bukan AyoMath.)</span></div></div>
+
+  <div class="fields">
+    <div class="f wide"><span>Nama anak:</span><i></i></div>
+    <div class="f"><span>Sekolah:</span><i></i></div>
+    <div class="f"><span>Kelas:</span><i></i></div>
+    <div class="f"><span>Nomor peserta (diisi panitia):</span><i></i></div>
+  </div>
+  <p class="note">Nama anak di lembar ini hanya untuk panitia dan sekolah. Lembar ini tidak dikirim ke AyoMath.</p>
+
+  <div class="sign">
+    <div class="f"><span>Nama orang tua / wali:</span><i></i></div>
+    <div class="sig">Tanda tangan</div>
+    <div class="f"><span>Hubungan dengan anak:</span><i></i></div>
+    <div class="f"><span>No. HP:</span><i></i></div>
+    <div class="f"><span>Tanggal:</span><i></i></div>
+  </div>
+
+  <footer>
+    Kebijakan privasi lengkap: www.ayomath.com/privacy.html (bagian "Mode Lomba") · Pertanyaan tentang lomba: hubungi panitia · Pertanyaan tentang data: ayomath.games@gmail.com
+  </footer>
+</main>
+</body>
+</html>
