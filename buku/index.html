@@ -9,18 +9,21 @@
 <meta property="og:description" content="Fiksi ilmiah untuk anak, berlatar Lombok. Baca online atau unduh EPUB.">
 <meta property="og:image" content="https://www.ayomath.com/buku/tamu-di-aikbatu/cover.jpg">
 <script src="../lang.js"></script>
+<link rel="stylesheet" href="../site.css">
+<meta name="theme-color" content="#F7F8FC" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#13112A" media="(prefers-color-scheme: dark)">
 <style>
-  :root{--night:#0E1730;--night2:#1B2A52;--gold:#E9B949;--gold-dark:#9A6B12;--bg:#F7F8FC;--surface:#fff;--text:#2D2A45;--muted:#6b6880;--line:rgba(45,42,69,.12)}
-  *{box-sizing:border-box}
-  body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+  /* Page-only tokens (site.css has the rest): the trilogy "Buku n" label, the
+     selected tab/dot accent and the "in preparation" badge, lifted for dark. */
+  :root{--gold-dark:#9A6B12;--pick:var(--night2);--soon-bg:#EFEDFB;--soon-fg:#6C5CE7}
+  @media (prefers-color-scheme:dark){
+    :root{--gold-dark:#E9B949;--pick:#E9B949;--soon-bg:#2A2548;--soon-fg:#B7AEFF}
+  }
   .wrap{max-width:960px;margin:0 auto;padding:0 20px}
   .top{display:flex;justify-content:space-between;align-items:center;padding:16px 0}
   .back{color:var(--muted);text-decoration:none;font-size:14px;font-weight:700}
   .back:hover{color:var(--text)}
-  .lang{display:inline-flex;background:#fff;border:1px solid var(--line);border-radius:999px;padding:3px;gap:2px}
-  .lang button{border:0;background:none;font:inherit;font-weight:800;font-size:13px;padding:4px 12px;border-radius:999px;color:var(--muted);cursor:pointer}
-  .lang button.on{background:var(--night2);color:#fff}
-  html:not([data-lang="en"]) [lang="en"],html[data-lang="en"] [lang="id"]{display:none}
+  .lang button.on{background:var(--night2)}
 
   .pagehead h1{font-size:30px;font-weight:900;margin:8px 0 2px}
   .pagehead p{color:var(--muted);margin:0 0 14px;max-width:640px}
@@ -28,11 +31,11 @@
   /* Shelf: cover tabs + one slide per book — swipe, arrows, or tap a cover */
   .tabs{display:flex;gap:10px;overflow-x:auto;padding:4px 2px 12px;scrollbar-width:none}
   .tabs::-webkit-scrollbar{display:none}
-  .tab{flex:0 0 auto;display:flex;align-items:center;gap:10px;background:#fff;border:2px solid var(--line);border-radius:14px;padding:6px 14px 6px 6px;font:inherit;color:var(--text);cursor:pointer;text-align:left}
+  .tab{flex:0 0 auto;display:flex;align-items:center;gap:10px;background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:6px 14px 6px 6px;font:inherit;color:var(--text);cursor:pointer;text-align:left}
   .tab img{width:34px;height:52px;object-fit:cover;border-radius:5px;display:block}
   .tab b{display:block;font-size:14px;line-height:1.2}
   .tab small{color:var(--muted);font-size:12px}
-  .tab[aria-selected="true"]{border-color:var(--night2);box-shadow:0 3px 12px rgba(27,42,82,.18)}
+  .tab[aria-selected="true"]{border-color:var(--pick);box-shadow:0 3px 12px var(--shadow)}
   .shelfwrap{position:relative}
   .shelf{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-radius:24px}
   .shelf::-webkit-scrollbar{display:none}
@@ -42,8 +45,8 @@
   .arrow.prev{left:-14px}.arrow.next{right:-14px}
   .arrow[disabled]{opacity:0;pointer-events:none}
   .dots{display:flex;justify-content:center;align-items:center;gap:8px;margin:12px 0 0}
-  .dots button{width:10px;height:10px;border-radius:50%;border:0;padding:0;background:rgba(45,42,69,.22);cursor:pointer}
-  .dots button[aria-current="true"]{background:var(--night2);width:26px;border-radius:999px}
+  .dots button{width:10px;height:10px;border-radius:50%;border:0;padding:0;background:var(--line);cursor:pointer}
+  .dots button[aria-current="true"]{background:var(--pick);width:26px;border-radius:999px}
   .hero.sea{background:radial-gradient(120% 140% at 80% 0%,#1B6A7C 0%,#12475A 40%,#0B2A3A 100%)}
   .hero.sea .kicker{color:#8FE3E0}
 
@@ -56,14 +59,13 @@
   .hero p{margin:0 0 12px}
   .chips{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 4px}
   .chip{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);font-size:13px;font-weight:700;padding:5px 12px;border-radius:999px}
-  .btns{display:flex;flex-wrap:wrap;gap:12px;margin-top:20px}
-  a.btn{display:inline-block;text-decoration:none;font-weight:800;padding:12px 20px;border-radius:14px}
-  a.gold{background:var(--gold);color:#1d1603}
+  .btns{gap:12px}
+  a.btn{padding:12px 20px}
   a.line{color:#fff;border:2px solid rgba(255,255,255,.55)}
   .note{font-size:13px;color:#B9C2DE;margin:14px 0 0}
 
   .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:20px 0}
-  .card{background:var(--surface);border-radius:20px;padding:22px;box-shadow:0 2px 14px rgba(45,42,69,.06)}
+  .card{background:var(--surface);border-radius:20px;padding:22px;box-shadow:0 2px 14px var(--shadow)}
   .card .ic{font-size:28px;line-height:1}
   .card h3{margin:8px 0 6px;font-size:17px;font-weight:900}
   .card p{margin:0;font-size:15px}
@@ -73,21 +75,20 @@
   .tri .card .n{color:var(--gold-dark);font-weight:900;font-size:13px;letter-spacing:.1em;text-transform:uppercase}
   .tri .card h3{font-family:Georgia,serif;font-size:19px}
   .badge{display:inline-block;font-size:12px;font-weight:800;padding:3px 10px;border-radius:999px;margin-top:10px}
-  .badge.ok{background:#E3F5E9;color:#1B7A42}
-  .badge.soon{background:#EFEDFB;color:#6C5CE7}
+  .badge.ok{background:var(--tick-bg);color:var(--green-dark)}
+  .badge.soon{background:var(--soon-bg);color:var(--soon-fg)}
   /* Full book = the Eramuse House group on Skeddo */
-  .req{background:var(--surface);border-radius:20px;padding:26px;margin:36px 0 8px;box-shadow:0 2px 14px rgba(45,42,69,.06);border-top:5px solid #12475A;scroll-margin-top:16px}
+  .req{background:var(--surface);border-radius:20px;padding:26px;margin:36px 0 8px;box-shadow:0 2px 14px var(--shadow);border-top:5px solid #12475A;scroll-margin-top:16px}
   .req h2{margin:0 0 6px;font-size:22px;font-weight:900}
   .req ul{margin:8px 0 16px;padding-left:20px;max-width:640px}
   .req li{margin:0 0 4px}
   .req a.go{display:inline-block;text-decoration:none;font-weight:800;padding:12px 20px;border-radius:14px;background:#12475A;color:#fff}
   .req .fine{font-size:13px;color:var(--muted);margin:12px 0 0;max-width:640px}
 
-  .about{background:linear-gradient(135deg,#f0eefe,#e7fbf7);border-radius:20px;padding:24px;margin:24px 0}
+  .about{background:var(--tint);border-radius:20px;padding:24px;margin:24px 0}
   .about h2{margin:0 0 6px;font-size:20px;font-weight:900}
   .about p{margin:0 0 8px}
-  footer{text-align:center;color:var(--muted);font-size:14px;padding:28px 0 48px}
-  footer a{color:#1F9E8E}
+  footer{padding:28px 0 48px}
   @media (max-width:760px){
     .hero{grid-template-columns:1fr;padding:24px;gap:22px}
     .hero img{max-width:220px;margin:0 auto}
@@ -117,8 +118,8 @@
   </div>
 
   <div class="tabs" role="tablist" aria-label="Pilih buku / Choose a book">
-    <button class="tab" type="button" role="tab" data-go="tamu-di-aikbatu" aria-selected="true"><img src="tamu-di-aikbatu/cover.jpg" alt="" width="34" height="52"><span><b>Tamu di Aikbatu</b><small lang="id">Langit · Lombok</small><small lang="en">The sky · Lombok</small></span></button>
-    <button class="tab" type="button" role="tab" data-go="satu-napas" aria-selected="false"><img src="satu-napas/cover.jpg" alt="" width="34" height="52"><span><b>Satu Napas</b><small lang="id">Laut · Wakatobi</small><small lang="en">The sea · Wakatobi</small></span></button>
+    <button class="tab" type="button" role="tab" data-go="tamu-di-aikbatu" aria-selected="true"><img src="tamu-di-aikbatu/cover-480.webp" alt="" width="34" height="52"><span><b>Tamu di Aikbatu</b><small lang="id">Langit · Lombok</small><small lang="en">The sky · Lombok</small></span></button>
+    <button class="tab" type="button" role="tab" data-go="satu-napas" aria-selected="false"><img src="satu-napas/cover-480.webp" alt="" width="34" height="52"><span><b>Satu Napas</b><small lang="id">Laut · Wakatobi</small><small lang="en">The sea · Wakatobi</small></span></button>
   </div>
 
   <div class="shelfwrap">
@@ -126,7 +127,7 @@
   <button class="arrow next" type="button" aria-label="Buku berikutnya / Next book">›</button>
   <div class="shelf" id="shelf">
   <section class="hero" id="tamu-di-aikbatu">
-    <img src="tamu-di-aikbatu/cover.jpg" width="768" height="1376" alt="Sampul buku Tamu di Aikbatu: seorang anak berambut jabrik duduk memegang bola batu yang bercahaya biru, dengan Gunung Rinjani dan langit berbintang di belakangnya" data-en="Cover of Tamu di Aikbatu: a spiky-haired boy sitting with a stone sphere glowing blue, with Mount Rinjani and a starry sky behind him">
+    <img src="tamu-di-aikbatu/cover-480.webp" width="480" height="860" alt="Sampul buku Tamu di Aikbatu: seorang anak berambut jabrik duduk memegang bola batu yang bercahaya biru, dengan Gunung Rinjani dan langit berbintang di belakangnya" data-en="Cover of Tamu di Aikbatu: a spiky-haired boy sitting with a stone sphere glowing blue, with Mount Rinjani and a starry sky behind him">
     <div>
       <p class="kicker" lang="id">Fiksi ilmiah untuk anak · Buku 1 dari 3</p>
       <p class="kicker" lang="en">Science fiction for children · Book 1 of 3</p>
@@ -168,7 +169,7 @@
   </section>
 
   <section class="hero sea" id="satu-napas">
-    <img src="satu-napas/cover.jpg" width="572" height="1024" loading="lazy" alt="Sampul buku Satu Napas: seorang anak perempuan menuruni tangga rumah panggung ke dalam laut malam, dengan dua paus bercahaya di bawahnya" data-en="Cover of Satu Napas: a girl climbing down a stilt-house ladder into the night sea, with two glowing whales below her">
+    <img src="satu-napas/cover-480.webp" width="480" height="859" loading="lazy" alt="Sampul buku Satu Napas: seorang anak perempuan menuruni tangga rumah panggung ke dalam laut malam, dengan dua paus bercahaya di bawahnya" data-en="Cover of Satu Napas: a girl climbing down a stilt-house ladder into the night sea, with two glowing whales below her">
     <div>
       <p class="kicker" lang="id">Fiksi ilmiah untuk anak · Buku 1 dari 3</p>
       <p class="kicker" lang="en">Science fiction for children · Book 1 of 3</p>

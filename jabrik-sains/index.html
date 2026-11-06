@@ -6,10 +6,14 @@
 <title data-en="Jabrik Sains — A Science Teaching Companion for Primary Teachers">Jabrik Sains — Teman Mengajar IPAS untuk Guru SD</title>
 <meta name="description" content="Jabrik Sains: teman mengajar IPAS SD Kelas 1–6 untuk guru Indonesia. 43 pelajaran selaras CP IPAS 2025 (Fase B–C, plus pengenalan Fase A), 105 eksperimen berbahan rumahan, rubrik penilaian, dan Modul Ajar siap ekspor. Gratis, tanpa internet, tanpa proyektor." data-en="Jabrik Sains: a primary-science (IPAS) teaching companion for Indonesian teachers, Grades 1–6. 43 lessons mapped to the 2025 IPAS curriculum (Phases B–C, plus Phase A introduction), 105 experiments with household materials, assessment rubrics and ready-to-export lesson plans. Free, offline, no projector needed.">
 <script src="../lang.js"></script>
+<link rel="stylesheet" href="../site.css">
+<meta name="theme-color" content="#FBF8F1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#13112A" media="(prefers-color-scheme: dark)">
 <style>
-  :root{--green:#2E9E5B;--green-dark:#1B7A42;--green-soft:#E3F5E9;--bg:#FBF8F1;--surface:#fff;--ink:#1C2B22;--muted:#5A6B61;--line:#E7E2D6}
-  *{box-sizing:border-box}
-  body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+  /* Jabrik Sains keeps its warm paper look in light mode; dark mode uses the shared dark tokens. */
+  @media (prefers-color-scheme:light){:root{--bg:#FBF8F1;--text:#1C2B22;--muted:#5A6B61;--line:#E7E2D6;--nav-bg:rgba(251,248,241,.92)}}
+  :root{--green-soft:#E3F5E9}
+  @media (prefers-color-scheme:dark){:root{--green-soft:#173326}}
   .wrap{max-width:760px;margin:0 auto;padding:24px}
   .back{display:inline-block;color:var(--muted);text-decoration:none;font-size:14px;font-weight:700;padding:8px 0}
   .back:hover{color:var(--green-dark)}
@@ -18,26 +22,20 @@
   h1{font-size:34px;margin:12px 0 6px;font-weight:900}
   .tag{color:var(--muted);font-size:17px;margin:0 auto;max-width:520px}
   .card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:24px;margin:16px 0}
-  .feat{display:flex;gap:12px;align-items:flex-start;margin:14px 0}
-  .feat .ic{font-size:26px;line-height:1.2}
-  .feat b{display:block}
-  .btns{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:18px}
-  a.btn{display:inline-block;text-decoration:none;font-weight:800;padding:12px 20px;border-radius:14px}
-  a.green{background:var(--green);color:#fff}
-  a.ghost{background:#fff;color:var(--green-dark);border:2px solid var(--green)}
+  .feat{margin:14px 0}
+  .btns{justify-content:center;gap:12px}
+  a.btn{padding:12px 20px}
   .sectitle{font-size:24px;font-weight:900;margin:36px 0 4px;text-align:center}
   .subtle{color:var(--muted);text-align:center;margin:0 auto 10px;max-width:520px}
   .beats{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:18px 0 4px}
   .beat{background:var(--green-soft);color:var(--green-dark);font-weight:800;font-size:14px;padding:8px 14px;border-radius:999px}
   .promise{background:var(--green-soft);border-radius:20px;padding:24px;margin:16px 0;color:var(--green-dark)}
-  footer{text-align:center;color:var(--muted);font-size:14px;padding:32px 24px 48px}
+  footer{padding:32px 24px 48px}
   footer a{color:var(--green-dark)}
   /* ID ⇄ EN toggle — see ../lang.js */
   .langbar{display:flex;justify-content:space-between;align-items:center}
-  .lang{display:inline-flex;background:#fff;border:1px solid var(--line);border-radius:999px;padding:3px;gap:2px;margin-left:auto}
-  .lang button{border:0;background:none;font:inherit;font-weight:800;font-size:13px;padding:4px 12px;border-radius:999px;color:var(--muted);cursor:pointer}
-  .lang button.on{background:var(--green);color:#fff}
-  html:not([data-lang="en"]) [lang="en"],html[data-lang="en"] [lang="id"]{display:none}
+  .langbar .lang{margin-left:auto}
+  .lang button.on{background:var(--green)}
 </style>
 <script data-goatcounter="https://esumar.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>
@@ -58,7 +56,7 @@
     <p class="tag" lang="en">A science (IPAS) teaching companion for primary teachers — no internet, no projector.</p>
     <div class="btns">
       <a class="btn green" href="app/"><span lang="id">🌐 Coba Langsung di Browser</span><span lang="en">🌐 Try it in your Browser</span></a>
-      <a class="btn ghost" href="privacy.html"><span lang="id">Kebijakan Privasi &amp; Ketentuan</span><span lang="en">Privacy Policy &amp; Terms</span></a>
+      <a class="btn ghost-green" href="privacy.html"><span lang="id">Kebijakan Privasi &amp; Ketentuan</span><span lang="en">Privacy Policy &amp; Terms</span></a>
     </div>
     <p class="subtle" style="margin-top:14px;font-size:14px" lang="id">Versi uji coba — bisa langsung
        dibuka di HP atau laptop, tanpa memasang apa pun. Aplikasi Android menyusul.</p>
@@ -106,9 +104,6 @@
   <h2 class="sectitle" lang="id">Bantuan saat mengajar</h2>
   <h2 class="sectitle" lang="en">Help while teaching</h2>
   <div class="card">
-    <div class="feat"><span class="ic">🎨</span>
-      <span lang="id"><b>Ilustrasi di setiap pelajaran</b>Ke-43 pelajaran bergambar, dan tiap bagian yang ditemukan anak — akar, jantung, magnet — punya gambarnya sendiri. Tampil besar di Layar Kelas untuk proyektor atau TV; tetap tanpa internet.</span>
-      <span lang="en"><b>Illustrations in every lesson</b>All 43 lessons are illustrated, and every part the children discover — roots, heart, magnet — has its own picture. Shown big on the Class Screen for a projector or TV; still no internet needed.</span></div>
     <div class="feat"><span class="ic">🔍</span>
       <span lang="id"><b>Rubrik “apa yang dilihat”</b>Tiga tingkat — 🌱 Belum · 🌿 Berkembang · 💚 Paham — berisi perilaku nyata yang bisa diamati, agar guru tak perlu menebak apakah anak benar-benar paham.</span>
       <span lang="en"><b>“What you'll see” rubrics</b>Three levels — 🌱 Not yet · 🌿 Developing · 💚 Got it — listing real, observable behaviours, so teachers never have to guess whether a child truly understands.</span></div>

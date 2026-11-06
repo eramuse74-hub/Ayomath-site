@@ -6,25 +6,22 @@
   <title data-en="Jabrik Sains — Privacy Policy, Terms &amp; Disclaimer">Jabrik Sains — Kebijakan Privasi, Ketentuan &amp; Penafian</title>
   <meta name="description" content="Kebijakan privasi, ketentuan penggunaan, dan penafian Jabrik Sains — alat bantu mengajar IPAS gratis untuk guru di Indonesia. Aplikasi bekerja sepenuhnya luring dan tidak mengumpulkan data pribadi apa pun." data-en="Privacy policy, terms of use and disclaimer for Jabrik Sains — a free science (IPAS) teaching aid for teachers in Indonesia. The app works fully offline and collects no personal data at all." />
   <script src="../lang.js"></script>
+  <link rel="stylesheet" href="../site.css">
+  <meta name="theme-color" content="#FBF8F1" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#13112A" media="(prefers-color-scheme: dark)">
   <style>
-    :root {
-      --green: #2E9E5B; --green-dark: #1B7A42; --green-soft: #E3F5E9;
-      --bg: #FBF8F1; --surface: #FFFFFF; --ink: #1C2B22; --ink-soft: #5A6B61;
-      --line: #E7E2D6;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0; background: var(--bg); color: var(--ink);
-      font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      line-height: 1.6; -webkit-text-size-adjust: 100%;
-    }
+    /* Jabrik Sains keeps its warm paper look in light mode; dark mode uses the shared dark tokens. */
+    @media (prefers-color-scheme:light) { :root { --bg: #FBF8F1; --text: #1C2B22; --muted: #5A6B61; --line: #E7E2D6; } }
+    :root { --green-soft: #E3F5E9; }
+    @media (prefers-color-scheme:dark) { :root { --green-soft: #173326; } }
+    body { -webkit-text-size-adjust: 100%; }
     .wrap { max-width: 720px; margin: 0 auto; padding: 24px 20px 64px; }
-    .back { display: inline-block; color: var(--ink-soft); text-decoration: none; font-size: 0.88rem; font-weight: 700; padding: 4px 0 12px; }
+    .back { display: inline-block; color: var(--muted); text-decoration: none; font-size: 0.88rem; font-weight: 700; padding: 4px 0 12px; }
     .back:hover { color: var(--green-dark); }
     header { padding: 8px 0; }
-    h1 { font-size: 1.7rem; margin: 0 0 4px; color: var(--ink); }
-    .sub { color: var(--ink-soft); font-size: 0.95rem; margin: 0; }
-    .note { color: var(--ink-soft); font-size: 0.85rem; font-style: italic; margin: 6px 0 0; }
+    h1 { font-size: 1.7rem; margin: 0 0 4px; color: var(--text); }
+    .sub { color: var(--muted); font-size: 0.95rem; margin: 0; }
+    .note { color: var(--muted); font-size: 0.85rem; font-style: italic; margin: 6px 0 0; }
     .intro {
       background: var(--green-soft); color: var(--green-dark);
       border-radius: 16px; padding: 16px; margin: 20px 0; font-size: 0.98rem;
@@ -37,15 +34,13 @@
       font-size: 1.05rem; margin: 0 0 8px; display: flex; gap: 10px; align-items: baseline;
     }
     .card h2 .emoji { font-size: 1.2rem; }
-    .card p { margin: 0; color: var(--ink); }
-    footer { text-align: center; color: var(--ink-soft); font-size: 0.85rem; margin-top: 28px; }
-    a { color: var(--green-dark); }
+    .card p { margin: 0; color: var(--text); }
+    footer { font-size: 0.85rem; margin-top: 28px; padding: 0; }
+    a, footer a { color: var(--green-dark); }
     /* ID ⇄ EN toggle — see ../lang.js */
     .langbar { display: flex; justify-content: space-between; align-items: center; }
-    .lang { display: inline-flex; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 3px; gap: 2px; margin-left: auto; }
-    .lang button { border: 0; background: none; font: inherit; font-weight: 800; font-size: 13px; padding: 4px 12px; border-radius: 999px; color: var(--ink-soft); cursor: pointer; }
-    .lang button.on { background: var(--green); color: #fff; }
-    html:not([data-lang="en"]) [lang="en"], html[data-lang="en"] [lang="id"] { display: none; }
+    .langbar .lang { margin-left: auto; }
+    .lang button.on { background: var(--green); }
   </style>
 <script data-goatcounter="https://esumar.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>

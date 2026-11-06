@@ -6,10 +6,11 @@
 <title data-en="Terms of Use — AyoMath">Syarat Penggunaan — AyoMath</title>
 <meta name="description" content="Syarat Penggunaan (EULA) AyoMath: aplikasi gratis & nirlaba untuk anak SD, tanpa iklan dan tanpa pembelian dalam aplikasi." data-en="AyoMath Terms of Use (EULA): a free, non-profit app for primary-school children, with no ads and no in-app purchases.">
 <script src="lang.js"></script>
+<link rel="stylesheet" href="site.css">
+<meta name="theme-color" content="#F7F8FC" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#13112A" media="(prefers-color-scheme: dark)">
 <style>
-  :root{--teal:#1F9E8E;--bg:#F7F8FC;--surface:#fff;--text:#2D2A45;--muted:#6b6880}
-  *{box-sizing:border-box}
-  body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.65}
+  body{line-height:1.65}
   .wrap{max-width:760px;margin:0 auto;padding:24px}
   h1{font-size:30px;font-weight:900;margin:8px 0 4px}
   h2{font-size:19px;font-weight:800;margin:26px 0 8px;color:var(--teal)}
@@ -18,14 +19,11 @@
   a{color:var(--teal)}
   ul{padding-left:20px}
   .back{display:inline-block;text-decoration:none;font-weight:700}
-  .surface{background:var(--surface);border-radius:18px;padding:22px 24px;box-shadow:0 2px 14px rgba(45,42,69,.06)}
-  footer{color:var(--muted);font-size:14px;margin-top:28px;text-align:center}
+  .surface{background:var(--surface);border-radius:18px;padding:22px 24px;box-shadow:0 2px 14px var(--shadow)}
+  footer{margin-top:28px;padding:0}
   /* ID ⇄ EN toggle — see lang.js */
   .langbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
-  .lang{display:inline-flex;background:#fff;border:1px solid rgba(45,42,69,.14);border-radius:999px;padding:3px;gap:2px;margin-left:auto}
-  .lang button{border:0;background:none;font:inherit;font-weight:800;font-size:13px;padding:4px 12px;border-radius:999px;color:var(--muted);cursor:pointer}
-  .lang button.on{background:var(--teal);color:#fff}
-  html:not([data-lang="en"]) [lang="en"],html[data-lang="en"] [lang="id"]{display:none}
+  .langbar .lang{margin-left:auto}
 </style>
 <script data-goatcounter="https://esumar.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>
