@@ -30,16 +30,16 @@
   .tick a.it:hover{text-decoration:underline}
   .tick a.it .go{color:var(--teal)}
 
-  .sectitle{font-size:14px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:36px 0 12px}
+  /* Section titles read as headings, not captions (Eric 2026-11-06: the
+     old 14-px muted caps were easy to miss). */
+  .sectitle{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;color:var(--text);margin:40px 0 14px}
+  .sectitle::before{content:"";width:8px;height:22px;border-radius:4px;background:var(--teal);flex:0 0 auto}
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
   .app{background:var(--surface);border-radius:20px;padding:24px;box-shadow:0 2px 14px var(--shadow);display:flex;flex-direction:column}
   .app .logo{font-size:44px;line-height:1}
   .app h2,.app h3{font-size:24px;font-weight:900;margin:8px 0 2px}
   .who{color:var(--muted);font-weight:700;font-size:13px;letter-spacing:.02em;text-transform:uppercase;margin:0 0 10px}
   .app p{margin:0 0 4px}
-  /* Three phone screenshots inside the AyoMath card; the whole strip opens the app page. */
-  .peek{display:flex;gap:10px;margin:14px 0 2px}
-  .peek img{width:calc((100% - 20px)/3);height:auto;border-radius:12px;border:1px solid var(--line);box-shadow:0 4px 14px var(--shadow)}
 
   /* Komunitas: three Skeddo group cards */
   .lead{margin:0 0 14px;max-width:720px}
@@ -283,6 +283,11 @@
          materials, assessment rubrics, and ready-to-export lesson plans (Modul Ajar).
          Can be taught <b>without a projector and without internet</b> — and teachers
          are never monitored.</p>
+      <a class="peek" href="jabrik-sains/" aria-label="Lihat Jabrik Sains / See Jabrik Sains">
+        <img src="jabrik-sains/screenshots/02_pelajaran.webp" width="600" height="1077" loading="lazy" alt="Daftar pelajaran Jabrik Sains per fase" data-en="Jabrik Sains lesson list by phase">
+        <img src="jabrik-sains/screenshots/03_panca-indra.webp" width="600" height="1077" loading="lazy" alt="Halaman pelajaran Panca Indra" data-en="The Panca Indra lesson page">
+        <img src="jabrik-sains/screenshots/05_di-kelas.webp" width="600" height="1077" loading="lazy" alt="Mode di kelas: naskah lisan babak Pancing" data-en="In-class mode: the spoken script of the Hook beat">
+      </a>
       <div class="btns">
         <a class="btn green" href="jabrik-sains/app/"><span lang="id">🌐 Coba di Browser</span><span lang="en">🌐 Try in Browser</span></a>
         <a class="btn ghost-green" href="jabrik-sains/"><span lang="id">Selengkapnya</span><span lang="en">Learn more</span></a>
