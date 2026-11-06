@@ -6,44 +6,33 @@
 <title data-en="AyoMath — Free, Child-Friendly Primary Maths Game">AyoMath — Game Matematika SD Gratis & Ramah Anak</title>
 <meta name="description" content="AyoMath: game latihan matematika SD (Kelas 1–6) yang gratis, offline, tanpa iklan. Banyak mode yang makin menantang seiring kemampuan anak — termasuk Mode Jenius bertaraf internasional (benchmark Singapura & Korea)." data-en="AyoMath: a free, offline, ad-free maths practice game for primary school (Grades 1–6). Many modes that grow harder as the child improves — including an international-standard Genius Mode (benchmarked against Singapore & Korea).">
 <script src="../lang.js"></script>
+<link rel="stylesheet" href="../site.css">
+<meta name="theme-color" content="#F7F8FC" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#13112A" media="(prefers-color-scheme: dark)">
 <style>
-  :root{--teal:#1F9E8E;--violet:#6C5CE7;--coral:#FF6B6B;--bg:#F7F8FC;--surface:#fff;--text:#2D2A45;--muted:#6b6880}
-  *{box-sizing:border-box}
-  body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
   .wrap{max-width:760px;margin:0 auto;padding:24px}
   header{text-align:center;padding:48px 24px 32px}
   .logo{font-size:64px;line-height:1}
   h1{font-size:34px;margin:12px 0 6px;font-weight:900}
   .tag{color:var(--muted);font-size:17px;margin:0}
-  .card{background:var(--surface);border-radius:20px;padding:24px;margin:16px 0;box-shadow:0 2px 14px rgba(45,42,69,.06)}
-  .feat{display:flex;gap:12px;align-items:flex-start;margin:14px 0}
-  .feat .ic{font-size:26px;line-height:1.2}
-  .feat b{display:block}
-  .btns{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:18px}
-  a.btn{display:inline-block;text-decoration:none;font-weight:800;padding:12px 20px;border-radius:14px}
-  /* Official Google Play badge (unaltered artwork, ≥ 40 px tall per Google's badge rules). */
-  a.playbadge{display:inline-flex;align-items:center}
-  a.playbadge img{display:block;height:58px;width:auto;margin:-6px 0}
-  a.teal{background:var(--teal);color:#fff}
-  a.violet{background:var(--violet);color:#fff}
-  a.ghost{background:#fff;color:var(--teal);border:2px solid var(--teal)}
-  footer{text-align:center;color:var(--muted);font-size:14px;padding:32px 24px 48px}
-  footer a{color:var(--teal)}
-  .feat a{color:var(--teal);font-weight:700}
+  .card{background:var(--surface);border-radius:20px;padding:24px;margin:16px 0;box-shadow:0 2px 14px var(--shadow)}
+  .card.tint{background:var(--tint)}
+  .feat{margin:14px 0}
+  .btns{justify-content:center;gap:12px}
+  a.btn{padding:12px 20px}
+  a.playbadge img{height:58px;margin:-6px 0}
+  footer{padding:32px 24px 48px}
   .sectitle{font-size:24px;font-weight:900;margin:36px 0 4px;text-align:center}
   .subtle{color:var(--muted);text-align:center;margin:0 auto 10px;max-width:520px}
   .shots{display:flex;gap:14px;overflow-x:auto;padding:8px 2px 16px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
-  .shots img{flex:0 0 auto;width:200px;height:auto;border-radius:20px;border:1px solid rgba(45,42,69,.08);box-shadow:0 6px 20px rgba(45,42,69,.12);scroll-snap-align:center}
+  .shots img{flex:0 0 auto;width:200px;height:auto;border-radius:20px;border:1px solid var(--line);box-shadow:0 6px 20px var(--shadow);scroll-snap-align:center}
   .shots::-webkit-scrollbar{height:8px}
-  .shots::-webkit-scrollbar-thumb{background:rgba(45,42,69,.18);border-radius:8px}
+  .shots::-webkit-scrollbar-thumb{background:var(--line);border-radius:8px}
   /* ID ⇄ EN toggle — see ../lang.js */
   .langbar{display:flex;justify-content:space-between;align-items:center}
+  .langbar .lang{margin-left:auto}
   .back{display:inline-block;color:var(--muted);text-decoration:none;font-size:14px;font-weight:700;padding:8px 0}
   .back:hover{color:var(--teal)}
-  .lang{display:inline-flex;background:#fff;border:1px solid rgba(45,42,69,.14);border-radius:999px;padding:3px;gap:2px;margin-left:auto}
-  .lang button{border:0;background:none;font:inherit;font-weight:800;font-size:13px;padding:4px 12px;border-radius:999px;color:var(--muted);cursor:pointer}
-  .lang button.on{background:var(--teal);color:#fff}
-  html:not([data-lang="en"]) [lang="en"],html[data-lang="en"] [lang="id"]{display:none}
 </style>
 <script data-goatcounter="https://esumar.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>
@@ -125,7 +114,7 @@
       <span lang="en"><b>Shop &amp; Profile</b>Buy hats &amp; animal friends with coins earned by playing, then track the child's skills, level and rank in the Profile.</span></div>
   </div>
 
-  <div class="card" style="background:linear-gradient(135deg,#f0eefe,#e7fbf7)">
+  <div class="card tint">
     <div class="feat"><span class="ic">📈</span>
       <span lang="id"><b>Tumbuh bersama anak</b>Tidak ada mode yang “terlalu mudah” untuk selamanya. Dari berhitung dasar sampai penalaran ala Singapura/Korea di Mode Jenius, tingkat kesulitan naik bertahap — menantang tanpa membuat anak menyerah.</span>
       <span lang="en"><b>Grows with the child</b>No mode stays “too easy” forever. From basic arithmetic to Singapore/Korea-style reasoning in Genius Mode, difficulty rises gradually — challenging without making children give up.</span></div>
@@ -136,12 +125,14 @@
   <p class="subtle" lang="id">Belajar jadi petualangan seru — naik level, soal pilihan ganda, koreksi yang lembut, dan banyak permainan asik.</p>
   <p class="subtle" lang="en">Learning becomes an adventure — level up, multiple-choice problems, gentle corrections and lots of fun games.</p>
   <div class="shots">
-    <img src="screenshots/01_petualangan.png" width="1080" height="2400" alt="Peta petualangan AyoMath" data-en="AyoMath adventure map" loading="lazy">
-    <img src="screenshots/02_soal.png" width="1080" height="2400" alt="Soal pilihan ganda" data-en="Multiple-choice problem" loading="lazy">
-    <img src="screenshots/03_koreksi.png" width="1080" height="2400" alt="Koreksi lembut saat jawaban salah" data-en="Gentle correction on a wrong answer" loading="lazy">
-    <img src="screenshots/04_lariciko.png" width="1080" height="2400" alt="Permainan Lari Ciko" data-en="Ciko's Run game" loading="lazy">
-    <img src="screenshots/05_toko.png?v=2" width="1080" height="2400" alt="Toko Oren — koin, hewan, kostum" data-en="Oren's Shop — coins, animals, outfits" loading="lazy">
-    <img src="screenshots/06_profil.png" width="1080" height="2400" alt="Profil dan kemajuan belajar" data-en="Profile and learning progress" loading="lazy">
+    <img src="screenshots/00_sampul.webp" width="600" height="1077" alt="Layar pembuka AyoMath: Oren si kucing dengan tablet" data-en="AyoMath splash screen: Oren the cat with a tablet" loading="lazy">
+    <img src="screenshots/01_beranda.webp" width="600" height="1077" alt="Beranda: roket Oren dan jalur mini-game" data-en="Home: Oren's rocket and the mini-game path" loading="lazy">
+    <img src="screenshots/02_petualangan.webp" width="600" height="1077" alt="Peta petualangan AyoMath" data-en="AyoMath adventure map" loading="lazy">
+    <img src="screenshots/03_soal.webp" width="600" height="1333" alt="Soal pilihan ganda" data-en="Multiple-choice problem" loading="lazy">
+    <img src="screenshots/04_koreksi.webp" width="600" height="1333" alt="Koreksi lembut saat jawaban salah" data-en="Gentle correction on a wrong answer" loading="lazy">
+    <img src="screenshots/05_lariciko.webp" width="600" height="1333" alt="Permainan Lari Ciko" data-en="Ciko's Run game" loading="lazy">
+    <img src="screenshots/06_toko.webp" width="600" height="1333" alt="Toko Oren — koin, hewan, kostum" data-en="Oren's Shop — coins, animals, outfits" loading="lazy">
+    <img src="screenshots/07_profil.webp" width="600" height="1333" alt="Profil dan kemajuan belajar" data-en="Profile and learning progress" loading="lazy">
   </div>
   <p class="subtle" style="font-size:13px" lang="id">🪙 Koin (Rp) di dalam game <b>hanya didapat dengan bermain</b> — bukan uang asli, dan <b>tidak ada pembelian dalam aplikasi</b>.</p>
   <p class="subtle" style="font-size:13px" lang="en">🪙 In-game coins (Rp) are <b>earned only by playing</b> — not real money, and there are <b>no in-app purchases</b>.</p>

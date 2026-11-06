@@ -1,0 +1,63 @@
+/* site.css — shared base for the hub (index.html) and the AyoMath page
+   (ayomath/index.html). Page-specific rules stay inline in each page.
+   Every colour is a token, so the dark scheme only swaps tokens and the
+   few fixed surfaces; it follows the system setting (no toggle). */
+:root{color-scheme:light dark;
+  --teal:#1F9E8E;--violet:#6C5CE7;--green:#2E9E5B;--green-dark:#1B7A42;--coral:#FF6B6B;
+  --night:#0E1730;--night2:#1B2A52;--gold:#E9B949;
+  --bg:#F7F8FC;--surface:#fff;--surface2:#eef0f5;--text:#2D2A45;--muted:#6b6880;
+  --line:rgba(45,42,69,.12);--shadow:rgba(45,42,69,.06);--nav-bg:rgba(247,248,252,.92);
+  --tint:linear-gradient(135deg,#f0eefe,#e7fbf7);--tick-bg:#f2fbf9}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#13112A;--surface:#1E1A38;--surface2:#2A2548;--text:#EEEAFB;--muted:#ABA5C6;
+    --line:rgba(255,255,255,.13);--shadow:rgba(0,0,0,.35);--nav-bg:rgba(19,17,42,.92);
+    --tint:linear-gradient(135deg,#242047,#16302E);--tick-bg:#172A2A;--green-dark:#5FD39A}
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+
+/* Top bar: brand, section links, ID/EN */
+.nav{position:sticky;top:0;z-index:20;background:var(--nav-bg);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;gap:14px;min-height:56px}
+.brand{font-weight:900;font-size:17px;color:var(--text);text-decoration:none;white-space:nowrap}
+.links{display:flex;gap:4px;flex:1;overflow-x:auto;scrollbar-width:none}
+.links::-webkit-scrollbar{display:none}
+.links a{color:var(--muted);text-decoration:none;font-weight:800;font-size:14px;padding:6px 12px;border-radius:999px;white-space:nowrap}
+.links a:hover{background:var(--surface);color:var(--teal)}
+.lang{display:inline-flex;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:3px;gap:2px}
+.lang button{border:0;background:none;font:inherit;font-weight:800;font-size:13px;padding:4px 12px;border-radius:999px;color:var(--muted);cursor:pointer}
+.lang button.on{background:var(--teal);color:#fff}
+html:not([data-lang="en"]) [lang="en"],html[data-lang="en"] [lang="id"]{display:none}
+
+/* Buttons */
+.btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:auto;padding-top:18px}
+a.btn{display:inline-block;text-decoration:none;font-weight:800;padding:11px 18px;border-radius:14px}
+/* Official Google Play badge (unaltered artwork, ≥ 40 px tall per Google's badge rules). */
+a.playbadge{display:inline-flex;align-items:center}
+a.playbadge img{display:block;height:54px;width:auto;margin:-5px 0}
+a.teal{background:var(--teal);color:#fff}
+a.violet{background:var(--violet);color:#fff}
+a.green{background:var(--green);color:#fff}
+a.ghost{background:var(--surface);color:var(--teal);border:2px solid var(--teal)}
+a.ghost-green{background:var(--surface);color:var(--green-dark);border:2px solid var(--green)}
+a.gold{background:var(--gold);color:#1d1603}
+.btn.soon{display:inline-block;font-weight:800;padding:11px 18px;border-radius:14px;background:var(--surface2);color:var(--muted);cursor:default}
+
+/* Feature rows: icon + title + text. Only the LEADING bold is a title
+   line; bold inside the text stays inline (it used to break the line). */
+.feat{display:flex;gap:12px;align-items:flex-start}
+.feat .ic{font-size:25px;line-height:1.2}
+.feat span>b:first-child{display:block}
+.feat span{font-size:15px}
+.feat a{color:var(--teal);font-weight:700}
+
+footer{text-align:center;color:var(--muted);font-size:14px;padding:32px 0 48px}
+footer a{color:var(--teal)}
+
+@media (max-width:820px){
+  .brand{font-size:15px}
+  /* The link row scrolls sideways on phones; fade its right edge as a hint
+     and pad the end so the last link clears the fade when scrolled there. */
+  .links{padding-right:28px;mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent);-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent)}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
