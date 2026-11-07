@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>AyoMath — sampul animasi</title>
+<style>
+  :root { color-scheme: dark; }
+  html, body { margin: 0; height: 100%; background: #0b0716; overflow: hidden; }
+  .stage-wrap { position: fixed; inset: 0; display: grid; place-items: center; }
+  .stage {
+    position: relative; overflow: hidden; background: #0b0716;
+    aspect-ratio: 9 / 16; height: 100vh; max-width: 100vw;
+  }
+  @supports not (aspect-ratio: 9 / 16) { .stage { width: 56.25vh; } }
+  .stage > * { position: absolute; left: 0; top: 0; }
+  .bg { width: 100%; height: 100%; object-fit: cover; }
+  canvas { width: 100%; height: 100%; pointer-events: none; }
+  .layer { will-change: transform; transform-origin: 50% 50%; pointer-events: none; }
+  .layer img { display: block; width: 100%; height: 100%; }
+  /* each character has its own motion: Oren bobs, the robot rocks, the spider scuttles, the logo breathes */
+  .float   { animation: bob 4.2s ease-in-out infinite; }
+  .rock    { animation: rock 3.1s ease-in-out infinite; transform-origin: 50% 100%; }
+  .scuttle { animation: scuttle 2.3s ease-in-out infinite; transform-origin: 50% 100%; }
+  .breathe { animation: breathe 6s ease-in-out infinite; }
+  @keyframes bob     { 0%,100% { translate: 0 0; } 50% { translate: 0 -0.6%; } }
+  @keyframes rock    { 0%,100% { rotate: -1.4deg; translate: 0 0; } 25%,75% { translate: 0 -0.25%; } 50% { rotate: 1.4deg; translate: 0 0; } }
+  @keyframes scuttle { 0%,100% { translate: 0 0; rotate: 0deg; } 30% { translate: 1.2% -0.15%; rotate: 2deg; } 60% { translate: -0.8% 0; rotate: -1.5deg; } }
+  @keyframes breathe { 0%,100% { scale: 1; } 50% { scale: 1.012; } }
+  @media (prefers-reduced-motion: reduce) {
+    .float, .rock, .scuttle, .breathe { animation: none; }
+  }
+</style>
+</head>
+<body>
+<div class="stage-wrap">
+  <div class="stage" id="stage">
+    <img class="bg" src="bg.webp" alt="AyoMath: Oren si kucing berdiri di atas dadu kristal, di depan kastil dan galaksi penuh simbol matematika" draggable="false">
+    <canvas id="glyphs"></canvas>
+    <div class="layer" data-layer="dice"><img src="dice.webp" alt="" draggable="false"></div>
+    <div class="layer float" data-layer="cat"><img src="cat.webp" alt="" draggable="false"></div>
+    <div class="layer scuttle" data-layer="spider"><img src="spider.webp" alt="" draggable="false"></div>
+    <div class="layer rock" data-layer="robot"><img src="robot.webp" alt="" draggable="false"></div>
+    <div class="layer breathe" data-layer="logo"><img src="logo.webp" alt="AyoMath — The Math Adventure" draggable="false"></div>
+    <canvas id="sparkle"></canvas>
+  </div>
+</div>
+<script src="layout.js"></script>
+<script>
+(() => {
+  const L = window.COVER_LAYOUT;
+  const stage = document.getElementById('stage');
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ---- place the cut-out layers from the compositor's layout (fractions of the stage) ----
+  const layers = {};
+  for (const el of stage.querySelectorAll('.layer')) {
+    const name = el.dataset.layer, p = L.layers[name];
+    if (!p) continue;
+    el.style.left = (p.x * 100) + '%'; el.style.top = (p.y * 100) + '%';
+    el.style.width = (p.w * 100) + '%'; el.style.height = (p.h * 100) + '%';
+    layers[name] = el;
+  }
+  // parallax depth: how far each layer shifts for a full tilt (fraction of stage width)
+  const depth = { dice: 0.012, cat: 0.018, spider: 0.030, robot: 0.024, logo: 0.008 };
+
+  // ---- canvases ----
+  const gc = document.getElementById('glyphs'), gx = gc.getContext('2d');
+  const sc = document.getElementById('sparkle'), sx = sc.getContext('2d');
+  let W = 0, H = 0, dpr = 1;
+  function resize() {
+    const r = stage.getBoundingClientRect();
+    dpr = Math.min(devicePixelRatio || 1, 2);
+    W = Math.round(r.width); H = Math.round(r.height);
+    for (const c of [gc, sc]) { c.width = W * dpr; c.height = H * dpr; }
+    gx.setTransform(dpr, 0, 0, dpr, 0, 0); sx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    spriteCache.clear();
+  }
+  addEventListener('resize', resize);
+
+  // ---- glyphs flowing along the galaxy swirl ----
+  const SYMBOLS = ['π','Σ','∫','∞','Δ','Ω','√','≈','÷','×','½','⅓','¾','θ','λ','∑','≠','≤','+','=','7','3','9','4','12','x²','dx','∮','φ','∂'];
+  const BINARY = ['0','1'];
+  const COLORS = ['#7ff3e8', '#ffd36b', '#c9b3ff', '#9fe7ff'];
+  const spriteCache = new Map();
+  function sprite(text, color, size) {
+    const key = text + '|' + color + '|' + size;
+    let s = spriteCache.get(key);
+    if (s) return s;
+    const pad = Math.ceil(size * 0.9);
+    const c = document.createElement('canvas');
+    const w = Math.ceil(size * 1.6 * (text.length > 1 ? 1 + 0.45 * (text.length - 1) : 1)) + pad * 2, h = Math.ceil(size * 1.6) + pad * 2;
+    c.width = w * dpr; c.height = h * dpr;
+    const x = c.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 0, 0);
+    x.font = `700 ${size}px "Baloo 2", "Segoe UI", system-ui, sans-serif`;
+    x.textAlign = 'center'; x.textBaseline = 'middle';
+    x.shadowColor = color; x.shadowBlur = size * 0.9; x.fillStyle = color;
+    x.fillText(text, w / 2, h / 2); x.fillText(text, w / 2, h / 2);
+    x.shadowBlur = 0; x.fillStyle = '#ffffff'; x.globalAlpha = 0.55; x.fillText(text, w / 2, h / 2);
+    s = { c, w, h }; spriteCache.set(key, s); return s;
+  }
+  const rnd = (a, b) => a + Math.random() * (b - a);
+  const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+
+  const N = reduced ? 0 : 34;
+  const glyphs = [];
+  function spawn(g, fresh) {
+    g.text = pick(SYMBOLS); g.color = pick(COLORS);
+    g.r = fresh ? rnd(0.08, 0.46) : rnd(0.40, 0.50);     // radius, fraction of stage width
+    g.a = rnd(0, Math.PI * 2);                             // angle
+    g.spin = rnd(0.10, 0.22) * (Math.random() < 0.85 ? 1 : -1);  // rad/s
+    g.inward = rnd(0.010, 0.020);                           // fraction of W per second
+    g.size = rnd(0.022, 0.046);                             // fraction of W
+    g.life = 0; g.ttl = rnd(7, 13); g.swapAt = rnd(2, 5);
+    g.wob = rnd(0, Math.PI * 2);
+  }
+  for (let i = 0; i < N; i++) { const g = {}; spawn(g, true); g.life = rnd(0, g.ttl); glyphs.push(g); }
+
+  // binary rain in the top-right corner
+  const rain = [];
+  if (!reduced) for (let i = 0; i < 7; i++) rain.push({ x: rnd(0.66, 0.97), y: rnd(-0.1, 0.25), v: rnd(0.012, 0.022), bits: Array.from({ length: 9 }, () => pick(BINARY)), t: rnd(0, 1) });
+
+  // twinkling stars in the sky
+  const stars = [];
+  if (!reduced) for (let i = 0; i < 46; i++) stars.push({ x: rnd(0.03, 0.97), y: rnd(0.02, 0.55), r: rnd(0.6, 2.2), ph: rnd(0, 6.28), sp: rnd(0.6, 1.8), col: pick(['#ffffff', '#ffe9b0', '#bfe3ff']) });
+
+  // ---- parallax from pointer or device tilt ----
+  let px = 0, py = 0, tx = 0, ty = 0;
+  stage.addEventListener('pointermove', e => {
+    const r = stage.getBoundingClientRect();
+    tx = ((e.clientX - r.left) / r.width - 0.5) * 2; ty = ((e.clientY - r.top) / r.height - 0.5) * 2;
+  });
+  stage.addEventListener('pointerleave', () => { tx = 0; ty = 0; });
+  addEventListener('deviceorientation', e => {
+    if (e.gamma == null) return;
+    tx = Math.max(-1, Math.min(1, e.gamma / 25)); ty = Math.max(-1, Math.min(1, (e.beta - 45) / 25));
+  });
+
+  // ---- main loop ----
+  let last = performance.now();
+  function frame(now) {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    const cx = L.galaxy[0] * W, cy = L.galaxy[1] * H;
+
+    gx.clearRect(0, 0, W, H);
+    gx.globalCompositeOperation = 'lighter';
+    for (const g of glyphs) {
+      g.life += dt; g.a += g.spin * dt; g.r -= g.inward * dt; g.wob += dt;
+      if (g.life > g.swapAt) { g.text = pick(SYMBOLS); g.swapAt += rnd(2, 5); }
+      if (g.life > g.ttl || g.r < 0.05) { spawn(g, false); continue; }
+      const fade = Math.min(1, g.life / 1.5, (g.ttl - g.life) / 1.5);
+      const rr = g.r * W;
+      const x = cx + Math.cos(g.a) * rr, y = cy + Math.sin(g.a) * rr * 0.62 + Math.sin(g.wob * 0.8) * 3;
+      const size = Math.max(10, g.size * W);
+      const s = sprite(g.text, g.color, Math.round(size));
+      gx.globalAlpha = fade * (0.7 + 0.3 * Math.min(1, g.r / 0.25));
+      gx.drawImage(s.c, x - s.w / 2, y - s.h / 2, s.w, s.h);
+    }
+    for (const c of rain) {
+      c.y += c.v * dt; c.t += dt;
+      if (c.t > 0.35) { c.t = 0; c.bits.pop(); c.bits.unshift(pick(BINARY)); }
+      if (c.y > 0.6) { c.y = -0.12; c.x = rnd(0.62, 0.97); }
+      const size = Math.max(9, 0.016 * W);
+      for (let i = 0; i < c.bits.length; i++) {
+        const s = sprite(c.bits[i], '#8fe6e0', Math.round(size));
+        gx.globalAlpha = 0.5 * (1 - i / c.bits.length);
+        gx.drawImage(s.c, c.x * W - s.w / 2, c.y * H + i * size * 1.25 - s.h / 2, s.w, s.h);
+      }
+    }
+    gx.globalAlpha = 1; gx.globalCompositeOperation = 'source-over';
+
+    sx.clearRect(0, 0, W, H);
+    for (const st of stars) {
+      const a = 0.35 + 0.65 * (0.5 + 0.5 * Math.sin(now / 1000 * st.sp + st.ph));
+      sx.globalAlpha = a; sx.fillStyle = st.col;
+      sx.beginPath(); sx.arc(st.x * W, st.y * H, st.r, 0, 6.283); sx.fill();
+      if (st.r > 1.6 && a > 0.8) { sx.globalAlpha = a * 0.5; sx.fillRect(st.x * W - st.r * 3, st.y * H - 0.5, st.r * 6, 1); sx.fillRect(st.x * W - 0.5, st.y * H - st.r * 3, 1, st.r * 6); }
+    }
+    sx.globalAlpha = 1;
+
+    px += (tx - px) * Math.min(1, dt * 4); py += (ty - py) * Math.min(1, dt * 4);
+    for (const name in layers) {
+      const d = depth[name] || 0;
+      layers[name].style.transform = `translate(${(-px * d * W).toFixed(1)}px, ${(-py * d * W * 0.6).toFixed(1)}px)`;
+    }
+    requestAnimationFrame(frame);
+  }
+  resize();
+  if (!reduced) requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

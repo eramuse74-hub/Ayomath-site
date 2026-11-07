@@ -29,6 +29,9 @@
   .langbar .lang{margin-left:auto}
   .back{display:inline-block;color:var(--muted);text-decoration:none;font-size:14px;font-weight:700;padding:8px 0}
   .back:hover{color:var(--teal)}
+  /* animated cover (cover/index.html): Oren, the crystal pad and drifting maths symbols */
+  .coverbox{display:flex;justify-content:center;margin:-8px 0 20px}
+  .coverbox iframe{width:min(100%,360px);aspect-ratio:9/16;border:0;border-radius:22px;background:#0b0716;box-shadow:0 8px 28px var(--shadow)}
 </style>
 <script data-goatcounter="https://esumar.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>
@@ -43,7 +46,9 @@
   </div>
 
   <header>
-    <div class="logo">🐱</div>
+    <div class="coverbox">
+      <iframe src="cover/" title="Sampul animasi AyoMath: Oren si kucing di atas dadu kristal, simbol matematika mengalir di langit" loading="eager" scrolling="no"></iframe>
+    </div>
     <h1>AyoMath</h1>
     <p class="tag" lang="id">Game matematika SD yang gratis, offline, dan ramah anak.</p>
     <p class="tag" lang="en">A free, offline, child-friendly primary-school maths game.</p>
