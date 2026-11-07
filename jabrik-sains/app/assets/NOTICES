@@ -5860,6 +5860,8 @@ shared_preferences_linux
 shared_preferences_platform_interface
 shared_preferences_web
 shared_preferences_windows
+url_launcher_android
+url_launcher_platform_interface
 vector_graphics_codec
 xdg_directories
 
@@ -11121,6 +11123,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 --------------------------------------------------------------------------------
 google_fonts
+url_launcher
+url_launcher_ios
+url_launcher_linux
+url_launcher_macos
+url_launcher_web
+url_launcher_windows
 vector_graphics
 vector_graphics_compiler
 
