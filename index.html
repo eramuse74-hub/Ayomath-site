@@ -34,6 +34,10 @@
      old 14-px muted caps were easy to miss). */
   .sectitle{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;color:var(--text);margin:40px 0 14px}
   .sectitle::before{content:"";width:8px;height:22px;border-radius:4px;background:var(--teal);flex:0 0 auto}
+  /* Bars take the Skeddo wordmark colours in order (blue, teal, green, orange, red) */
+  #lomba::before{background:#007ED1} #buku::before{background:#21B1AF}
+  #aplikasi::before{background:#24A557} #komunitas::before{background:#EFA900}
+  #tentang::before{background:#C50000}
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
   .app{background:var(--surface);border-radius:20px;padding:24px;box-shadow:0 2px 14px var(--shadow);display:flex;flex-direction:column}
   .app .logo{font-size:44px;line-height:1}
