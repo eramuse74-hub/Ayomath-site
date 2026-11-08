@@ -52,14 +52,14 @@
   a.line{color:#fff;border:2px solid rgba(255,255,255,.55)}
 
   /* Book feature */
-  .book{background:radial-gradient(120% 140% at 85% 0%,#2B3F7A 0%,var(--night2) 40%,var(--night) 100%);color:#EEF1FA;border-radius:24px;padding:28px;display:grid;grid-template-columns:190px 1fr;gap:30px;align-items:center;box-shadow:0 6px 24px rgba(14,23,48,.25)}
+  .book{background:radial-gradient(70% 60% at 18% 22%,rgba(255,255,255,.20),transparent 65%),radial-gradient(60% 70% at 100% 100%,rgba(255,159,90,.30),transparent 70%),linear-gradient(155deg,#5A6BEE 0%,#4338CA 50%,#33298F 100%);color:#EEF1FA;border-radius:24px;padding:28px;display:grid;grid-template-columns:190px 1fr;gap:30px;align-items:center;box-shadow:0 6px 24px rgba(14,23,48,.25)}
   .book img{width:100%;height:auto;display:block;border-radius:8px;box-shadow:0 14px 32px rgba(0,0,0,.5);transition:transform .2s}
   .book a.cover:hover img{transform:translateY(-3px) rotate(-1deg)}
   .book .kicker{color:var(--gold);font-weight:800;font-size:13px;letter-spacing:.12em;text-transform:uppercase;margin:0 0 6px}
   .book .new{display:inline-block;background:var(--gold);color:#1d1603;font-size:11px;font-weight:900;padding:2px 9px;border-radius:999px;margin-right:8px;letter-spacing:.06em}
   .book h2{font-family:Georgia,'Times New Roman',serif;font-size:32px;line-height:1.15;margin:0 0 10px;font-weight:700}
   .book p{margin:0 0 8px}
-  .book .fine{font-size:13px;color:#B9C2DE;margin-top:12px}
+  .book .fine{font-size:13px;color:rgba(255,255,255,.82);margin-top:12px}
   .book .btns{margin-top:0;padding-top:14px}
 
   /* Book shelf: cards side by side, swipe or use the arrows */
@@ -68,10 +68,10 @@
   .shelf::-webkit-scrollbar{display:none}
   .shelf>.book{flex:0 0 90%;scroll-snap-align:start;box-shadow:none}
   .shelf>.book:last-child{flex-basis:100%}
-  .book.sea{background:radial-gradient(120% 140% at 85% 0%,#1B6A7C 0%,#12475A 40%,#0B2A3A 100%)}
-  .book.sea .kicker{color:#8FE3E0}
-  .book.moon{background:radial-gradient(120% 140% at 85% 0%,#4B5670 0%,#272E42 40%,#10131D 100%)}
-  .book.moon .kicker{color:#C9D3EA}
+  .book.sea{background:radial-gradient(70% 60% at 18% 22%,rgba(255,255,255,.20),transparent 65%),radial-gradient(60% 70% at 100% 100%,rgba(120,240,200,.25),transparent 70%),linear-gradient(155deg,#1597AC 0%,#0C7591 50%,#0A5874 100%)}
+  .book.sea .kicker{color:#C8FFF4}
+  .book.moon{background:radial-gradient(70% 60% at 18% 22%,rgba(255,255,255,.20),transparent 65%),radial-gradient(60% 70% at 100% 100%,rgba(255,159,90,.30),transparent 70%),linear-gradient(155deg,#5A6BEE 0%,#4338CA 50%,#33298F 100%)}
+  .book .kicker,.book.moon .kicker{color:#FFE08A}
   /* Series strip under a book: the other books of the same series */
   .book .strip{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:14px}
   .book .mini{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:5px 12px 5px 5px;color:#EEF1FA;text-decoration:none;font-size:13px;line-height:1.25}
@@ -104,7 +104,7 @@
   .arena .kicker{color:var(--gold);font-weight:800;font-size:13px;letter-spacing:.12em;text-transform:uppercase;margin:0 0 6px}
   .arena h2{font-size:26px;line-height:1.15;margin:0 0 8px;font-weight:900}
   .arena p{margin:0 0 6px}
-  .arena .fine{font-size:13px;color:#B9C2DE}
+  .arena .fine{font-size:13px;color:rgba(255,255,255,.82)}
   .arena .btns{margin-top:0;padding-top:12px}
   .arena .masuk{margin:12px 0 0;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:14px;padding:10px 12px}
   .arena .masuk label{display:block;font-size:13px;color:#D6DDF0;margin-bottom:8px}
