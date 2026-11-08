@@ -72,6 +72,17 @@
   .book.sea .kicker{color:#8FE3E0}
   .book.moon{background:radial-gradient(120% 140% at 85% 0%,#4B5670 0%,#272E42 40%,#10131D 100%)}
   .book.moon .kicker{color:#C9D3EA}
+  /* Series strip under a book: the other books of the same series */
+  .book .strip{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:14px}
+  .book .mini{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:5px 12px 5px 5px;color:#EEF1FA;text-decoration:none;font-size:13px;line-height:1.25}
+  .book a.mini:hover{background:rgba(255,255,255,.16)}
+  .book .mini img{width:26px;height:40px;object-fit:cover;border-radius:4px;box-shadow:none}
+  .book .mini .l{display:block}
+  .book .mini small{font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;opacity:.75}
+  .book .mini em{font-style:normal;font-size:12px;color:var(--gold)}
+  .book .mini.soon{border-style:dashed;opacity:.65}
+  .book .mini .ph{width:26px;height:40px;border-radius:4px;background:rgba(255,255,255,.1);display:grid;place-items:center;font-weight:900}
+  .book .strip a.all{color:#EEF1FA;font-size:13px;font-weight:800;margin-left:4px}
   .arrow{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;border:0;background:var(--surface);color:var(--text);font-size:22px;font-weight:900;line-height:1;cursor:pointer;box-shadow:0 4px 16px rgba(14,23,48,.35);z-index:2}
   .arrow.prev{left:-14px}.arrow.next{right:-14px}
   .arrow[disabled]{opacity:0;pointer-events:none}
@@ -199,34 +210,11 @@
   <button class="arrow prev" type="button" aria-label="Buku sebelumnya / Previous book" disabled>‹</button>
   <button class="arrow next" type="button" aria-label="Buku berikutnya / Next book">›</button>
   <div class="shelf" id="shelf">
-  <section class="book">
-    <a class="cover" href="buku/#tamu-di-aikbatu"><img src="buku/tamu-di-aikbatu/cover-480.webp" width="480" height="860" loading="lazy" alt="Sampul buku Tamu di Aikbatu: seorang anak berambut jabrik duduk memegang bola batu yang bercahaya biru, dengan Gunung Rinjani dan langit berbintang di belakangnya" data-en="Cover of Tamu di Aikbatu: a spiky-haired boy sitting with a stone sphere glowing blue, with Mount Rinjani and a starry sky behind him"></a>
-    <div>
-      <p class="kicker" lang="id">Fiksi ilmiah untuk anak · Dibacakan 8+ · baca sendiri 10+</p>
-      <p class="kicker" lang="en">Science fiction for children · Read aloud 8+ · alone 10+</p>
-      <h2>Tamu di Aikbatu</h2>
-      <p lang="id">Kami juga menerbitkan <b>buku fiksi ilmiah untuk anak</b>. Yang pertama:
-         suatu malam di lereng Rinjani, sesuatu jatuh dari langit — dan Jabrik, 10 tahun,
-         mengajarinya bicara. Cerita berlatar Lombok, dengan sains sungguhan di setiap bab.</p>
-      <p lang="en">We also publish <b>science fiction books for children</b>. The first:
-         one night on the slopes of Mount Rinjani, something falls from the sky — and
-         ten-year-old Jabrik teaches it to talk. Set in Lombok, with real science in every
-         chapter. (In Indonesian.)</p>
-      <div class="btns">
-        <a class="btn gold" href="buku/tamu-di-aikbatu/baca.html"><span lang="id">📖 Baca di Browser</span><span lang="en">📖 Read in Browser</span></a>
-        <a class="btn line" href="buku/tamu-di-aikbatu/tamu-di-aikbatu.epub" download><span lang="id">⬇ Unduh EPUB</span><span lang="en">⬇ Download EPUB</span></a>
-        <a class="btn line" href="buku/#tamu-di-aikbatu"><span lang="id">Tentang buku ini</span><span lang="en">About the book</span></a>
-      </div>
-      <p class="fine" lang="id">Edisi digital ini saat ini bisa dibaca tanpa biaya. Ketersediaan dan harga edisi lain dapat berbeda.</p>
-      <p class="fine" lang="en">This digital edition is currently available at no cost. Availability and pricing of other editions may differ.</p>
-    </div>
-  </section>
-
   <section class="book moon">
     <a class="cover" href="buku/#tamu-di-bulan"><img src="buku/tamu-di-bulan/cover-480.webp" width="480" height="860" loading="lazy" alt="Sampul buku Tamu di Bulan: bola logam retak yang bercahaya biru di dasar kawah Bulan, dengan Bumi di ufuk" data-en="Cover of Tamu di Bulan: a cracked metal sphere glowing blue at the bottom of a lunar crater, with the Earth on the horizon"></a>
     <div>
-      <p class="kicker" lang="id"><span class="new">BARU</span>Buku 2 · Fiksi ilmiah untuk anak · Dibacakan 8+ · baca sendiri 10+</p>
-      <p class="kicker" lang="en"><span class="new">NEW</span>Book 2 · Science fiction for children · Read aloud 8+ · alone 10+</p>
+      <p class="kicker" lang="id"><span class="new">BARU</span>Seri Jabrik · Buku 2 dari 3</p>
+      <p class="kicker" lang="en"><span class="new">NEW</span>The Jabrik series · Book 2 of 3</p>
       <h2>Tamu di Bulan</h2>
       <p lang="id">Lanjutan <i>Tamu di Aikbatu</i>. Dua tahun kemudian, Jabrik sudah 12 tahun dan tinggal
          di Mataram. Lalu ada yang memanggil dari sisi jauh Bulan — dengan suara Jabrik sendiri.
@@ -237,18 +225,22 @@
       <div class="btns">
         <a class="btn gold" href="buku/tamu-di-bulan/baca.html"><span lang="id">📖 Baca 3 Bab Pertama</span><span lang="en">📖 Read the First 3 Chapters</span></a>
         <a class="btn line" href="buku/#buku-lengkap"><span lang="id">📖 Dapatkan Buku Lengkap</span><span lang="en">📖 Get the Full Book</span></a>
-        <a class="btn line" href="buku/#tamu-di-bulan"><span lang="id">Tentang buku ini</span><span lang="en">About the book</span></a>
       </div>
-      <p class="fine" lang="id">Tiga bab pertama bisa langsung dibaca. Buku lengkapnya untuk orang tua dan guru: gabung grup Eramuse House di Skeddo — saat ini tanpa biaya.</p>
-      <p class="fine" lang="en">The first three chapters are open to read. The full book is for parents and teachers: join the Eramuse House group on Skeddo — currently at no cost.</p>
+      <div class="strip">
+        <a class="mini" href="buku/tamu-di-aikbatu/baca.html"><img src="buku/tamu-di-aikbatu/cover-480.webp" width="34" height="52" alt="" loading="lazy"><span><span class="l"><small lang="id">Buku 1</small><small lang="en">Book 1</small></span><span class="l"><b>Tamu di Aikbatu</b></span><span class="l"><em lang="id">Baca gratis →</em><em lang="en">Free to read →</em></span></span></a>
+        <span class="mini soon"><span class="ph">3</span><span><span class="l"><small lang="id">Buku 3</small><small lang="en">Book 3</small></span><span class="l"><b lang="id">Judul menyusul</b><b lang="en">Title to come</b></span></span></span>
+        <a class="all" href="buku/#seri-jabrik"><span lang="id">Seri Jabrik →</span><span lang="en">The Jabrik series →</span></a>
+      </div>
+      <p class="fine" lang="id">Tiga bab pertama bisa langsung dibaca; buku lengkapnya untuk orang tua dan guru di grup Eramuse House di Skeddo. Buku 1 bisa dibaca seluruhnya tanpa biaya.</p>
+      <p class="fine" lang="en">The first three chapters are open to read; the full book is for parents and teachers in the Eramuse House group on Skeddo. Book 1 is free to read in full.</p>
     </div>
   </section>
 
   <section class="book sea">
-    <a class="cover" href="buku/#satu-napas"><img src="buku/satu-napas/cover-480.webp" width="480" height="859" loading="lazy" alt="Sampul buku Satu Napas: seorang anak perempuan menuruni tangga rumah panggung ke dalam laut malam, dengan dua paus bercahaya di bawahnya" data-en="Cover of Satu Napas: a girl climbing down a stilt-house ladder into the night sea, with two glowing whales below her"></a>
+    <a class="cover" href="buku/#satu-napas"><img src="buku/satu-napas/cover-480.webp" width="480" height="859" loading="lazy" alt="Sampul buku Satu Napas: seorang anak perempuan menuruni tangga rumah panggung ke dalam laut malam, dengan dua paus bercahaya di bawahnya" data-en="Cover of Satu Napas: a girl climbing down a stilt-house ladder into the night sea, with two glowing whales below"></a>
     <div>
-      <p class="kicker" lang="id">Fiksi ilmiah untuk anak · Dibacakan 8+ · baca sendiri 10+</p>
-      <p class="kicker" lang="en">Science fiction for children · Read aloud 8+ · alone 10+</p>
+      <p class="kicker" lang="id">Seri Pari · Buku 1 dari 3</p>
+      <p class="kicker" lang="en">The Pari series · Book 1 of 3</p>
       <h2>Satu Napas</h2>
       <p lang="id">Di bawah lantai rumah Pari, ada laut. Setiap senja Pari, 11 tahun, mendengar
          bunyi dari laut dalam yang tidak didengar orang lain. Lalu kapal survei datang, dan laut
@@ -260,7 +252,11 @@
       <div class="btns">
         <a class="btn gold" href="buku/satu-napas/baca.html"><span lang="id">📖 Baca 3 Bab Pertama</span><span lang="en">📖 Read the First 3 Chapters</span></a>
         <a class="btn line" href="buku/#buku-lengkap"><span lang="id">📖 Dapatkan Buku Lengkap</span><span lang="en">📖 Get the Full Book</span></a>
-        <a class="btn line" href="buku/#satu-napas"><span lang="id">Tentang buku ini</span><span lang="en">About the book</span></a>
+      </div>
+      <div class="strip">
+        <span class="mini soon"><span class="ph">2</span><span><span class="l"><small lang="id">Buku 2</small><small lang="en">Book 2</small></span><span class="l"><b lang="id">Judul menyusul</b><b lang="en">Title to come</b></span></span></span>
+        <span class="mini soon"><span class="ph">3</span><span><span class="l"><small lang="id">Buku 3</small><small lang="en">Book 3</small></span><span class="l"><b lang="id">Judul menyusul</b><b lang="en">Title to come</b></span></span></span>
+        <a class="all" href="buku/#seri-pari"><span lang="id">Seri Pari →</span><span lang="en">The Pari series →</span></a>
       </div>
       <p class="fine" lang="id">Tiga bab pertama bisa langsung dibaca. Buku lengkapnya untuk orang tua dan guru: gabung grup Eramuse House di Skeddo — saat ini tanpa biaya.</p>
       <p class="fine" lang="en">The first three chapters are open to read. The full book is for parents and teachers: join the Eramuse House group on Skeddo — currently at no cost.</p>
@@ -268,7 +264,7 @@
   </section>
   </div><!-- /shelf -->
   </div><!-- /shelfwrap -->
-  <p class="shelfnote"><span lang="id">Geser ke samping untuk buku lain · </span><span lang="en">Swipe sideways for more books · </span><a href="buku/"><span lang="id">Semua buku →</span><span lang="en">All books →</span></a></p>
+  <p class="shelfnote"><span lang="id">Dua seri · geser ke samping untuk seri lain · </span><span lang="en">Two series · swipe sideways for the other · </span><a href="buku/"><span lang="id">Semua buku →</span><span lang="en">All books →</span></a></p>
 
   <h2 class="sectitle" id="aplikasi"><span lang="id">Aplikasi kami</span><span lang="en">Our apps</span></h2>
   <div class="grid">

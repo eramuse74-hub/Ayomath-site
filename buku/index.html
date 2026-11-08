@@ -36,6 +36,19 @@
   .tab b{display:block;font-size:14px;line-height:1.2}
   .tab small{color:var(--muted);font-size:12px}
   .tab[aria-selected="true"]{border-color:var(--pick);box-shadow:0 3px 12px var(--shadow)}
+  .tab .nn{display:block}
+  .tab .nn small{color:var(--sc);font-weight:900;letter-spacing:.08em;text-transform:uppercase;font-size:11px}
+  .tab.soon{opacity:.6;border-style:dashed;cursor:default}
+  .tab .ph{width:34px;height:52px;border-radius:5px;background:var(--surface2);color:var(--muted);display:grid;place-items:center;font-weight:900}
+  /* One block per series: header with the series colour bar, its own tabs, shelf and dots */
+  .series{--sc:#9A6B12;margin:22px 0 34px;scroll-margin-top:12px}
+  .series.pari{--sc:#12475A}
+  @media (prefers-color-scheme:dark){.series{--sc:#E9B949}.series.pari{--sc:#5FC9C7}}
+  .shead{display:flex;justify-content:space-between;align-items:flex-end;gap:10px 16px;flex-wrap:wrap;border-left:6px solid var(--sc);padding:2px 0 2px 14px;margin:0 0 12px}
+  .shead h2{font-size:26px;font-weight:900;margin:0;line-height:1.2}
+  .shead p{color:var(--muted);margin:2px 0 0;font-size:15px}
+  .shead .count{font-size:13px;font-weight:800;color:var(--sc);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:4px 12px;white-space:nowrap}
+  .hero .new{display:inline-block;background:var(--gold);color:#1d1603;font-size:11px;font-weight:900;padding:2px 9px;border-radius:999px;margin-right:8px;letter-spacing:.06em}
   .shelfwrap{position:relative}
   .shelf{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-radius:24px}
   .shelf::-webkit-scrollbar{display:none}
@@ -115,150 +128,177 @@
 
   <div class="pagehead">
     <h1 lang="id">Buku</h1><h1 lang="en">Books</h1>
-    <p lang="id">Fiksi ilmiah untuk anak, berlatar Indonesia. Pilih sampul, atau geser ke samping.</p>
-    <p lang="en">Science fiction for children, set in Indonesia. Pick a cover, or swipe sideways.</p>
+    <p lang="id">Fiksi ilmiah untuk anak, berlatar Indonesia, dalam dua seri. Setiap buku bisa dibaca sendiri. Pilih sampul, atau geser ke samping.</p>
+    <p lang="en">Science fiction for children, set in Indonesia, in two series. Each book stands on its own. Pick a cover, or swipe sideways.</p>
   </div>
 
-  <div class="tabs" role="tablist" aria-label="Pilih buku / Choose a book">
-    <button class="tab" type="button" role="tab" data-go="tamu-di-aikbatu" aria-selected="true"><img src="tamu-di-aikbatu/cover-480.webp" alt="" width="34" height="52"><span><b>Tamu di Aikbatu</b><small lang="id">Langit · Lombok</small><small lang="en">The sky · Lombok</small></span></button>
-    <button class="tab" type="button" role="tab" data-go="tamu-di-bulan" aria-selected="false"><img src="tamu-di-bulan/cover-480.webp" alt="" width="34" height="52"><span><b>Tamu di Bulan</b><small lang="id">Bulan · Lombok</small><small lang="en">The Moon · Lombok</small></span></button>
-    <button class="tab" type="button" role="tab" data-go="satu-napas" aria-selected="false"><img src="satu-napas/cover-480.webp" alt="" width="34" height="52"><span><b>Satu Napas</b><small lang="id">Laut · Wakatobi</small><small lang="en">The sea · Wakatobi</small></span></button>
-  </div>
-
-  <div class="shelfwrap">
-  <button class="arrow prev" type="button" aria-label="Buku sebelumnya / Previous book" disabled>‹</button>
-  <button class="arrow next" type="button" aria-label="Buku berikutnya / Next book">›</button>
-  <div class="shelf" id="shelf">
-  <section class="hero" id="tamu-di-aikbatu">
-    <img src="tamu-di-aikbatu/cover-480.webp" width="480" height="860" alt="Sampul buku Tamu di Aikbatu: seorang anak berambut jabrik duduk memegang bola batu yang bercahaya biru, dengan Gunung Rinjani dan langit berbintang di belakangnya" data-en="Cover of Tamu di Aikbatu: a spiky-haired boy sitting with a stone sphere glowing blue, with Mount Rinjani and a starry sky behind him">
-    <div>
-      <p class="kicker" lang="id">Fiksi ilmiah untuk anak · Buku 1 dari 3</p>
-      <p class="kicker" lang="en">Science fiction for children · Book 1 of 3</p>
-      <h2 class="bt">Tamu di Aikbatu</h2>
-      <p class="by" lang="id">oleh Eramuse · Eramuse House, 2026</p>
-      <p class="by" lang="en">by Eramuse · Eramuse House, 2026 · in Indonesian</p>
-
-      <p lang="id">Desa Aikbatu, di lembah Sembalun, punya langit paling gelap yang pernah
-         dilihat Jabrik. Suatu malam, sesuatu jatuh dari langit itu — dan ternyata
-         ia bisa belajar bicara.</p>
-      <p lang="id">Jabrik, 10 tahun, dan adiknya Lela mengajari tamu itu kata demi kata.
-         Lalu orang-orang dewasa datang, dan seluruh dunia ikut menonton. Pada akhirnya
-         ada satu pesan yang harus dikirim — dan seorang anak yang harus memutuskan
-         apa yang <i>benar</i> untuk dikatakan tentang manusia.</p>
-      <p lang="en">Aikbatu, a village in Lombok's Sembalun valley, has the darkest sky
-         Jabrik has ever seen. One night, something falls out of that sky — and it
-         turns out it can learn to talk.</p>
-      <p lang="en">Ten-year-old Jabrik and his little sister Lela teach the visitor word by
-         word. Then the grown-ups arrive, and the whole world starts watching. In the end
-         there is one message to send — and a child who must decide what is
-         <i>true</i> to say about humankind.</p>
-
-      <div class="chips">
-        <span class="chip" lang="id">Dibacakan 8+ · baca sendiri 10+</span><span class="chip" lang="en">Read aloud 8+ · read alone 10+</span>
-        <span class="chip" lang="id">24 bab</span><span class="chip" lang="en">24 chapters</span>
-        <span class="chip" lang="id">Bahasa Indonesia</span><span class="chip" lang="en">In Indonesian</span>
-        <span class="chip" lang="id">Berlatar Lombok</span><span class="chip" lang="en">Set in Lombok</span>
-      </div>
-
-      <div class="btns">
-        <a class="btn gold" href="tamu-di-aikbatu/baca.html"><span lang="id">📖 Baca di Browser</span><span lang="en">📖 Read in Browser</span></a>
-        <a class="btn line" href="tamu-di-aikbatu/tamu-di-aikbatu.epub" download><span lang="id">⬇ Unduh EPUB</span><span lang="en">⬇ Download EPUB</span></a>
-      </div>
-      <p class="note" lang="id">Edisi digital ini saat ini bisa dibaca tanpa biaya. Ketersediaan dan
-         harga edisi lain — termasuk edisi cetak dan buku berikutnya — dapat berbeda.</p>
-      <p class="note" lang="en">This digital edition is currently available to read at no cost.
-         Availability and pricing of other editions — including print and later books — may differ.</p>
+  <section class="series jabrik" id="seri-jabrik">
+    <div class="shead">
+      <div><h2 lang="id">Seri Jabrik</h2><h2 lang="en">The Jabrik series</h2>
+        <p lang="id">Langit di atas Lombok · tiga buku yang tumbuh bersama pembacanya</p>
+        <p lang="en">The sky above Lombok · three books that grow up with their reader</p></div>
+      <span class="count" lang="id">2 dari 3 sudah terbit</span><span class="count" lang="en">2 of 3 out now</span>
     </div>
+    <div class="tabs" role="tablist" aria-label="Seri Jabrik">
+      <button class="tab" type="button" role="tab" data-go="tamu-di-aikbatu" aria-selected="false"><img src="tamu-di-aikbatu/cover-480.webp" alt="" width="34" height="52"><span><span class="nn"><small lang="id">Buku 1</small><small lang="en">Book 1</small></span><b>Tamu di Aikbatu</b><small lang="id">Jabrik umur 10</small><small lang="en">Jabrik at 10</small></span></button>
+      <button class="tab" type="button" role="tab" data-go="tamu-di-bulan" aria-selected="false"><img src="tamu-di-bulan/cover-480.webp" alt="" width="34" height="52"><span><span class="nn"><small lang="id">Buku 2 · BARU</small><small lang="en">Book 2 · NEW</small></span><b>Tamu di Bulan</b><small lang="id">Jabrik umur 12</small><small lang="en">Jabrik at 12</small></span></button>
+      <span class="tab soon" aria-disabled="true"><span class="ph">3</span><span><span class="nn"><small lang="id">Buku 3</small><small lang="en">Book 3</small></span><b lang="id">Judul menyusul</b><b lang="en">Title to come</b><small lang="id">Jabrik dewasa</small><small lang="en">Jabrik grown up</small></span></span>
+    </div>
+    <div class="shelfwrap">
+    <button class="arrow prev" type="button" aria-label="Buku sebelumnya / Previous book" disabled>‹</button>
+    <button class="arrow next" type="button" aria-label="Buku berikutnya / Next book">›</button>
+    <div class="shelf">
+    <section class="hero" id="tamu-di-aikbatu">
+      <img src="tamu-di-aikbatu/cover-480.webp" width="480" height="860" alt="Sampul buku Tamu di Aikbatu: seorang anak berambut jabrik duduk memegang bola batu yang bercahaya biru, dengan Gunung Rinjani dan langit berbintang di belakangnya" data-en="Cover of Tamu di Aikbatu: a spiky-haired boy sitting with a stone sphere glowing blue, with Mount Rinjani and a starry sky behind him">
+      <div>
+        <p class="kicker" lang="id">Seri Jabrik · Buku 1 dari 3</p>
+        <p class="kicker" lang="en">The Jabrik series · Book 1 of 3</p>
+        <h2 class="bt">Tamu di Aikbatu</h2>
+        <p class="by" lang="id">oleh Eramuse · Eramuse House, 2026</p>
+        <p class="by" lang="en">by Eramuse · Eramuse House, 2026 · in Indonesian</p>
+
+        <p lang="id">Desa Aikbatu, di lembah Sembalun, punya langit paling gelap yang pernah
+           dilihat Jabrik. Suatu malam, sesuatu jatuh dari langit itu — dan ternyata
+           ia bisa belajar bicara.</p>
+        <p lang="id">Jabrik, 10 tahun, dan adiknya Lela mengajari tamu itu kata demi kata.
+           Lalu orang-orang dewasa datang, dan seluruh dunia ikut menonton. Pada akhirnya
+           ada satu pesan yang harus dikirim — dan seorang anak yang harus memutuskan
+           apa yang <i>benar</i> untuk dikatakan tentang manusia.</p>
+        <p lang="en">Aikbatu, a village in Lombok's Sembalun valley, has the darkest sky
+           Jabrik has ever seen. One night, something falls out of that sky — and it
+           turns out it can learn to talk.</p>
+        <p lang="en">Ten-year-old Jabrik and his little sister Lela teach the visitor word by
+           word. Then the grown-ups arrive, and the whole world starts watching. In the end
+           there is one message to send — and a child who must decide what is
+           <i>true</i> to say about humankind.</p>
+
+        <div class="chips">
+          <span class="chip" lang="id">Dibacakan 8+ · baca sendiri 10+</span><span class="chip" lang="en">Read aloud 8+ · read alone 10+</span>
+          <span class="chip" lang="id">24 bab</span><span class="chip" lang="en">24 chapters</span>
+          <span class="chip" lang="id">Bahasa Indonesia</span><span class="chip" lang="en">In Indonesian</span>
+          <span class="chip" lang="id">Berlatar Lombok</span><span class="chip" lang="en">Set in Lombok</span>
+        </div>
+
+        <div class="btns">
+          <a class="btn gold" href="tamu-di-aikbatu/baca.html"><span lang="id">📖 Baca di Browser</span><span lang="en">📖 Read in Browser</span></a>
+          <a class="btn line" href="tamu-di-aikbatu/tamu-di-aikbatu.epub" download><span lang="id">⬇ Unduh EPUB</span><span lang="en">⬇ Download EPUB</span></a>
+        </div>
+        <p class="note" lang="id">Edisi digital ini saat ini bisa dibaca tanpa biaya. Ketersediaan dan
+           harga edisi lain — termasuk edisi cetak dan buku berikutnya — dapat berbeda.</p>
+        <p class="note" lang="en">This digital edition is currently available to read at no cost.
+           Availability and pricing of other editions — including print and later books — may differ.</p>
+      </div>
+    </section>
+
+    <section class="hero moon" id="tamu-di-bulan">
+      <img src="tamu-di-bulan/cover-480.webp" width="480" height="860" loading="lazy" alt="Sampul buku Tamu di Bulan: bola logam retak yang bercahaya biru di dasar kawah Bulan, dengan Bumi di ufuk" data-en="Cover of Tamu di Bulan: a cracked metal sphere glowing blue at the bottom of a lunar crater, with the Earth on the horizon">
+      <div>
+        <p class="kicker" lang="id"><span class="new">BARU</span>Seri Jabrik · Buku 2 dari 3</p>
+        <p class="kicker" lang="en"><span class="new">NEW</span>The Jabrik series · Book 2 of 3</p>
+        <h2 class="bt">Tamu di Bulan</h2>
+        <p class="by" lang="id">oleh Eramuse · Eramuse House, 2026</p>
+        <p class="by" lang="en">by Eramuse · Eramuse House, 2026 · in Indonesian</p>
+
+        <p lang="id">Dua tahun setelah Aikbatu, Jabrik sudah 12 tahun dan tinggal di Mataram, di bawah
+           langit yang hanya punya sembilan bintang. Lalu Bu Ratna menelepon: ada yang memanggil dari
+           sisi jauh Bulan — dengan suara Jabrik sendiri.</p>
+        <p lang="id">Benda itu sudah dua tahun memanggil, dan tenaganya terus berkurang. Bersama Lela, yang
+           mendengar apa yang terlewat oleh orang dewasa, Jabrik harus mencari cara menjawabnya sebelum
+           terlambat.</p>
+        <p lang="en">Two years after Aikbatu, Jabrik is twelve and lives in Mataram, under a city sky
+           with only nine stars. Then Bu Ratna calls: something is calling from the far side of the
+           Moon — in Jabrik's own voice.</p>
+        <p lang="en">It has been calling for two years, and its power is running down. With his sister
+           Lela, who hears what the grown-ups miss, Jabrik must find a way to answer before it is
+           too late.</p>
+
+        <div class="chips">
+          <span class="chip" lang="id">Dibacakan 8+ · baca sendiri 10+</span><span class="chip" lang="en">Read aloud 8+ · read alone 10+</span>
+          <span class="chip" lang="id">25 bab · 3 bab pertama di sini</span><span class="chip" lang="en">25 chapters · first 3 here</span>
+          <span class="chip" lang="id">Bahasa Indonesia</span><span class="chip" lang="en">In Indonesian</span>
+          <span class="chip" lang="id">Lanjutan Tamu di Aikbatu</span><span class="chip" lang="en">Sequel to Tamu di Aikbatu</span>
+        </div>
+
+        <div class="btns">
+          <a class="btn gold" href="tamu-di-bulan/baca.html"><span lang="id">📖 Baca 3 Bab Pertama</span><span lang="en">📖 Read the First 3 Chapters</span></a>
+          <a class="btn line" href="#buku-lengkap"><span lang="id">📖 Dapatkan Buku Lengkap</span><span lang="en">📖 Get the Full Book</span></a>
+        </div>
+        <p class="note" lang="id">Tiga bab pertama bisa langsung dibaca. Buku lengkapnya (EPUB) untuk
+           orang tua dan guru: gabung grup Eramuse House di Skeddo — saat ini tanpa biaya. Ketersediaan
+           dan harga edisi lain dapat berbeda.</p>
+        <p class="note" lang="en">The first three chapters are open to read. The full book (EPUB) is for
+           parents and teachers: join the Eramuse House group on Skeddo — currently at no cost.
+           Availability and pricing of other editions may differ.</p>
+      </div>
+    </section>
+    </div>
+    </div>
+    <div class="dots" aria-hidden="true"></div>
   </section>
 
-  <section class="hero moon" id="tamu-di-bulan">
-    <img src="tamu-di-bulan/cover-480.webp" width="480" height="860" loading="lazy" alt="Sampul buku Tamu di Bulan: bola logam retak yang bercahaya biru di dasar kawah Bulan, dengan Bumi di ufuk" data-en="Cover of Tamu di Bulan: a cracked metal sphere glowing blue at the bottom of a lunar crater, with the Earth on the horizon">
-    <div>
-      <p class="kicker" lang="id">Fiksi ilmiah untuk anak · Buku 2 dari 3</p>
-      <p class="kicker" lang="en">Science fiction for children · Book 2 of 3</p>
-      <h2 class="bt">Tamu di Bulan</h2>
-      <p class="by" lang="id">oleh Eramuse · Eramuse House, 2026</p>
-      <p class="by" lang="en">by Eramuse · Eramuse House, 2026 · in Indonesian</p>
-
-      <p lang="id">Dua tahun setelah Aikbatu, Jabrik sudah 12 tahun dan tinggal di Mataram, di bawah
-         langit yang hanya punya sembilan bintang. Lalu Bu Ratna menelepon: ada yang memanggil dari
-         sisi jauh Bulan — dengan suara Jabrik sendiri.</p>
-      <p lang="id">Benda itu sudah dua tahun memanggil, dan tenaganya terus berkurang. Bersama Lela, yang
-         mendengar apa yang terlewat oleh orang dewasa, Jabrik harus mencari cara menjawabnya sebelum
-         terlambat.</p>
-      <p lang="en">Two years after Aikbatu, Jabrik is twelve and lives in Mataram, under a city sky
-         with only nine stars. Then Bu Ratna calls: something is calling from the far side of the
-         Moon — in Jabrik's own voice.</p>
-      <p lang="en">It has been calling for two years, and its power is running down. With his sister
-         Lela, who hears what the grown-ups miss, Jabrik must find a way to answer before it is
-         too late.</p>
-
-      <div class="chips">
-        <span class="chip" lang="id">Dibacakan 8+ · baca sendiri 10+</span><span class="chip" lang="en">Read aloud 8+ · read alone 10+</span>
-        <span class="chip" lang="id">25 bab · 3 bab pertama di sini</span><span class="chip" lang="en">25 chapters · first 3 here</span>
-        <span class="chip" lang="id">Bahasa Indonesia</span><span class="chip" lang="en">In Indonesian</span>
-        <span class="chip" lang="id">Lanjutan Tamu di Aikbatu</span><span class="chip" lang="en">Sequel to Tamu di Aikbatu</span>
-      </div>
-
-      <div class="btns">
-        <a class="btn gold" href="tamu-di-bulan/baca.html"><span lang="id">📖 Baca 3 Bab Pertama</span><span lang="en">📖 Read the First 3 Chapters</span></a>
-        <a class="btn line" href="#buku-lengkap"><span lang="id">📖 Dapatkan Buku Lengkap</span><span lang="en">📖 Get the Full Book</span></a>
-      </div>
-      <p class="note" lang="id">Tiga bab pertama bisa langsung dibaca. Buku lengkapnya (EPUB) untuk
-         orang tua dan guru: gabung grup Eramuse House di Skeddo — saat ini tanpa biaya. Ketersediaan
-         dan harga edisi lain dapat berbeda.</p>
-      <p class="note" lang="en">The first three chapters are open to read. The full book (EPUB) is for
-         parents and teachers: join the Eramuse House group on Skeddo — currently at no cost.
-         Availability and pricing of other editions may differ.</p>
+  <section class="series pari" id="seri-pari">
+    <div class="shead">
+      <div><h2 lang="id">Seri Pari</h2><h2 lang="en">The Pari series</h2>
+        <p lang="id">Laut di bawah Wakatobi · tiga buku tentang Pari dan laut</p>
+        <p lang="en">The sea beneath Wakatobi · three books about Pari and the sea</p></div>
+      <span class="count" lang="id">1 dari 3 sudah terbit</span><span class="count" lang="en">1 of 3 out now</span>
     </div>
-  </section>
-
-  <section class="hero sea" id="satu-napas">
-    <img src="satu-napas/cover-480.webp" width="480" height="859" loading="lazy" alt="Sampul buku Satu Napas: seorang anak perempuan menuruni tangga rumah panggung ke dalam laut malam, dengan dua paus bercahaya di bawahnya" data-en="Cover of Satu Napas: a girl climbing down a stilt-house ladder into the night sea, with two glowing whales below her">
-    <div>
-      <p class="kicker" lang="id">Fiksi ilmiah untuk anak · Buku 1 dari 3</p>
-      <p class="kicker" lang="en">Science fiction for children · Book 1 of 3</p>
-      <h2 class="bt">Satu Napas</h2>
-      <p class="by" lang="id">oleh Eramuse · Eramuse House, 2026</p>
-      <p class="by" lang="en">by Eramuse · Eramuse House, 2026 · in Indonesian</p>
-
-      <p lang="id">Di bawah lantai rumah Pari, ada laut. Pari, 11 tahun, tinggal di kampung
-         orang Sama di Wakatobi, di rumah kayu di atas tiang. Setiap senja ia mendengar bunyi
-         dari laut dalam. <i>Tik, tik, tik.</i> Ia kira semua orang mendengarnya. Ternyata tidak.</p>
-      <p lang="id">Waktu kapal penelitian datang, telinga Pari menangkap bunyi yang tidak dikenal
-         komputer paling pintar sekalipun. Lalu kapal survei datang, dan laut mulai berdentum.
-         Bersama Udin, Mbo, dan seluruh kampung, Pari harus berpacu dengan pasang surut untuk
-         menyelamatkan sesuatu yang hanya bisa ia dengar.</p>
-      <p lang="en">Under the floor of Pari's house, there is the sea. Eleven-year-old Pari lives in
-         a Sama village in Wakatobi, in a wooden house on stilts. Every dusk she hears a sound from
-         the deep. <i>Tick, tick, tick.</i> She thought everyone could hear it. They can't.</p>
-      <p lang="en">When a research ship arrives, Pari's ears catch a sound that even the smartest
-         computer does not recognise. Then a survey ship comes, and the sea starts to boom.
-         With her best friend Udin, old Mbo and the whole village, Pari must race the tides to save
-         something only she can hear.</p>
-
-      <div class="chips">
-        <span class="chip" lang="id">Dibacakan 8+ · baca sendiri 10+</span><span class="chip" lang="en">Read aloud 8+ · read alone 10+</span>
-        <span class="chip" lang="id">24 bab · 3 bab pertama di sini</span><span class="chip" lang="en">24 chapters · first 3 here</span>
-        <span class="chip" lang="id">Bahasa Indonesia</span><span class="chip" lang="en">In Indonesian</span>
-        <span class="chip" lang="id">Berlatar Wakatobi</span><span class="chip" lang="en">Set in Wakatobi</span>
-      </div>
-
-      <div class="btns">
-        <a class="btn gold" href="satu-napas/baca.html"><span lang="id">📖 Baca 3 Bab Pertama</span><span lang="en">📖 Read the First 3 Chapters</span></a>
-        <a class="btn line" href="#buku-lengkap"><span lang="id">📖 Dapatkan Buku Lengkap</span><span lang="en">📖 Get the Full Book</span></a>
-      </div>
-      <p class="note" lang="id">Tiga bab pertama bisa langsung dibaca. Buku lengkapnya (EPUB) untuk
-         orang tua dan guru: gabung grup Eramuse House di Skeddo — saat ini tanpa biaya. Ketersediaan
-         dan harga edisi lain dapat berbeda.</p>
-      <p class="note" lang="en">The first three chapters are open to read. The full book (EPUB) is for
-         parents and teachers: join the Eramuse House group on Skeddo — currently at no cost.
-         Availability and pricing of other editions may differ.</p>
+    <div class="tabs" role="tablist" aria-label="Seri Pari">
+      <button class="tab" type="button" role="tab" data-go="satu-napas" aria-selected="false"><img src="satu-napas/cover-480.webp" alt="" width="34" height="52"><span><span class="nn"><small lang="id">Buku 1</small><small lang="en">Book 1</small></span><b>Satu Napas</b><small lang="id">Pari umur 11</small><small lang="en">Pari at 11</small></span></button>
+      <span class="tab soon" aria-disabled="true"><span class="ph">2</span><span><span class="nn"><small lang="id">Buku 2</small><small lang="en">Book 2</small></span><b lang="id">Judul menyusul</b><b lang="en">Title to come</b><small lang="id">Pari beranjak dewasa</small><small lang="en">Pari as a young adult</small></span></span>
+      <span class="tab soon" aria-disabled="true"><span class="ph">3</span><span><span class="nn"><small lang="id">Buku 3</small><small lang="en">Book 3</small></span><b lang="id">Judul menyusul</b><b lang="en">Title to come</b><small lang="id">Pari dewasa</small><small lang="en">Pari grown up</small></span></span>
     </div>
+    <div class="shelfwrap">
+    <button class="arrow prev" type="button" aria-label="Buku sebelumnya / Previous book" disabled>‹</button>
+    <button class="arrow next" type="button" aria-label="Buku berikutnya / Next book">›</button>
+    <div class="shelf">
+    <section class="hero sea" id="satu-napas">
+      <img src="satu-napas/cover-480.webp" width="480" height="859" loading="lazy" alt="Sampul buku Satu Napas: seorang anak perempuan menuruni tangga rumah panggung ke dalam laut malam, dengan dua paus bercahaya di bawahnya" data-en="Cover of Satu Napas: a girl climbing down a stilt-house ladder into the night sea, with two glowing whales below her">
+      <div>
+        <p class="kicker" lang="id">Seri Pari · Buku 1 dari 3</p>
+        <p class="kicker" lang="en">The Pari series · Book 1 of 3</p>
+        <h2 class="bt">Satu Napas</h2>
+        <p class="by" lang="id">oleh Eramuse · Eramuse House, 2026</p>
+        <p class="by" lang="en">by Eramuse · Eramuse House, 2026 · in Indonesian</p>
+
+        <p lang="id">Di bawah lantai rumah Pari, ada laut. Pari, 11 tahun, tinggal di kampung
+           orang Sama di Wakatobi, di rumah kayu di atas tiang. Setiap senja ia mendengar bunyi
+           dari laut dalam. <i>Tik, tik, tik.</i> Ia kira semua orang mendengarnya. Ternyata tidak.</p>
+        <p lang="id">Waktu kapal penelitian datang, telinga Pari menangkap bunyi yang tidak dikenal
+           komputer paling pintar sekalipun. Lalu kapal survei datang, dan laut mulai berdentum.
+           Bersama Udin, Mbo, dan seluruh kampung, Pari harus berpacu dengan pasang surut untuk
+           menyelamatkan sesuatu yang hanya bisa ia dengar.</p>
+        <p lang="en">Under the floor of Pari's house, there is the sea. Eleven-year-old Pari lives in
+           a Sama village in Wakatobi, in a wooden house on stilts. Every dusk she hears a sound from
+           the deep. <i>Tick, tick, tick.</i> She thought everyone could hear it. They can't.</p>
+        <p lang="en">When a research ship arrives, Pari's ears catch a sound that even the smartest
+           computer does not recognise. Then a survey ship comes, and the sea starts to boom.
+           With her best friend Udin, old Mbo and the whole village, Pari must race the tides to save
+           something only she can hear.</p>
+
+        <div class="chips">
+          <span class="chip" lang="id">Dibacakan 8+ · baca sendiri 10+</span><span class="chip" lang="en">Read aloud 8+ · read alone 10+</span>
+          <span class="chip" lang="id">24 bab · 3 bab pertama di sini</span><span class="chip" lang="en">24 chapters · first 3 here</span>
+          <span class="chip" lang="id">Bahasa Indonesia</span><span class="chip" lang="en">In Indonesian</span>
+          <span class="chip" lang="id">Berlatar Wakatobi</span><span class="chip" lang="en">Set in Wakatobi</span>
+        </div>
+
+        <div class="btns">
+          <a class="btn gold" href="satu-napas/baca.html"><span lang="id">📖 Baca 3 Bab Pertama</span><span lang="en">📖 Read the First 3 Chapters</span></a>
+          <a class="btn line" href="#buku-lengkap"><span lang="id">📖 Dapatkan Buku Lengkap</span><span lang="en">📖 Get the Full Book</span></a>
+        </div>
+        <p class="note" lang="id">Tiga bab pertama bisa langsung dibaca. Buku lengkapnya (EPUB) untuk
+           orang tua dan guru: gabung grup Eramuse House di Skeddo — saat ini tanpa biaya. Ketersediaan
+           dan harga edisi lain dapat berbeda.</p>
+        <p class="note" lang="en">The first three chapters are open to read. The full book (EPUB) is for
+           parents and teachers: join the Eramuse House group on Skeddo — currently at no cost.
+           Availability and pricing of other editions may differ.</p>
+      </div>
+    </section>
+    </div>
+    </div>
+    <div class="dots" aria-hidden="true"></div>
   </section>
-  </div><!-- /shelf -->
-  </div><!-- /shelfwrap -->
-  <div class="dots" id="dots" aria-hidden="true"></div>
 
   <div class="grid">
     <div class="card"><div class="ic">🔭</div>
@@ -273,50 +313,6 @@
       <h3 lang="id">Berakar di Indonesia</h3><h3 lang="en">Rooted in Indonesia</h3>
       <p lang="id">Lereng Rinjani dan Rowot, gugus bintang penanda musim orang Sasak. Kampung di atas laut dan para penyelam Sama di Wakatobi. Tempatnya nyata.</p>
       <p lang="en">The slopes of Rinjani and Rowot, the star cluster the Sasak read the seasons by. A village over the sea and the Sama divers of Wakatobi. The places are real.</p></div>
-  </div>
-
-  <h2 class="sectitle sk1" lang="id">Trilogi Jabrik</h2>
-  <h2 class="sectitle sk1" lang="en">The Jabrik trilogy</h2>
-  <p class="sub" lang="id">Tiga buku yang tumbuh bersama pembacanya. Setiap buku bisa dibaca sendiri.</p>
-  <p class="sub" lang="en">Three books that grow up with their reader. Each one stands on its own.</p>
-  <div class="tri">
-    <div class="card"><span class="n" lang="id">Buku 1</span><span class="n" lang="en">Book 1</span>
-      <h3>Tamu di Aikbatu</h3>
-      <p lang="id">Jabrik umur 10. Untuk anak SD dan siapa saja.</p>
-      <p lang="en">Jabrik at 10. For primary-school readers and everyone else.</p>
-      <span class="badge ok" lang="id">Sudah terbit</span><span class="badge ok" lang="en">Out now</span></div>
-    <div class="card"><span class="n" lang="id">Buku 2</span><span class="n" lang="en">Book 2</span>
-      <h3>Tamu di Bulan</h3>
-      <p lang="id">Jabrik umur 12. Untuk anak SD dan siapa saja.</p>
-      <p lang="en">Jabrik at 12. For primary-school readers and everyone else.</p>
-      <span class="badge ok" lang="id">Sudah terbit</span><span class="badge ok" lang="en">Out now</span></div>
-    <div class="card"><span class="n" lang="id">Buku 3</span><span class="n" lang="en">Book 3</span>
-      <h3 lang="id">Judul menyusul</h3><h3 lang="en">Title to come</h3>
-      <p lang="id">Jabrik dewasa. Untuk pembaca dewasa.</p>
-      <p lang="en">Jabrik grown up. For adult readers.</p>
-      <span class="badge soon" lang="id">Sedang disiapkan</span><span class="badge soon" lang="en">In preparation</span></div>
-  </div>
-
-  <h2 class="sectitle sk2" lang="id">Trilogi Laut</h2>
-  <h2 class="sectitle sk2" lang="en">The ocean trilogy</h2>
-  <p class="sub" lang="id">Tiga buku tentang Pari dan laut. Setiap buku bisa dibaca sendiri.</p>
-  <p class="sub" lang="en">Three books about Pari and the sea. Each one stands on its own.</p>
-  <div class="tri">
-    <div class="card"><span class="n" lang="id">Buku 1</span><span class="n" lang="en">Book 1</span>
-      <h3>Satu Napas</h3>
-      <p lang="id">Pari umur 11. Untuk anak SD dan siapa saja.</p>
-      <p lang="en">Pari at 11. For primary-school readers and everyone else.</p>
-      <span class="badge ok" lang="id">Sudah terbit</span><span class="badge ok" lang="en">Out now</span></div>
-    <div class="card"><span class="n" lang="id">Buku 2</span><span class="n" lang="en">Book 2</span>
-      <h3 lang="id">Judul menyusul</h3><h3 lang="en">Title to come</h3>
-      <p lang="id">Pari beranjak dewasa.</p>
-      <p lang="en">Pari as a young adult.</p>
-      <span class="badge soon" lang="id">Sedang disiapkan</span><span class="badge soon" lang="en">In preparation</span></div>
-    <div class="card"><span class="n" lang="id">Buku 3</span><span class="n" lang="en">Book 3</span>
-      <h3 lang="id">Judul menyusul</h3><h3 lang="en">Title to come</h3>
-      <p lang="id">Pari dewasa.</p>
-      <p lang="en">Pari grown up.</p>
-      <span class="badge soon" lang="id">Sedang disiapkan</span><span class="badge soon" lang="en">In preparation</span></div>
   </div>
 
   <!-- Buku lengkap = grup Eramuse House di Skeddo. EPUB-nya ada di "Shared
@@ -377,28 +373,36 @@
 </div>
 <script>
 (function(){
-  var shelf=document.getElementById('shelf'); if(!shelf) return;
-  var slides=[].slice.call(shelf.children), tabs=[].slice.call(document.querySelectorAll('.tab'));
-  var prev=document.querySelector('.arrow.prev'), next=document.querySelector('.arrow.next'), dots=document.getElementById('dots');
-  var cur=0;
-  function go(i,instant){ i=Math.max(0,Math.min(slides.length-1,i));
-    shelf.scrollTo({left:slides[i].offsetLeft-shelf.offsetLeft,behavior:(instant||document.visibilityState!=='visible'||matchMedia('(prefers-reduced-motion:reduce)').matches)?'instant':'smooth'}); }
-  function mark(i){ cur=i;
-    tabs.forEach(function(t,k){t.setAttribute('aria-selected',k===i?'true':'false')});
-    [].forEach.call(dots.children,function(d,k){d.setAttribute('aria-current',k===i?'true':'false')});
-    prev.disabled=i===0; next.disabled=i===slides.length-1; }
-  slides.forEach(function(s,i){ var d=document.createElement('button'); d.type='button'; d.tabIndex=-1;
-    d.onclick=function(){go(i)}; dots.appendChild(d); });
-  tabs.forEach(function(t,i){ t.onclick=function(){ go(i); try{history.replaceState(null,'','#'+t.getAttribute('data-go'))}catch(e){} } });
-  prev.onclick=function(){go(cur-1)}; next.onclick=function(){go(cur+1)};
-  var tick; shelf.addEventListener('scroll',function(){ clearTimeout(tick); tick=setTimeout(function(){
-    var x=shelf.scrollLeft, best=0, bd=1e9;
-    slides.forEach(function(s,i){ var d=Math.abs(s.offsetLeft-shelf.offsetLeft-x); if(d<bd){bd=d;best=i} });
-    if(shelf.scrollLeft+shelf.clientWidth>=shelf.scrollWidth-4) best=slides.length-1;
-    mark(best); },60); });
-  function fromHash(instant){ var id=location.hash.slice(1);
-    slides.forEach(function(s,i){ if(s.id===id){ go(i,instant); mark(i); } }); }
-  mark(0); if(location.hash) setTimeout(function(){fromHash(true)},0);
+  var reduce=matchMedia('(prefers-reduced-motion:reduce)').matches, all=[];
+  [].forEach.call(document.querySelectorAll('.series'),function(box){
+    var shelf=box.querySelector('.shelf'), slides=[].slice.call(shelf.children),
+        tabs=[].slice.call(box.querySelectorAll('.tab[data-go]')),
+        prev=box.querySelector('.arrow.prev'), next=box.querySelector('.arrow.next'),
+        dots=box.querySelector('.dots'), cur=0;
+    function go(i,instant){ i=Math.max(0,Math.min(slides.length-1,i));
+      shelf.scrollTo({left:slides[i].offsetLeft-shelf.offsetLeft,behavior:(instant||document.visibilityState!=='visible'||reduce)?'instant':'smooth'}); }
+    function mark(i){ cur=i;
+      tabs.forEach(function(t,k){t.setAttribute('aria-selected',k===i?'true':'false')});
+      [].forEach.call(dots.children,function(d,k){d.setAttribute('aria-current',k===i?'true':'false')});
+      prev.disabled=i===0; next.disabled=i===slides.length-1; }
+    if(slides.length>1) slides.forEach(function(s,i){ var d=document.createElement('button'); d.type='button'; d.tabIndex=-1;
+      d.onclick=function(){go(i)}; dots.appendChild(d); });
+    tabs.forEach(function(t,i){ t.onclick=function(){ go(i); try{history.replaceState(null,'','#'+t.getAttribute('data-go'))}catch(e){} } });
+    prev.onclick=function(){go(cur-1)}; next.onclick=function(){go(cur+1)};
+    var tick; shelf.addEventListener('scroll',function(){ clearTimeout(tick); tick=setTimeout(function(){
+      var x=shelf.scrollLeft, best=0, bd=1e9;
+      slides.forEach(function(s,i){ var d=Math.abs(s.offsetLeft-shelf.offsetLeft-x); if(d<bd){bd=d;best=i} });
+      if(shelf.scrollLeft+shelf.clientWidth>=shelf.scrollWidth-4) best=slides.length-1;
+      mark(best); },60); });
+    mark(0);
+    all.push({box:box,slides:slides,go:go,mark:mark});
+  });
+  // #tamu-di-bulan etc: open that book's series at that book
+  function fromHash(instant){ var id=location.hash.slice(1); if(!id) return;
+    all.forEach(function(c){ c.slides.forEach(function(s,i){ if(s.id===id){
+      c.go(i,true); c.mark(i);
+      c.box.scrollIntoView({behavior:(instant||reduce)?'instant':'smooth',block:'start'}); } }); }); }
+  if(location.hash) setTimeout(function(){fromHash(true)},0);
   window.addEventListener('hashchange',function(){fromHash(false)});
 })();
 </script>
