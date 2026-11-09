@@ -264,6 +264,69 @@ async function rpc(fn, args) {
   return data;
 }
 
+// ── Skeddo: jadwal diketik SEKALI, di Skeddo ─────────────────────────────────
+// Tautan JOIN di event Skeddo membawa ?lomba=<KODE>, dan kolom itu terbaca
+// publik (kunci anon Skeddo, sama dengan ../skeddo-events.js; RLS Skeddo hanya
+// memperlihatkan event published + public). Jadi tiap batch menemukan event
+// Skeddo-nya sendiri, dan jamnya bisa diambil dengan satu klik.
+const SKEDDO_URL = 'https://dsomtcrnslmhdgonpary.supabase.co';
+const SKEDDO_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRzb210Y3Juc2xtaGRnb25wYXJ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1NDI5MDgsImV4cCI6MjA5NjExODkwOH0.bEytV7vUVibDz6nx4DEQSr7ba_kmWD1Mn4lLKg5DPhs';
+
+/** Map KODE → event Skeddo yang tautan JOIN-nya memakai kode itu. */
+async function loadSkeddo() {
+  const qs = new URLSearchParams([
+    ['select', 'id,title,starts_at,ends_at,meeting_url'],
+    ['status', 'eq.published'],
+    ['meeting_url', 'ilike.*lomba=*'],
+    ['order', 'starts_at.desc'],
+    ['limit', '300'],
+  ]);
+  const r = await fetch(`${SKEDDO_URL}/rest/v1/events?${qs}`,
+    { headers: { apikey: SKEDDO_KEY, Authorization: `Bearer ${SKEDDO_KEY}` } });
+  if (!r.ok) throw new Error(`Skeddo ${r.status}`);
+  const byCode = new Map();
+  for (const e of await r.json()) {
+    let code;
+    try { code = new URL(e.meeting_url).searchParams.get('lomba'); } catch { continue; }
+    code = (code ?? '').trim().toUpperCase();
+    if (!code) continue;
+    if (!byCode.has(code)) byCode.set(code, []);
+    byCode.get(code).push(e);
+  }
+  return byCode;
+}
+
+/** Satu kode bisa dipakai beberapa event Skeddo (latihan berulang): ambil yang
+    sedang berjalan atau terdekat akan datang; kalau semua sudah lewat, yang
+    terakhir. */
+function pickSkeddo(list) {
+  const now = Date.now();
+  const live = (list ?? []).filter(e => e.ends_at ? Date.parse(e.ends_at) > now
+                                                  : Date.parse(e.starts_at) > now - 2 * 3600e3);
+  if (live.length) return live.sort((a, b) => Date.parse(a.starts_at) - Date.parse(b.starts_at))[0];
+  return (list ?? []).slice().sort((a, b) => Date.parse(b.starts_at) - Date.parse(a.starts_at))[0] ?? null;
+}
+const skeddoFor = (b) => pickSkeddo(S.skeddo?.get(String(b.code).toUpperCase()));
+
+/** Alamat publik event Skeddo — pola yang sama dengan ../skeddo-events.js. */
+function skeddoEventUrl(e) {
+  const slug = String(e.title || '').toLowerCase().normalize('NFKD')
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60);
+  return `https://app.skeddo.com/e/${e.id}${slug ? '/' + slug : ''}`;
+}
+
+// ── CSV ──────────────────────────────────────────────────────────────────────
+function csvText(cols, rows) {
+  const esc = (v) => { const s = v == null ? '' : String(v); return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
+  return [cols.join(',')].concat((rows ?? []).map(r => cols.map(c => esc(r[c])).join(','))).join('\n');
+}
+function downloadCsv(name, text) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([text], { type: 'text/csv' }));
+  a.download = name;
+  a.click();
+}
+
 // ── Masuk ────────────────────────────────────────────────────────────────────
 
 $('send-code').onclick = async () => {
@@ -353,12 +416,18 @@ async function boot() {
 
 // ── Data ─────────────────────────────────────────────────────────────────────
 
-const S = { events: [], batches: [], open: new Set() };
+const S = { events: [], batches: [], open: new Set(), history: [], historyErr: null, skeddo: null, skeddoErr: null };
 
 async function loadAll() {
   try {
-    [S.events, S.batches] = await Promise.all([
+    // Riwayat dan Skeddo boleh gagal tanpa menjatuhkan halaman: riwayat
+    // butuh supabase/lomba_history.sql, Skeddo adalah server lain.
+    [S.events, S.batches, S.history, S.skeddo] = await Promise.all([
       rpc('lomba_admin_events'), rpc('lomba_admin_batches'),
+      rpc('lomba_admin_history').then(h => { S.historyErr = null; return h ?? []; },
+                                      e => { S.historyErr = errText(e); return []; }),
+      loadSkeddo().then(m => { S.skeddoErr = null; return m; },
+                        e => { S.skeddoErr = errText(e); return null; }),
     ]);
     drawEvents();
     await drawStaff();
@@ -443,6 +512,25 @@ function eventCard(ev) {
   }), skMsg);
   card.appendChild(skRow);
 
+  // Tidak perlu menempel alamat: event Skeddo yang tautan JOIN-nya memakai
+  // kode batch event ini sudah ketemu sendiri.
+  const mine = S.batches.filter(b => b.event_id === ev.id);
+  const found = pickSkeddo(mine.flatMap(b => S.skeddo?.get(String(b.code).toUpperCase()) ?? []));
+  if (found && !(ev.skeddo_url ?? '').includes(found.id)) {
+    const sug = el('div', null, 'row');
+    sug.style.marginTop = '4px';
+    const sugMsg = el('span', null, 'msg');
+    sug.append(el('span', `Ditemukan di Skeddo (dari tautan JOIN): «${found.title}», ${fmtWib(found.starts_at)} WIB`, 'when'),
+      btn('Pakai alamat ini', 'ghost', async () => {
+        try {
+          await rpc('lomba_admin_set_event_url', { p_event: ev.id, p_url: skeddoEventUrl(found) });
+          say(sugMsg, `Disimpan ${stamp()}`, true);
+          await loadAll();
+        } catch (e) { say(sugMsg, errText(e), false); }
+      }), sugMsg);
+    card.appendChild(sug);
+  }
+
   // Seri + edisi (docs/LOMBA_SHOW.md §6): "IOA Math Competition" / "Lombok
   // Bangkit" tampil dua baris sama besar di aplikasi, kartu, dan arena.
   // Warna aksen = warna baris edisi. Kosong = halaman memakai nama event.
@@ -476,12 +564,116 @@ function eventCard(ev) {
   card.appendChild(metaRow);
   card.appendChild(msg);
 
-  const mine = S.batches.filter(b => b.event_id === ev.id);
   if (!mine.length) card.appendChild(el('p', 'Belum ada batch. Salin dari batch event lain, atau buat lewat lomba_seed.sql.', 'sub'));
   for (const b of mine) card.appendChild(batchCard(b));
   card.appendChild(skeddoLinksSection(ev, mine));
   card.appendChild(sponsorSection(ev));
+  card.appendChild(wrapSection(ev, mine));
   return card;
+}
+
+// ── Akhiri & Riwayat (supabase/lomba_history.sql, docs/LOMBA_ADMIN.md §8) ───
+
+const RESULT_COLS = ['batch', 'latihan', 'kelas', 'rank', 'nomor', 'nama', 'sekolah',
+                     'score', 'points', 'max_points', 'time_ms', 'done'];
+
+/** Semua hasil satu event dalam satu CSV (kolom batch + latihan). */
+async function eventRows(batches) {
+  const out = [];
+  for (const b of batches) {
+    if (!b.entries) continue;
+    const rows = await rpc('lomba_results', { p_batch: b.id });
+    for (const r of rows ?? []) out.push({ batch: b.code, latihan: b.is_practice ? 'ya' : 'tidak', ...r });
+  }
+  return out;
+}
+const today = () => new Date(Date.now() + WIB).toISOString().slice(0, 10);
+
+function wrapSection(ev, batches) {
+  const box = el('div', null, 'batch');
+  box.appendChild(el('p', '🏁 Akhiri & simpan ke Riwayat', 'ptitle'));
+  const ul = el('ul', null, 'sub');
+  ul.style.paddingLeft = '18px';
+  for (const t of [
+    'Peserta yang belum selesai dinilai dari jawaban tersimpan.',
+    'Hasil lengkap (CSV, dengan nama) terunduh otomatis — simpan untuk penyelenggara.',
+    'Riwayat menyimpan per sesi & kelas: jumlah peserta + juara 1–3 (nomor + sekolah, TANPA nama), tabel medali sekolah, sponsor.',
+    'Latihan: entri pindah ke arsip staf → papan kosong untuk putaran berikutnya. Entri lomba resmi tidak pernah dipindah.',
+    'Event menjadi Closed. Putaran latihan berikutnya: klik Published lagi, lalu "Pakai jam Skeddo" di batch-nya.',
+  ]) ul.appendChild(el('li', t));
+  box.appendChild(ul);
+
+  const msg = el('div', null, 'msg');
+  const pub = el('label');
+  const cb = el('input', null, null, { type: 'checkbox' });
+  cb.checked = true;
+  pub.append(cb, document.createTextNode('Tampilkan di Riwayat publik (www.ayomath.com/lomba/riwayat/) — untuk event mitra, pastikan penyelenggara setuju'));
+  box.appendChild(pub);
+
+  const row = el('div', null, 'row');
+  row.style.marginTop = '8px';
+  row.appendChild(armed('🏁 Akhiri & simpan', 'warn', async () => {
+    if (S.historyErr) return say(msg, 'Riwayat belum aktif — jalankan supabase/lomba_history.sql di Supabase dulu.', false);
+    const now = Date.now();
+    const open = batches.filter(b => !b.is_practice && now < Date.parse(b.ends_at));
+    if (open.length) {
+      return say(msg, `Sesi resmi belum selesai: ${open.map(b => `${b.code} (sampai ${fmtWib(b.ends_at)} WIB)`).join(', ')}. Tunggu, atau majukan jam Selesai-nya.`, false);
+    }
+    try {
+      // Nilai dulu, lalu ambil CSV — sebelum entri latihan pindah ke arsip.
+      for (const b of batches) if (b.entries) await rpc('lomba_admin_close_batch', { p_batch: b.id });
+      const rows = await eventRows(batches);
+      const r = await rpc('lomba_admin_wrap_up', { p_event: ev.id, p_public: cb.checked });
+      if (rows.length) downloadCsv(`hasil-${ev.slug}-${today()}.csv`, csvText(RESULT_COLS, rows));
+      say(msg, r.history_id
+        ? `Selesai ${stamp()}: ${r.peserta} peserta tersimpan di Riwayat (${r.kind}${cb.checked ? ', publik' : ', staf saja'}); ${r.scored} dinilai otomatis; ${r.archived} entri latihan diarsipkan. Event → Closed.`
+        : `Selesai ${stamp()}: belum ada peserta, jadi tidak ada yang disimpan ke Riwayat. Event → Closed.`, true);
+      await loadAll();
+    } catch (e) {
+      say(msg, errText(e) === 'official_not_ended' ? 'Sesi resmi belum selesai — tunggu jam Selesai-nya.' : errText(e), false);
+    }
+  }));
+  row.appendChild(btn('Unduh semua hasil (CSV)', 'ghost', async () => {
+    try {
+      const rows = await eventRows(batches);
+      downloadCsv(`hasil-${ev.slug}-${today()}.csv`, csvText(RESULT_COLS, rows));
+      say(msg, `${rows.length} baris, ${stamp()}`, true);
+    } catch (e) { say(msg, errText(e), false); }
+  }));
+  box.appendChild(row);
+  box.appendChild(msg);
+
+  // Riwayat yang sudah tersimpan untuk event ini.
+  if (S.historyErr) {
+    box.appendChild(el('p', `Riwayat belum aktif (${S.historyErr}) — jalankan supabase/lomba_history.sql.`, 'sub'));
+    return box;
+  }
+  const mineH = (S.history ?? []).filter(h => h.event_id === ev.id);
+  if (!mineH.length) { box.appendChild(el('p', 'Belum ada riwayat untuk event ini.', 'sub')); return box; }
+  box.appendChild(el('p', 'Tersimpan di Riwayat:', 'sub'));
+  for (const h of mineH) {
+    const hr = el('div', null, 'sp-row');
+    hr.appendChild(el('span', h.kind === 'lomba' ? 'lomba' : 'latihan', 'pill ' + (h.kind === 'lomba' ? 'closed' : 'practice')));
+    hr.appendChild(el('span', `${h.starts_at ? fmtWib(h.starts_at) : '—'} → ${h.ends_at ? fmtWib(h.ends_at) : '—'} WIB · ${h.peserta} peserta`, 'nm'));
+    hr.appendChild(el('span', h.public ? 'publik' : 'staf saja', 'pill ' + (h.public ? 'published' : 'draft')));
+    hr.appendChild(el('a', 'lihat', null, { href: `riwayat/#${h.id}`, target: '_blank', rel: 'noopener' }));
+    const hMsg = el('span', null, 'msg');
+    hr.appendChild(btn(h.public ? 'Sembunyikan' : 'Tampilkan publik', 'ghost', async () => {
+      try {
+        await rpc('lomba_admin_history_set_public', { p_id: h.id, p_public: !h.public });
+        await loadAll();
+      } catch (e) { say(hMsg, errText(e), false); }
+    }));
+    hr.appendChild(armed('Hapus', 'warn', async () => {
+      try {
+        await rpc('lomba_admin_history_delete', { p_id: h.id });
+        await loadAll();
+      } catch (e) { say(hMsg, errText(e), false); }
+    }));
+    hr.appendChild(hMsg);
+    box.appendChild(hr);
+  }
+  return box;
 }
 
 // Tautan siap-salin untuk form event Skeddo (docs/SKEDDO_EVENT_LATIHAN.md).
@@ -689,6 +881,7 @@ function batchCard(b) {
     + ` · akses: ${akses}`, 'when'));
   head.appendChild(left);
   card.appendChild(head);
+  card.appendChild(skeddoRow(b));
 
   const msg = el('div', null, 'msg');
   const actions = el('div', null, 'row');
@@ -732,12 +925,7 @@ function batchCard(b) {
     try {
       const rows = await rpc('lomba_results', { p_batch: b.id });
       const cols = ['kelas', 'rank', 'nomor', 'nama', 'sekolah', 'score', 'points', 'max_points', 'time_ms', 'done'];
-      const esc = (v) => { const s = v == null ? '' : String(v); return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
-      const csv = [cols.join(',')].concat((rows ?? []).map(r => cols.map(c => esc(r[c])).join(','))).join('\n');
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
-      a.download = `hasil-${b.code}.csv`;
-      a.click();
+      downloadCsv(`hasil-${b.code}.csv`, csvText(cols, rows));
       say(msg, `${rows?.length ?? 0} baris, ${stamp()}`, true);
     } catch (e) { say(msg, errText(e), false); }
   }));
@@ -752,6 +940,54 @@ function batchCard(b) {
     fillRoster(roster, b, msg);
   }
   return card;
+}
+
+/** Baris "Skeddo" di kartu batch: jam event Skeddo-nya, sama atau beda, dan
+    satu tombol untuk memakai jam itu. Skeddo = satu-satunya tempat mengetik
+    jadwal; di sini cukup diklik. */
+function skeddoRow(b) {
+  const row = el('div', null, 'row');
+  row.style.marginTop = '4px';
+  if (S.skeddoErr) {
+    row.appendChild(el('span', `Skeddo tidak terbaca (${S.skeddoErr}) — samakan jam secara manual lewat "Ubah".`, 'when'));
+    return row;
+  }
+  const e = skeddoFor(b);
+  if (!e) {
+    row.appendChild(el('span', `Skeddo: belum ada event publik yang tautan JOIN-nya memakai kode ${b.code}. ` +
+      'Buat event di Skeddo dengan tautan JOIN di bawah, lalu muat ulang — jamnya bisa diambil dari sana.', 'when'));
+    return row;
+  }
+  row.appendChild(el('a', `Skeddo: «${e.title}»`, null, { href: skeddoEventUrl(e), target: '_blank', rel: 'noopener' }));
+  if (!e.ends_at) {
+    row.appendChild(el('span', `${fmtWib(e.starts_at)} WIB · event Skeddo belum punya jam selesai — isi dulu di Skeddo`, 'when'));
+    return row;
+  }
+  row.appendChild(el('span', `${fmtWib(e.starts_at)} → ${fmtWib(e.ends_at)} WIB`, 'when'));
+  const same = Math.abs(Date.parse(e.starts_at) - Date.parse(b.starts_at)) < 60e3
+            && Math.abs(Date.parse(e.ends_at) - Date.parse(b.ends_at)) < 60e3;
+  if (same) { row.appendChild(el('span', '✓ sama dengan jadwal di sini', 'when')); return row; }
+  const warn = el('span', '⚠ beda dengan jadwal di sini', 'when');
+  warn.style.color = 'var(--coral)';
+  row.appendChild(warn);
+  // Jangan memindah jam di bawah anak-anak yang sedang mengerjakan.
+  const now = Date.now();
+  const running = !b.is_practice && b.entries > 0
+    && now >= Date.parse(b.starts_at) - b.lobby_sec * 1000 && now < Date.parse(b.ends_at);
+  if (running) {
+    row.appendChild(el('span', '— sesi resmi sedang berjalan, jam tidak diubah sekarang', 'when'));
+    return row;
+  }
+  const msg = el('span', null, 'msg');
+  row.appendChild(armed('Pakai jam Skeddo', 'gold', async () => {
+    try {
+      await rpc('lomba_admin_set_batch', { p_batch: b.id, p_patch: { starts_at: e.starts_at, ends_at: e.ends_at } });
+      say(msg, `Jam disamakan dengan Skeddo, ${stamp()}`, true);
+      await loadAll();
+    } catch (err) { say(msg, errText(err), false); }
+  }));
+  row.appendChild(msg);
+  return row;
 }
 
 function field(parent, labelText, input) {

@@ -113,7 +113,9 @@
           <li>Klik <b>Simpan sebagai draft</b>.</li>
         </ul></li>
       <li>Di kartu event, isi <b>Seri</b> (baris 1, mis. <i>IOA Math Competition</i>) dan <b>Edisi</b> (baris 2, mis. <i>Lombok Bangkit</i>), pilih <b>Warna aksen</b>, pilih <b>Bendera</b> (Indonesia / tanpa bendera / gambar sendiri lewat URL https), lalu <b>Simpan seri / edisi</b>.</li>
-      <li>Tempel <b>alamat event di Skeddo</b> (tombol Share di Skeddo, https://app.skeddo.com/…) lalu <b>Simpan alamat Skeddo</b>. Ini bukan tautan main — ini tujuan tombol "Gabung melalui Skeddo" di ayomath.com.</li>
+      <li><b>Alamat event di Skeddo</b> — tujuan tombol "Gabung melalui Skeddo" di ayomath.com (bukan tautan main):
+        <ul><li>Biasanya tidak perlu ditempel: setelah tautan JOIN dipasang di event Skeddo, kartu event menampilkan <b>Ditemukan di Skeddo</b> → klik <b>Pakai alamat ini</b>.</li>
+          <li>Cara manual tetap ada: tombol Share di Skeddo → salin → tempel → <b>Simpan alamat Skeddo</b>.</li></ul></li>
       <li>Tambahkan <b>sponsor</b> di bagian Sponsor: nama, logo (png/jpg/svg/webp, maks 500 KB), tautan, tingkat <i>utama</i> atau <i>pendukung</i>.</li>
       <li>Saat semua siap, klik <b>Published</b>. Selama masih <i>Draft</i>, halaman publik dan game tidak menampilkan event ini.</li>
       <li>Minta tim AyoMath membuat <b>folder halaman event</b> (<code>/lomba/&lt;slug&gt;/</code>, berisi halaman depan dan arena). Ini satu kali per event.
@@ -132,7 +134,7 @@
       <tr><th>Kolom</th><th>Isi untuk lomba resmi</th></tr>
       <tr><td>Label</td><td>Mis. <i>Batch 2 · Kelas 3–4</i></td></tr>
       <tr><td>Kelas min / max</td><td>Rentang kelas sesi ini</td></tr>
-      <tr><td>Mulai / Selesai (WIB)</td><td>Jam soal dibuka serentak, dan batas akhir sesi</td></tr>
+      <tr><td>Mulai / Selesai (WIB)</td><td>Jam soal dibuka serentak, dan batas akhir sesi. <b>Ketik jamnya di Skeddo saja</b> — lihat baris <i>Skeddo</i> di bawah</td></tr>
       <tr><td>Ruang tunggu</td><td>300 detik (anak bisa masuk 5 menit sebelum mulai)</td></tr>
       <tr><td>Kursi</td><td>Jumlah komputer di aula; kalau penuh, soal dibuka 10 detik kemudian. Kosongkan untuk menunggu jam mulai</td></tr>
       <tr><td>Detik per soal</td><td>60 (20 soal = 20 menit)</td></tr>
@@ -143,6 +145,12 @@
     </table></div>
     <ol start="3">
       <li>Klik <b>Simpan</b> dan pastikan muncul tulisan "Disimpan" berwarna hijau.</li>
+      <li><b>Jadwal diketik sekali, di Skeddo.</b> Setiap kartu sesi punya baris <i>Skeddo</i>:
+        <ul><li>Halaman ini mencari sendiri event Skeddo yang tautan JOIN-nya memakai kode sesi ini.</li>
+          <li><b>✓ sama</b>: jam di Skeddo dan di sini sudah cocok.</li>
+          <li><b>⚠ beda</b>: klik <b>Pakai jam Skeddo</b> (dua kali) — Mulai/Selesai di sini mengikuti Skeddo.</li>
+          <li>Belum ketemu? Event Skeddo harus <i>published</i> dan <i>public</i>, dengan tautan JOIN dari kartu event ini. Lalu klik <b>Muat ulang</b>.</li>
+          <li>Selama sesi resmi berjalan, tombolnya disembunyikan supaya jam tidak berpindah di tengah lomba.</li></ul></li>
       <li>Pintu <b>tiket</b> baru bisa disimpan setelah daftar peserta diisi (langkah berikutnya).</li>
     </ol>
   </section>
@@ -214,7 +222,13 @@
       <li>Klik <b>Unduh hasil (CSV)</b> pada sesi itu. Berkas berisi kelas, peringkat, nomor, sekolah, nilai, poin, dan waktu. Kirim ke IOA untuk dicocokkan dengan nama dan untuk sertifikat.</li>
       <li>Simpan berkas hasil dan CSV peserta di folder event. Jangan menghapus peserta sesi resmi; sistem memang tidak mengizinkannya.</li>
       <li>Untuk sesi berikutnya ulangi langkah sesi dan daftar peserta. Arena akan memilih sendiri sesi yang sedang berjalan.</li>
-      <li>Setelah seluruh event selesai, ubah status event menjadi <b>Closed</b>. Hasil tetap bisa dilihat.</li>
+      <li>Setelah seluruh event selesai, klik <b>🏁 Akhiri &amp; simpan</b> di kartu event (dua kali):
+        <ul><li>Anak yang belum selesai dinilai dari jawaban tersimpan.</li>
+          <li>CSV hasil lengkap seluruh sesi terunduh otomatis.</li>
+          <li>Ringkasan masuk <a href="riwayat/">Riwayat</a>: jumlah peserta + juara 1–3 tiap kelas (nomor + sekolah, tanpa nama), tabel medali sekolah, sponsor.</li>
+          <li>Event menjadi <b>Closed</b>.</li>
+          <li>Tombol ini menolak selama masih ada sesi resmi yang belum lewat jam Selesai-nya.</li>
+          <li>Centang <b>Tampilkan di Riwayat publik</b> hanya bila penyelenggara setuju. Bisa diubah nanti: <b>Tampilkan publik</b> / <b>Sembunyikan</b> / <b>Hapus</b> di daftar riwayat event itu.</li></ul></li>
     </ol>
   </section>
 
@@ -228,6 +242,11 @@
         <ul><li><b>Wajib</b>: tempel tautan Meeting yang baru ke event Skeddo. Tautan lama berhenti bekerja.</li></ul></li>
       <li><b>Kunci ulang</b> membuat kunci baru (mis. bila tautan tersebar). <b>Buka kunci</b> kembali ke latihan terbuka.</li>
       <li>Saat sesi resmi event yang sama sedang berjalan, latihan tertutup sendiri dan terbuka lagi setelahnya.</li>
+      <li><b>Jam latihan</b>: ketik di event Skeddo, lalu di kartu sesi klik <b>Pakai jam Skeddo</b>.</li>
+      <li><b>Akhir putaran latihan</b>: klik <b>🏁 Akhiri &amp; simpan</b>.
+        <ul><li>Hasil putaran masuk Riwayat sebagai <i>Latihan</i>.</li>
+          <li>Entri latihan pindah ke arsip staf (tidak hilang) → papan kosong untuk putaran berikutnya.</li>
+          <li>Putaran berikutnya: buat event Skeddo baru dengan tautan JOIN yang sama → klik <b>Published</b> → <b>Pakai jam Skeddo</b>.</li></ul></li>
     </ol>
   </section>
 

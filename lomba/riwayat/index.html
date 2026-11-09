@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title data-en="AyoMath Competition History">Riwayat Lomba AyoMath</title>
+<meta name="description" content="Riwayat lomba dan latihan matematika AyoMath: tanggal, jumlah peserta, juara 1–3 per kelas, dan tabel medali sekolah." data-en="AyoMath maths competition and practice history: dates, participant counts, top 3 per grade, and the school medal table.">
+<script src="../../lang.js"></script>
+<link rel="stylesheet" href="../../site.css">
+<meta name="theme-color" content="#F7F8FC" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#13112A" media="(prefers-color-scheme: dark)">
+<style>
+  .wrap{max-width:760px;margin:0 auto;padding:24px 16px}
+  header{text-align:center;padding:32px 0 8px}
+  .logo{font-size:52px;line-height:1}
+  h1{font-size:30px;margin:10px 0 6px;font-weight:900}
+  .tag{color:var(--muted);font-size:16px;margin:0 auto;max-width:520px}
+  .langbar{display:flex;justify-content:space-between;align-items:center}
+  .back{color:var(--muted);text-decoration:none;font-weight:700}
+  .langbar .lang{margin-left:auto}
+  .card{background:var(--surface);border-radius:20px;padding:20px;margin:16px 0;box-shadow:0 2px 14px var(--shadow)}
+  .filters{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:18px 0 4px}
+  .filters button{font:inherit;font-weight:800;font-size:14px;padding:7px 16px;border-radius:999px;
+                  border:2px solid var(--line);background:var(--surface);color:var(--muted);cursor:pointer}
+  .filters button.on{border-color:var(--teal);background:var(--teal);color:#fff}
+  .pill{display:inline-block;font-size:12px;font-weight:800;padding:2px 10px;border-radius:999px;vertical-align:2px}
+  .pill.lomba{background:var(--gold);color:#1d1603}
+  .pill.latihan{background:rgba(31,158,142,.14);color:var(--teal)}
+  .ev h2{font-size:20px;margin:6px 0 2px;line-height:1.3}
+  .ev h2 small{display:block;font-size:15px;color:var(--teal);font-weight:800}
+  .meta{color:var(--muted);font-size:14px;margin:2px 0}
+  .stats{display:flex;gap:18px;flex-wrap:wrap;margin:10px 0 0;font-size:14px}
+  .stats b{font-size:20px;display:block;line-height:1.1}
+  details{margin-top:14px;border-top:1px solid var(--line);padding-top:10px}
+  summary{cursor:pointer;font-weight:800;color:var(--teal)}
+  .sesi{margin:14px 0 0}
+  .sesi h3{font-size:16px;margin:0}
+  .sesi .meta{margin-bottom:6px}
+  .kelas{margin:10px 0 0}
+  .kelas h4{font-size:14px;margin:0 0 4px}
+  .tbl{width:100%;overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{text-align:left;padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)}
+  td.n{font-variant-numeric:tabular-nums;white-space:nowrap}
+  .sp{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:8px}
+  .sp img{height:32px;width:auto;max-width:120px;object-fit:contain;background:#fff;border-radius:8px;padding:3px}
+  .sp span{font-size:13px;font-weight:700;color:var(--muted)}
+  .note ul{margin:6px 0 0;padding-left:20px;color:var(--muted);font-size:14px}
+  .empty{text-align:center;color:var(--muted)}
+  footer{padding:24px 0 40px}
+</style>
+<script data-goatcounter="https://esumar.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <div class="langbar">
+    <a class="back" href="../"><span lang="id">← Lomba</span><span lang="en">← Competition</span></a>
+    <span class="lang" role="group" aria-label="Bahasa / Language">
+      <button type="button" data-set-lang="id" title="Bahasa Indonesia">ID</button>
+      <button type="button" data-set-lang="en" title="English">EN</button>
+    </span>
+  </div>
+
+  <header>
+    <div class="logo">🏅</div>
+    <h1 lang="id">Riwayat Lomba</h1>
+    <h1 lang="en">Competition History</h1>
+    <p class="tag" lang="id">Lomba dan latihan AyoMath yang sudah selesai: kapan, berapa peserta, dan juara 1–3 tiap kelas.</p>
+    <p class="tag" lang="en">Finished AyoMath competitions and practice rounds: when, how many took part, and the top 3 in each grade.</p>
+  </header>
+
+  <div class="filters" role="group" aria-label="Filter">
+    <button type="button" data-kind="" class="on"><span lang="id">Semua</span><span lang="en">All</span></button>
+    <button type="button" data-kind="lomba"><span lang="id">🏆 Lomba</span><span lang="en">🏆 Competitions</span></button>
+    <button type="button" data-kind="latihan"><span lang="id">✏️ Latihan</span><span lang="en">✏️ Practice</span></button>
+  </div>
+
+  <div id="list"><p class="empty"><span lang="id">Memuat…</span><span lang="en">Loading…</span></p></div>
+
+  <div class="card note">
+    <b lang="id">Tentang halaman ini</b><b lang="en">About this page</b>
+    <ul lang="id">
+      <li>Hasil disimpan saat panitia menutup lomba atau putaran latihan.</li>
+      <li>Peserta tampil dengan nomor peserta dan sekolah — tanpa nama anak.</li>
+      <li>Nilai = poin yang diraih dari poin maksimal; waktu = lama mengerjakan.</li>
+      <li>Peringkat ganda berarti nilai dan waktunya sama persis.</li>
+    </ul>
+    <ul lang="en">
+      <li>Results are saved when the organisers close a competition or a practice round.</li>
+      <li>Participants are shown by participant number and school — never a child's name.</li>
+      <li>Score = points earned out of the maximum; time = how long the paper took.</li>
+      <li>A shared rank means the score and the time were exactly equal.</li>
+    </ul>
+  </div>
+
+  <footer>
+    <p lang="id">Dikembangkan oleh Eramuse.<br>
+       Pertanyaan atau masukan? <a href="mailto:ayomath.games@gmail.com">ayomath.games@gmail.com</a></p>
+    <p lang="en">Developed by Eramuse.<br>
+       Questions or feedback? <a href="mailto:ayomath.games@gmail.com">ayomath.games@gmail.com</a></p>
+    <p lang="id"><a href="../../privacy.html">Privasi</a> · <a href="../../terms.html">Syarat Penggunaan</a></p>
+    <p lang="en"><a href="../../privacy.html">Privacy</a> · <a href="../../terms.html">Terms of Use</a></p>
+  </footer>
+</div>
+
+<script>
+/* Riwayat = lomba_history_list() (supabase/lomba_history.sql): snapshot yang
+   disimpan staf lewat "Akhiri & simpan" di lomba/admin.html. Kunci anon memang
+   publik; fungsi itu hanya memberi snapshot yang ditandai publik, tanpa nama. */
+(function () {
+  'use strict';
+  var SUPA_URL = 'https://koadqcjejecqpnufkhyx.supabase.co';
+  var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtvYWRxY2plamVjcXBudWZraHl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMzQ1NDEsImV4cCI6MjA5NTcxMDU0MX0.IQUnBXrGsz1fCRTvUb0f5vI8AKhmASoegvVs09wqbaI';
+  var TZ = 'Asia/Jakarta';
+  var LOC = { id: 'id-ID', en: 'en-GB' };
+  var MEDAL = { 1: '🥇', 2: '🥈', 3: '🥉' };
+  var all = [];
+  var kind = '';
+
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  }
+  /** Satu label dua bahasa; CSS menyembunyikan yang tidak aktif. */
+  function bi(parent, tag, cls, idText, enText) {
+    var a = el(tag, cls, idText); a.lang = 'id'; parent.appendChild(a);
+    var b = el(tag, cls, enText); b.lang = 'en'; parent.appendChild(b);
+  }
+  function day(iso, lang) {
+    return new Date(iso).toLocaleDateString(LOC[lang], { timeZone: TZ, day: 'numeric', month: 'long', year: 'numeric' });
+  }
+  function clock(iso) {
+    return new Date(iso).toLocaleTimeString('id-ID', { timeZone: TZ, hour: '2-digit', minute: '2-digit' });
+  }
+  /** "15 November 2026, 09.30–11.00 WIB" or "1 Oktober – 9 November 2026". */
+  function range(a, b, lang) {
+    if (!a) return '';
+    if (!b) return day(a, lang);
+    var d1 = day(a, lang), d2 = day(b, lang);
+    if (d1 === d2) return d1 + ', ' + clock(a) + '–' + clock(b) + ' WIB';
+    return d1 + ' – ' + d2;
+  }
+  function num(v) {
+    return v == null ? '—' : Number(v).toLocaleString('id-ID', { maximumFractionDigits: 2 });
+  }
+  function mmss(ms) {
+    if (ms == null) return '—';
+    var s = Math.max(0, Math.round(ms / 1000));
+    return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+  }
+  function title(h) {
+    return h.series && h.edition ? [h.series, h.edition] : [h.name, null];
+  }
+
+  function topTable(k) {
+    var wrap = el('div', 'tbl');
+    var t = el('table');
+    var head = el('tr');
+    [['#', '#'], ['Peserta', 'Participant'], ['Nilai', 'Score'], ['Waktu', 'Time']].forEach(function (c) {
+      var th = el('th'); bi(th, 'span', null, c[0], c[1]); head.appendChild(th);
+    });
+    t.appendChild(head);
+    (k.top || []).forEach(function (r) {
+      var tr = el('tr');
+      tr.appendChild(el('td', 'n', (MEDAL[r.rank] || '') + ' ' + r.rank));
+      var who = el('td');
+      bi(who, 'span', null, 'Peserta ' + r.nomor, 'No. ' + r.nomor);
+      if (r.sekolah) who.appendChild(document.createTextNode(' · ' + r.sekolah));
+      tr.appendChild(who);
+      tr.appendChild(el('td', 'n', num(r.points) + ' / ' + num(r.max_points)));
+      tr.appendChild(el('td', 'n', mmss(r.time_ms)));
+      t.appendChild(tr);
+    });
+    wrap.appendChild(t);
+    return wrap;
+  }
+
+  function schoolTable(rows) {
+    var wrap = el('div', 'tbl');
+    var t = el('table');
+    var head = el('tr');
+    [['Sekolah', 'School'], ['🥇', '🥇'], ['🥈', '🥈'], ['🥉', '🥉'], ['Peserta', 'Entrants']].forEach(function (c) {
+      var th = el('th'); bi(th, 'span', null, c[0], c[1]); head.appendChild(th);
+    });
+    t.appendChild(head);
+    rows.forEach(function (s) {
+      var tr = el('tr');
+      tr.appendChild(el('td', null, s.sekolah));
+      ['emas', 'perak', 'perunggu', 'peserta'].forEach(function (f) { tr.appendChild(el('td', 'n', String(s[f] || 0))); });
+      t.appendChild(tr);
+    });
+    wrap.appendChild(t);
+    return wrap;
+  }
+
+  function card(h, open) {
+    var c = el('article', 'card ev');
+    c.id = h.id;
+    var pill = el('span', 'pill ' + h.kind);
+    bi(pill, 'span', null, h.kind === 'lomba' ? 'Lomba' : 'Latihan', h.kind === 'lomba' ? 'Competition' : 'Practice');
+    c.appendChild(pill);
+    var tt = title(h);
+    var h2 = el('h2', null, tt[0]);
+    if (tt[1]) h2.appendChild(el('small', null, tt[1]));
+    c.appendChild(h2);
+    bi(c, 'p', 'meta', range(h.starts_at, h.ends_at, 'id'), range(h.starts_at, h.ends_at, 'en'));
+    var org = [h.host, h.organizer].filter(Boolean).filter(function (v, i, a) { return a.indexOf(v) === i; });
+    if (org.length) c.appendChild(el('p', 'meta', org.join(' · ')));
+
+    var batches = h.batches || [];
+    var schools = h.schools || [];
+    var stats = el('div', 'stats');
+    function stat(n, idL, enL) { var s = el('span'); s.appendChild(el('b', null, String(n))); bi(s, 'span', null, idL, enL); stats.appendChild(s); }
+    stat(h.peserta, 'peserta', 'participants');
+    stat(batches.length, 'sesi', batches.length === 1 ? 'session' : 'sessions');
+    if (schools.length) stat(schools.length, 'sekolah', schools.length === 1 ? 'school' : 'schools');
+    c.appendChild(stats);
+
+    var d = el('details');
+    if (open) d.open = true;
+    var sm = el('summary');
+    bi(sm, 'span', null, 'Lihat juara', 'See the winners');
+    d.appendChild(sm);
+
+    batches.forEach(function (b) {
+      var s = el('section', 'sesi');
+      var h3 = el('h3', null, b.label);
+      if (b.practice && h.kind === 'lomba') {
+        var p = el('span', 'pill latihan'); p.style.marginLeft = '8px';
+        bi(p, 'span', null, 'latihan', 'practice'); h3.appendChild(p);
+      }
+      s.appendChild(h3);
+      bi(s, 'p', 'meta',
+        range(b.starts_at, b.ends_at, 'id') + ' · ' + b.peserta + ' peserta',
+        range(b.starts_at, b.ends_at, 'en') + ' · ' + b.peserta + ' participants');
+      (b.kelas || []).forEach(function (k) {
+        var kd = el('div', 'kelas');
+        bi(kd, 'h4', null, 'Kelas ' + k.kelas + ' · ' + k.peserta + ' peserta',
+                           'Grade ' + k.kelas + ' · ' + k.peserta + ' participants');
+        kd.appendChild(topTable(k));
+        s.appendChild(kd);
+      });
+      d.appendChild(s);
+    });
+
+    if (schools.length) {
+      var ss = el('section', 'sesi');
+      bi(ss, 'h3', null, 'Tabel medali sekolah', 'School medal table');
+      ss.appendChild(schoolTable(schools));
+      d.appendChild(ss);
+    }
+
+    var sponsors = (h.sponsors || []).filter(function (sp) { return sp && sp.name; });
+    if (sponsors.length) {
+      var sps = el('section', 'sesi');
+      bi(sps, 'h3', null, 'Didukung oleh', 'Supported by');
+      var row = el('div', 'sp');
+      sponsors.forEach(function (sp) {
+        var item;
+        if (sp.logo_url && /^https:\/\//i.test(sp.logo_url)) {
+          item = el('img'); item.src = sp.logo_url; item.alt = sp.name; item.loading = 'lazy'; item.title = sp.name;
+        } else {
+          item = el('span', null, sp.name);
+        }
+        if (sp.link && /^https:\/\//i.test(sp.link)) {
+          var a = el('a'); a.href = sp.link; a.target = '_blank'; a.rel = 'noopener'; a.appendChild(item); item = a;
+        }
+        row.appendChild(item);
+      });
+      sps.appendChild(row);
+      d.appendChild(sps);
+    }
+    c.appendChild(d);
+    return c;
+  }
+
+  function draw() {
+    var box = document.getElementById('list');
+    box.replaceChildren();
+    var rows = all.filter(function (h) { return !kind || h.kind === kind; });
+    if (!rows.length) {
+      var p = el('p', 'empty');
+      bi(p, 'span', null,
+        'Belum ada riwayat. Lomba dan latihan yang sudah selesai akan muncul di sini.',
+        'No history yet. Finished competitions and practice rounds will appear here.');
+      box.appendChild(p);
+      return;
+    }
+    var target = location.hash.slice(1);
+    rows.forEach(function (h, i) { box.appendChild(card(h, target ? h.id === target : i === 0)); });
+    if (target && document.getElementById(target)) document.getElementById(target).scrollIntoView();
+  }
+
+  document.querySelectorAll('.filters button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      kind = b.getAttribute('data-kind');
+      document.querySelectorAll('.filters button').forEach(function (x) { x.classList.toggle('on', x === b); });
+      draw();
+    });
+  });
+
+  fetch(SUPA_URL + '/rest/v1/rpc/lomba_history_list', {
+    method: 'POST',
+    headers: { apikey: SUPA_KEY, Authorization: 'Bearer ' + SUPA_KEY, 'Content-Type': 'application/json' },
+    body: '{}',
+  }).then(function (r) { return r.ok ? r.json() : []; })
+    .catch(function () { return []; })
+    .then(function (rows) { all = Array.isArray(rows) ? rows : []; draw(); });
+})();
+</script>
+</body>
+</html>
