@@ -35,6 +35,10 @@ a.btn{display:inline-block;text-decoration:none;font-weight:800;padding:11px 18p
 /* Official Google Play badge (unaltered artwork, ≥ 40 px tall per Google's badge rules). */
 a.playbadge{display:inline-flex;align-items:center}
 a.playbadge img{display:block;height:54px;width:auto;margin:-5px 0}
+/* Official App Store badge (unaltered SVG from Apple's marketing toolbox; Apple's minimum is 40 px tall).
+   The SVG has no padding, so 40 px matches the visible part of the 54 px Google badge. */
+a.appbadge{display:inline-flex;align-items:center}
+a.appbadge img{display:block;height:40px;width:auto}
 a.teal{background:var(--teal);color:#fff}
 a.violet{background:var(--violet);color:#fff}
 a.green{background:var(--green);color:#fff}
