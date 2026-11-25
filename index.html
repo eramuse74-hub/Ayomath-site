@@ -20,6 +20,8 @@
 <meta name="twitter:card" content="summary_large_image">
 <script src="lang.js"></script>
 <link rel="stylesheet" href="site.css">
+<link rel="icon" href="img/eramuse-icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="img/eramuse-apple-touch-icon.png">
 <meta name="theme-color" content="#F7F8FC" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#13112A" media="(prefers-color-scheme: dark)">
 <style>
@@ -28,6 +30,11 @@
 
   header{text-align:center;padding:44px 0 20px}
   h1{font-size:38px;margin:0 0 8px;font-weight:900;letter-spacing:-.01em}
+  /* Eramuse House logo: the plane's flight path writes an "e" */
+  h1.logo{margin:0 0 14px;line-height:0}
+  h1.logo img{width:min(460px,86vw);height:auto}
+  .brand{display:inline-flex;align-items:center;gap:8px}
+  .brand img{width:30px;height:30px;border-radius:8px}
   .tag{color:var(--muted);font-size:18px;margin:0 auto;max-width:620px}
 
   /* Ticker jadwal lomba — diisi dari Supabase; kosong = teks "nantikan". */
@@ -148,7 +155,7 @@
 <body>
 <nav class="nav">
   <div class="wrap">
-    <a class="brand" href="#top">Eramuse House</a>
+    <a class="brand" href="#top"><img src="img/eramuse-icon.svg" alt="" width="30" height="30">Eramuse House</a>
     <div class="links">
       <a href="#lomba" id="nav-lomba"><span lang="id">Lomba</span><span lang="en">Competition</span></a>
       <a href="#buku"><span lang="id">Buku</span><span lang="en">Books</span></a>
@@ -165,7 +172,10 @@
 
 <div class="wrap" id="top">
   <header>
-    <h1>Eramuse House</h1>
+    <h1 class="logo"><picture>
+      <source srcset="img/eramuse-logo-on-dark.png" media="(prefers-color-scheme: dark)">
+      <img src="img/eramuse-logo-on-light.png" alt="Eramuse House" width="1040" height="277">
+    </picture></h1>
     <p class="tag" lang="id">Aplikasi belajar <b>gratis</b>, <b>offline</b>, dan <b>tanpa iklan</b>
        untuk anak dan guru di Indonesia — dan buku fiksi ilmiah untuk anak.</p>
     <p class="tag" lang="en"><b>Free</b>, <b>offline</b>, <b>ad-free</b> learning apps
